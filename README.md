@@ -1,0 +1,4 @@
+mgAndroidRepo
+=============
+
+mgGolf source code
