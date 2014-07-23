@@ -1,1 +1,1 @@
-include ':app', ':MalengaGolfLibrary', ':MalengaGolfAdmin', ':PlayerApp', ':ScorerApp', ':EventReporter', ':LeaderBoardApp', ':ScraperApp'
+include ':app', ':MalengaGolfLibrary', ':MalengaGolfAdmin', ':PlayerApp', ':ScorerApp', ':EventReporter', ':LeaderBoardApp', ':ScraperApp', ':CloudBackEnd'

@@ -44,6 +44,7 @@ public class RegistrationActivity extends FragmentActivity implements
     }
 
     private void checkVirgin() {
+        
         GolfGroupDTO dto = SharedUtil.getGolfGroup(ctx);
         if (dto != null) {
             Log.i(LOG, "Not a virgin anymore ...checking GCM registration....");

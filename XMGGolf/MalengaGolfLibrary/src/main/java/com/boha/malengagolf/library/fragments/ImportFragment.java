@@ -103,7 +103,7 @@ public class ImportFragment extends Fragment {
                 if (rem > 0) {
                     totalPages++;
                 }
-                controlImportx();
+                controlImport();
             }
         });
 
@@ -218,7 +218,7 @@ public class ImportFragment extends Fragment {
     static final int PAGE_SIZE = 30;
     boolean isDone;
 
-    private void controlImportx() {
+    private void controlImport() {
 
         if (pageCnt < totalPages) {
             List<ImportPlayerDTO> list = new ArrayList<ImportPlayerDTO>();
@@ -260,7 +260,7 @@ public class ImportFragment extends Fragment {
                 }
                 Log.w(LOG, "#####  ########## players imported OK ....pageCnt: " + pageCnt + response.getMessage());
                 pageCnt++;
-                controlImportx();
+                controlImport();
 
             }
 

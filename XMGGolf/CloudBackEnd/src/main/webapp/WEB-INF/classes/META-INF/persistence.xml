@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+    <persistence-unit name="golfpu" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>com.boha.golfkids.data.Administrator</class>
+        <class>com.boha.golfkids.data.Agegroup</class>
+        <class>com.boha.golfkids.data.AppUser</class>
+        <class>com.boha.golfkids.data.AppUserGroup</class>
+        <class>com.boha.golfkids.data.City</class>
+        <class>com.boha.golfkids.data.Club</class>
+        <class>com.boha.golfkids.data.ClubCourse</class>
+        <class>com.boha.golfkids.data.Country</class>
+        <class>com.boha.golfkids.data.ErrorStore</class>
+        <class>com.boha.golfkids.data.ErrorStoreAndroid</class>
+        <class>com.boha.golfkids.data.GcmDevice</class>
+        <class>com.boha.golfkids.data.GolfGroup</class>
+        <class>com.boha.golfkids.data.GolfGroupParent</class>
+        <class>com.boha.golfkids.data.GolfGroupPlayer</class>
+        <class>com.boha.golfkids.data.GolfGroupVolunteer</class>
+        <class>com.boha.golfkids.data.LeaderBoard</class>
+
+        <class>com.boha.golfkids.data.LeaderBoardTeam</class>
+        <class>com.boha.golfkids.data.OrderOfMeritPoint</class>
+        <class>com.boha.golfkids.data.Parent</class>
+        <class>com.boha.golfkids.data.PersonalPlayer</class>
+        <class>com.boha.golfkids.data.PersonalScore</class>
+        <class>com.boha.golfkids.data.Player</class>
+        <class>com.boha.golfkids.data.Province</class>
+        <class>com.boha.golfkids.data.Scorer</class>
+
+        <class>com.boha.golfkids.data.Team</class>
+        <class>com.boha.golfkids.data.TeamMember</class>
+        <class>com.boha.golfkids.data.Tournament</class>
+        <class>com.boha.golfkids.data.TournamentCourse</class>
+        <class>com.boha.golfkids.data.TournamentVolunteer</class>
+        <class>com.boha.golfkids.data.TourneyScoreByRound</class>
+        <class>com.boha.golfkids.data.TourneyScoreByRoundTeam</class>
+        <class>com.boha.golfkids.data.VideoClip</class>
+        <class>com.boha.golfkids.data.Volunteer</class>
+
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.GoogleDriver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:google:mysql://mggolf-303:mggolf-303:golfdb/kidsgolf"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value="kktiger3"/>
+
+        </properties>
+    </persistence-unit>
+</persistence>

@@ -11,18 +11,27 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.GolfCourseMapActivity;
 import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.PictureActivity;
 import com.boha.malengagolf.library.base.BaseVolley;
-import com.boha.malengagolf.library.data.*;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.GolfGroupTournamentListFragment;
 import com.boha.malengagolf.library.fragments.SplashFragment;
 import com.boha.malengagolf.library.gallery.StaggeredTournamentGridFragment;
-import com.boha.malengagolf.library.gallery.TournamentPlayersPicturesFragment;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.MGPageFragment;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+
 import org.acra.ACRA;
 
 import java.util.ArrayList;
@@ -151,11 +160,11 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
                     staggeredTournamentGridFragment.setFileNames(fileNames);
 
 
-                    tournamentPlayersPicturesFragment = new TournamentPlayersPicturesFragment();
-                    tournamentPlayersPicturesFragment.setLeaderBoardList(leaderBoardList);
-                    Bundle b2 = new Bundle();
-                    b2.putSerializable("tournament", t);
-                    tournamentPlayersPicturesFragment.setArguments(b2);
+//                    tournamentPlayersPicturesFragment = new TournamentPlayersPicturesFragment();
+//                    tournamentPlayersPicturesFragment.setLeaderBoardList(leaderBoardList);
+//                    Bundle b2 = new Bundle();
+//                    b2.putSerializable("tournament", t);
+//                    tournamentPlayersPicturesFragment.setArguments(b2);
 
                     try {
                         if (pageFragmentList.size() > 2) {
@@ -166,7 +175,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
                     } catch (Exception e) {
                     }
 
-                    pageFragmentList.add(tournamentPlayersPicturesFragment);
+                   // pageFragmentList.add(tournamentPlayersPicturesFragment);
                     pageFragmentList.add(staggeredTournamentGridFragment);
 
 
@@ -183,7 +192,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
     }
 
     StaggeredTournamentGridFragment staggeredTournamentGridFragment;
-    TournamentPlayersPicturesFragment tournamentPlayersPicturesFragment;
+    //TournamentPlayersPicturesFragment tournamentPlayersPicturesFragment;
     List<LeaderBoardDTO> leaderBoardList;
     static final String LOG = "MainPagerActivity-scorer";
 

@@ -23,7 +23,6 @@ import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.fragments.GolfGroupTournamentListFragment;
 import com.boha.malengagolf.library.fragments.SplashFragment;
 import com.boha.malengagolf.library.gallery.StaggeredTournamentGridFragment;
-import com.boha.malengagolf.library.gallery.TournamentPlayersPicturesFragment;
 import com.boha.malengagolf.library.util.*;
 
 import java.util.ArrayList;
@@ -191,13 +190,13 @@ public class MainPanelActivity extends FragmentActivity implements GolfGroupTour
         if (leaderBoardList == null) {
             Log.e(LOG, "buildPages ######### leaderBoardList list is NULL");
         }
-        tournamentPlayersPicturesFragment = new TournamentPlayersPicturesFragment();
-        Bundle b2 = new Bundle();
-        b2.putSerializable("tournament", t);
-        tournamentPlayersPicturesFragment.setArguments(b2);
-        tournamentPlayersPicturesFragment.setLeaderBoardList(leaderBoardList);
-
-        pageFragmentList.add(tournamentPlayersPicturesFragment);
+//        tournamentPlayersPicturesFragment = new TournamentPlayersPicturesFragment();
+//        Bundle b2 = new Bundle();
+//        b2.putSerializable("tournament", t);
+//        tournamentPlayersPicturesFragment.setArguments(b2);
+//        tournamentPlayersPicturesFragment.setLeaderBoardList(leaderBoardList);
+//
+//        pageFragmentList.add(tournamentPlayersPicturesFragment);
         pageFragmentList.add(staggeredTournamentGridFragment);
 
 
@@ -343,7 +342,7 @@ public class MainPanelActivity extends FragmentActivity implements GolfGroupTour
     Context ctx;
     GolfGroupDTO golfGroup;
     StaggeredTournamentGridFragment staggeredTournamentGridFragment;
-    TournamentPlayersPicturesFragment tournamentPlayersPicturesFragment;
+    //TournamentPlayersPicturesFragment tournamentPlayersPicturesFragment;
     List<LeaderBoardDTO> leaderBoardList;
     List<MGPageFragment> pageFragmentList;
     PagerAdapter mPagerAdapter;

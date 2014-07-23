@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.fragments.ImportFragment;
 import com.boha.malengagolf.library.util.SharedUtil;
@@ -28,6 +29,7 @@ public class ImportActivity extends FragmentActivity implements ImportFragment.I
                 .findFragmentById(R.id.IMP_fragment);
 
         setTitle(ctx.getResources().getString(R.string.import_players));
+
 
 
     }

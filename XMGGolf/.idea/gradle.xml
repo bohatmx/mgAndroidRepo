@@ -8,6 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/CloudBackEnd" />
             <option value="$PROJECT_DIR$/EventReporter" />
             <option value="$PROJECT_DIR$/LeaderBoardApp" />
             <option value="$PROJECT_DIR$/MalengaGolfAdmin" />

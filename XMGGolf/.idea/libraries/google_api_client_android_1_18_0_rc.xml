@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="google-api-client-android-1.18.0-rc">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/MalengaGolfLibrary/libs/google-api-client-android-1.18.0-rc.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.api-client/google-api-client-android/1.18.0-rc/5a61d590275464895d783fb1612418964e20162e/google-api-client-android-1.18.0-rc.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
