@@ -3,10 +3,17 @@ package com.boha.malengagolf.library.util;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
 import com.boha.malengagolf.library.base.BaseVolley;
 import com.boha.malengagolf.library.data.PhotoUploadDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.google.gson.Gson;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import khandroid.ext.apache.http.HttpEntity;
 import khandroid.ext.apache.http.HttpResponse;
 import khandroid.ext.apache.http.client.HttpClient;
@@ -16,11 +23,6 @@ import khandroid.ext.apache.http.entity.mime.content.FileBody;
 import khandroid.ext.apache.http.entity.mime.content.StringBody;
 import khandroid.ext.apache.http.impl.client.DefaultHttpClient;
 import khandroid.ext.apache.http.util.ByteArrayBuffer;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 public class ImageUpload {
 

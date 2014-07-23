@@ -4,6 +4,8 @@ import com.google.appengine.api.utils.SystemProperty;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,40 +16,36 @@ import javax.persistence.Persistence;
  */
 public class EMUtil {
 
+    static final Logger log = Logger.getLogger(EMUtil.class.getName());
+
     public static EntityManager getEM() {
         // Set the persistence driver and url based on environment, production or local.
         Map<String, String> properties = new HashMap();
 
-        for (SystemProperty.Environment.Value c : SystemProperty.Environment.Value.values()) {
-            System.out.println("SystemProperty.Environment.Value : " + c);
-        }
-
         if (SystemProperty.environment.value() ==
                 SystemProperty.Environment.Value.Production) {
-            System.out.println("######### Running in PRODUCTION ########");
+            //log.log(Level.WARNING, "######### Running in PRODUCTION ########");
             properties.put("javax.persistence.jdbc.driver",
                     "com.mysql.jdbc.GoogleDriver");
             properties.put("javax.persistence.jdbc.url",
-                    "jdbc:google:mysql://mggolf-303:mggolf-303:golfdb/kidsgolf");
-            properties.put("javax.persistence.jdbc.password", "kktiger3");
+                    "jdbc:google:mysql://mggolf-303:golfdb/kidsgolf");
+            properties.put("javax.persistence.jdbc.user", "root");
         } else {
-            System.out.println("######### Running in DEVELOPMENT ########");
+            //log.log(Level.WARNING, "######### Running in DEVELOPMENT ########");
             properties.put("javax.persistence.jdbc.driver",
                     "com.mysql.jdbc.Driver");
             properties.put("javax.persistence.jdbc.url",
                     "jdbc:mysql://127.0.0.1:8889/kidsgolf");
             properties.put("javax.persistence.jdbc.password", "root");
-            //<property name="javax.persistence.jdbc.password" value="kktiger3"/>
         }
-        // Create a EntityManager which will perform operations on the database.
-        if (emf == null) {
+         if (emf == null) {
             emf = Persistence.createEntityManagerFactory(
                     "golfpu", properties);
-            System.out.println("createEntityManagerFactory seems OK: " + emf.toString());
+            log.log(Level.WARNING, "####### createEntityManagerFactory created, seems OK: " + emf.toString());
         }
         if (em == null) {
             em = emf.createEntityManager();
-            System.out.println("createEntityManager is Cool. ");
+            log.log(Level.WARNING, "==========> createEntityManager created, was null. is Cool. ");
         }
         if (!em.isOpen()) {
             em = emf.createEntityManager();

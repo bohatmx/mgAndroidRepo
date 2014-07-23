@@ -35,7 +35,13 @@ public class EndPointAsyncTask extends AsyncTask<Pair<Context, String>, Void, St
         // end options for devappserver
 
         myApiService = builder.build();
+        try {
+            Registration.GetClubsNearby r =
+            myApiService.getClubsNearby(0.0, 0.0, 1, 100, 1);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
