@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 'android-L'
-    buildToolsVersion "19.1.0"
-
+    compileSdkVersion 19
+    buildToolsVersion '19.1.0'
     defaultConfig {
-        applicationId "com.boha.blobstoretester.blobstoretestmodule"
+        applicationId 'com.boha.blobstoretester.blobstoretestmodule'
         minSdkVersion 15
         targetSdkVersion 20
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
     }
     buildTypes {
         release {
@@ -17,8 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':MalengaGolfLibrary')
 }

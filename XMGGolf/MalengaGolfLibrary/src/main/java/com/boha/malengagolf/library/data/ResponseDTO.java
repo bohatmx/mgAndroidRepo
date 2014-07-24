@@ -44,6 +44,25 @@ public class ResponseDTO implements Serializable{
     private List<ErrorStoreDTO> errorStoreList;
     private List<String> imageFileNames;
     private List<VideoClipDTO> videoClips;
+    private UploadBlobDTO uploadBlob;
+    private UploadUrlDTO uploadUrl;
+
+    public UploadBlobDTO getUploadBlob() {
+        return uploadBlob;
+    }
+
+    public void setUploadBlob(UploadBlobDTO uploadBlob) {
+        this.uploadBlob = uploadBlob;
+    }
+
+    public UploadUrlDTO getUploadUrl() {
+        return uploadUrl;
+    }
+
+    public void setUploadUrl(UploadUrlDTO uploadUrl) {
+        this.uploadUrl = uploadUrl;
+    }
+
     public List<LeaderBoardCarrierDTO> getLeaderBoardCarriers() {
         return leaderBoardCarriers;
     }

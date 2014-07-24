@@ -11,7 +11,8 @@ import java.util.List;
  * @author Aubrey Malabie
  */
 public class ResponseDTO {
-
+    private UploadBlobDTO uploadBlob;
+    private UploadUrlDTO uploadUrl;
     private int statusCode, totalPages, totalClubs;
     private String message, gcmRegistrationID;
     private LeaderBoardDTO leaderBoard;
@@ -93,6 +94,22 @@ public class ResponseDTO {
 
     public void setGcmRegistrationID(String gcmRegistrationID) {
         this.gcmRegistrationID = gcmRegistrationID;
+    }
+
+    public UploadBlobDTO getUploadBlob() {
+        return uploadBlob;
+    }
+
+    public void setUploadBlob(UploadBlobDTO uploadBlob) {
+        this.uploadBlob = uploadBlob;
+    }
+
+    public UploadUrlDTO getUploadUrl() {
+        return uploadUrl;
+    }
+
+    public void setUploadUrl(UploadUrlDTO uploadUrl) {
+        this.uploadUrl = uploadUrl;
     }
 
     public void setTotalPages(int totalPages) {

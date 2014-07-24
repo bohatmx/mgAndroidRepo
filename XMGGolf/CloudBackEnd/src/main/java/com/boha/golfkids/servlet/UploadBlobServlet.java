@@ -5,6 +5,7 @@
  */
 package com.boha.golfkids.servlet;
 
+import com.boha.golfkids.dto.ResponseDTO;
 import com.boha.golfkids.dto.UploadBlobDTO;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
@@ -46,6 +47,7 @@ public class UploadBlobServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
         log.log(Level.WARNING, "UploadBlobServlet started............");
         UploadBlobDTO blob = new UploadBlobDTO();
+        ResponseDTO resp = new ResponseDTO();
         Gson gson = new Gson();
         try {
             BlobstoreService service = BlobstoreServiceFactory.getBlobstoreService();
@@ -57,15 +59,16 @@ public class UploadBlobServlet extends HttpServlet {
 
             String servingUrl = imagesService.getServingUrl(servingOptions);
             blob.setServingUrl(servingUrl);
+            resp.setUploadBlob(blob);
             //TODO - database table update - store servingUrl and blobKey
 
             log.log(Level.WARNING, "----- Blobstore url: " + blob.getServingUrl());
         } catch (Exception e) {
-            blob.setStatusCode(99);
-            blob.setMessage("Unable to create upload URL");
+            resp.setStatusCode(99);
+            resp.setMessage("Unable to create upload URL");
             log.log(Level.SEVERE, "Unable to create upload URL", e);
         } finally {
-            String json = gson.toJson(blob);
+            String json = gson.toJson(resp);
             try (PrintWriter out = response.getWriter()) {
                 out.println(json);
             }

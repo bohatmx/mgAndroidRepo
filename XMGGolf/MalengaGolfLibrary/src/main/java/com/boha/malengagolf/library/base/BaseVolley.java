@@ -138,6 +138,30 @@ public class BaseVolley {
                 0, 0));
         requestQueue.add(bohaRequest);
     }
+
+    public static void getUploadUrl(Context context, BohaVolleyListener listener) {
+        DateTime s = new DateTime();
+        Log.w(LOG, "getUploadUrl starting: " + s.getHourOfDay() + ":"
+                + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+        ctx = context;
+        bohaVolleyListener = listener;
+        if (requestQueue == null) {
+            Log.w(LOG, "getUploadUrl requestQueue is null, getting it ...: ");
+            requestQueue = BohaVolley.getRequestQueue(ctx);
+        } else {
+            Log.e(LOG, "********** getUploadUrl requestQueue is NOT NULL - Kool");
+        }
+
+        retries = 0;
+        String x = Statics.URL + Statics.UPLOAD_URL_REQUEST;
+        Log.i(LOG, "...sending remote request: ....size: "+ x.length() +"...>\n"
+                + x);
+        bohaRequest = new BohaRequest(Method.GET, x,
+                onSuccessListener(), onErrorListener());
+        bohaRequest.setRetryPolicy(new DefaultRetryPolicy((int) TimeUnit.SECONDS.toMillis(120),
+                0, 0));
+        requestQueue.add(bohaRequest);
+    }
     public static void getRemoteData(String suffix, RequestDTO request,
                                      Context context, int timeOutSeconds, BohaVolleyListener listener) {
         DateTime s = new DateTime();
