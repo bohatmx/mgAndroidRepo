@@ -2,14 +2,16 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 20
-    buildToolsVersion "19.1.0"
-
+    buildToolsVersion '19.1.0'
     defaultConfig {
-        applicationId "com.boha.xmggolf"
+        applicationId 'com.boha.xmggolf'
         minSdkVersion 15
         targetSdkVersion 20
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
+    }
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
     }
     buildTypes {
         release {
@@ -17,9 +19,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    productFlavors {
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.android.gms:play-services:4.2.42'
+    compile project(':MalengaGolfLibrary')
 }

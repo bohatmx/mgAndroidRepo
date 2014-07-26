@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.UploadBlobDTO;
 import com.google.gson.Gson;
 
@@ -32,16 +33,16 @@ public class BlobUpload {
     static final String LOGTAG = "BlobUpload";
 
     static BlobUploadListener blobUploadListener;
-    static UploadBlobDTO response;
+    static ResponseDTO response;
     static String uploadUrl;
     static File file;
 
-    public static void upload(String uploadUrl, File file, Context ctx,
+    public static void upload(String url, File f, Context c,
                               BlobUploadListener listener) {
-        uploadUrl = uploadUrl;
-        file = file;
+        uploadUrl = url;
+        file = f;
         blobUploadListener = listener;
-        if (!BaseVolley.checkNetworkOnDevice(ctx)) {
+        if (!BaseVolley.checkNetworkOnDevice(c)) {
             return;
         }
         Log.i(LOGTAG, "....starting image upload");
@@ -55,7 +56,7 @@ public class BlobUpload {
             InputStream is = null;
             String responseJSON = null;
             try {
-                response = new UploadBlobDTO();
+                response = new ResponseDTO();
                 MultipartEntity reqEntity = null;
                 try {
                     reqEntity = new MultipartEntity();
@@ -64,6 +65,7 @@ public class BlobUpload {
                             e);
                     throw new Exception();
                 }
+                Log.e(LOGTAG, "URL: " + uploadUrl);
                 HttpClient httpclient = new DefaultHttpClient();
                 HttpPost httppost = new HttpPost(uploadUrl);
                 Log.d(LOGTAG, "sending image upload to " + uploadUrl);
@@ -84,7 +86,7 @@ public class BlobUpload {
                 responseJSON = new String(bab.toByteArray());
                 if (responseJSON != null) {
                     Log.w(LOGTAG, "Response from upload:\n" + responseJSON);
-                    response = gson.fromJson(responseJSON, UploadBlobDTO.class);
+                    response = gson.fromJson(responseJSON, ResponseDTO.class);
                 }
 
             } catch (Exception e) {
@@ -110,7 +112,7 @@ public class BlobUpload {
                 return;
             }
 
-            blobUploadListener.onImageUploaded(response);
+            blobUploadListener.onImageUploaded(response.getUploadBlob());
         }
 
     }

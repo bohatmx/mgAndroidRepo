@@ -414,7 +414,7 @@ public class BlobActivity extends Activity implements GLSurfaceView.Renderer {
     ImageView image;
     File currentThumbFile, currentFullFile;
     Uri thumbUri, fullUri;
-    static final String LOG = "PictureActivity";
+    static final String LOG = "BlobActivity";
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
 

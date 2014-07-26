@@ -2,19 +2,29 @@ package com.boha.malengagolf.library.base;
 
 import android.content.Context;
 import android.util.Log;
-import com.android.volley.*;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
 import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.LoaderRequestDTO;
+import com.boha.malengagolf.library.util.LoaderResponseDTO;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebCheck;
+import com.boha.malengagolf.library.util.WebCheckResult;
 import com.boha.malengagolf.library.volley.toolbox.BohaLoaderRequest;
 import com.boha.malengagolf.library.volley.toolbox.BohaRequest;
 import com.boha.malengagolf.library.volley.toolbox.BohaVolley;
 import com.google.gson.Gson;
-import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -75,8 +85,7 @@ public class BaseVolley {
      */
     public static void getRemoteData(String suffix, RequestDTO request,
                                      Context context, MGApp app, BohaVolleyListener listener) {
-        DateTime s = new DateTime();
-        Log.w(LOG, "getRemoteData starting: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute() + " - reqType: " + request.getRequestType());
+
         ctx = context;
         bohaVolleyListener = listener;
         if (requestQueue == null) {
@@ -110,8 +119,7 @@ public class BaseVolley {
      */
     public static void getRemoteData(String suffix, RequestDTO request,
                                      Context context, BohaVolleyListener listener) {
-        DateTime s = new DateTime();
-        Log.w(LOG, "getRemoteData starting: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute()+ " - reqType: " + request.getRequestType());
+
         ctx = context;
         bohaVolleyListener = listener;
         if (requestQueue == null) {
@@ -140,9 +148,7 @@ public class BaseVolley {
     }
 
     public static void getUploadUrl(Context context, BohaVolleyListener listener) {
-        DateTime s = new DateTime();
-        Log.w(LOG, "getUploadUrl starting: " + s.getHourOfDay() + ":"
-                + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+
         ctx = context;
         bohaVolleyListener = listener;
         if (requestQueue == null) {
@@ -164,8 +170,7 @@ public class BaseVolley {
     }
     public static void getRemoteData(String suffix, RequestDTO request,
                                      Context context, int timeOutSeconds, BohaVolleyListener listener) {
-        DateTime s = new DateTime();
-        Log.w(LOG, "getRemoteData starting: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute() + " - reqType: " + request.getRequestType());
+
         ctx = context;
         bohaVolleyListener = listener;
         if (requestQueue == null) {
@@ -199,8 +204,7 @@ public class BaseVolley {
             public void onResponse(ResponseDTO r) {
                 response = r;
                 Log.e(LOG, "Yup! ...response object received, status code: " + r.getStatusCode());
-                DateTime s = new DateTime();
-                Log.i(LOG, "onResponse: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+
                 if (r.getStatusCode() > 0) {
                     try {
                         Log.w(LOG, response.getMessage());
@@ -216,8 +220,7 @@ public class BaseVolley {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DateTime s = new DateTime();
-                Log.w(LOG, "onErrorResponse starting: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+
                 if (error instanceof TimeoutError) {
                     retries++;
                     if (retries < MAX_RETRIES) {
@@ -228,7 +231,7 @@ public class BaseVolley {
                     }
                 }
                 if (error instanceof NetworkError) {
-                    Log.w(LOG, "onErrorResponse Network Error: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+                    Log.w(LOG, "onErrorResponse Network Error: ");
                     NetworkError ne = (NetworkError) error;
                     if (ne.networkResponse != null) {
                         Log.e(LOG, "volley networkResponse status code: "
@@ -282,7 +285,6 @@ public class BaseVolley {
      */
     public static void loadData(final String suffix, LoaderRequestDTO request,
                                      Context context, final BohaLoaderListener listener) {
-        DateTime s = new DateTime();
         suff = suffix;
         ctx = context;
         loaderRequest = request;
@@ -316,7 +318,6 @@ public class BaseVolley {
             public void onResponse(LoaderResponseDTO r) {
                 loaderResponse = r;
                 Log.i(LOG, "Yebo! ...loader response object received, status code: " + r.getStatusCode());
-                DateTime s = new DateTime();
                 if (r.getStatusCode() > 0) {
                     Log.w(LOG, r.getMessage());
                 }
@@ -337,8 +338,7 @@ public class BaseVolley {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                DateTime s = new DateTime();
-                Log.w(LOG, "onErrorResponse starting: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+
                 if (error instanceof TimeoutError) {
                     retries++;
                     if (retries < MAX_RETRIES) {
@@ -349,7 +349,7 @@ public class BaseVolley {
                     }
                 }
                 if (error instanceof NetworkError) {
-                    Log.w(LOG, "onErrorResponse Network Error: " + s.getHourOfDay() + ":" + s.getMinuteOfHour() + ":" + s.getSecondOfMinute());
+                    Log.w(LOG, "onErrorResponse Network Error: ");
                     NetworkError ne = (NetworkError) error;
                     if (ne.networkResponse != null) {
                         Log.e(LOG, "volley networkResponse status code: "

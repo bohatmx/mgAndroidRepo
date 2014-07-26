@@ -4,24 +4,8 @@ package com.boha.golfkids.dto;
  * Created by aubreyM on 2014/07/23.
  */
 public class UploadBlobDTO {
-    private int statusCode;
-    private String servingUrl, blobKey, message;
+    private String servingUrl, blobKey;
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
 
     public String getServingUrl() {
         return servingUrl;

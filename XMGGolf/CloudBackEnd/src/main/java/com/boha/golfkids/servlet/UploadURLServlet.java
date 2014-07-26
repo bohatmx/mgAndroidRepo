@@ -48,7 +48,7 @@ public class UploadURLServlet extends HttpServlet {
             BlobstoreService service = BlobstoreServiceFactory.getBlobstoreService();
             urlDTO.setUrl(service.createUploadUrl("/uploadBlob"));
             resp.setUploadUrl(urlDTO);
-            log.log(Level.WARNING, "----- Blobstore url: " + urlDTO.getUrl());
+            log.log(Level.WARNING, "----- BlobstoreService url: " + urlDTO.getUrl());
         } catch (Exception e) {
             resp.setStatusCode(99);
             resp.setMessage("Unable to create upload URL");

@@ -11,24 +11,34 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.TimeSheetActivity;
 import com.boha.malengagolf.library.adapters.TeeTimeAdapter;
 import com.boha.malengagolf.library.base.BaseVolley;
-import com.boha.malengagolf.library.data.*;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.Statics;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
-import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -120,10 +130,10 @@ public class TeeTimeRequestFragment extends Fragment implements
     private void showDateDialog() {
 
         if (mYear == 0) {
-            DateTime x = new DateTime();
-            mYear = x.getYear();
-            mMonth = x.getMonthOfYear();
-            mDay = x.getDayOfMonth();
+            Calendar cal = GregorianCalendar.getInstance();
+            mYear = cal.get(Calendar.YEAR);
+            mMonth = cal.get(Calendar.MONTH);
+            mDay = cal.get(Calendar.DAY_OF_MONTH);
         }
         DatePickerDialog dp = DatePickerDialog.newInstance(this, mYear, mMonth, mDay, true);
         dp.setYearRange(2013, 2037);
@@ -133,9 +143,12 @@ public class TeeTimeRequestFragment extends Fragment implements
 
     @Override
     public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-        DateTime s = new DateTime(year, month, day, 0, 0);
-        date = s.toDate().getTime();
-        txtDate.setText(sdf.format(s.toDate()));
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.DAY_OF_MONTH, day);
+        date = cal.getTimeInMillis();
+        txtDate.setText(sdf.format(cal.getTime()));
 
     }
 
@@ -246,13 +259,15 @@ public class TeeTimeRequestFragment extends Fragment implements
         this.tee = tee;
 
         if (score.getTeeTime() > 0) {
-            DateTime s = new DateTime(score.getTeeTime());
-            mHour = s.getHourOfDay();
-            mMinute = s.getMinuteOfHour();
-            mYear = s.getYear();
-            mMonth = s.getMonthOfYear();
-            mDay = s.getDayOfMonth();
-            date = s.toDate().getTime();
+            Date dt = new Date(score.getTeeTime());
+            Calendar c = GregorianCalendar.getInstance();
+            c.setTime(dt);
+            mHour = c.get(Calendar.HOUR_OF_DAY);
+            mMinute = c.get(Calendar.MINUTE);
+            mYear = c.get(Calendar.YEAR);
+            mMonth = c.get(Calendar.MONTH);
+            mDay = c.get(Calendar.DAY_OF_MONTH);
+            date = c.getTimeInMillis();
         } else {
             mHour = 7;
             mMinute = 0;
@@ -267,8 +282,13 @@ public class TeeTimeRequestFragment extends Fragment implements
         mHour = hourOfDay;
         mMinute = minute;
 
-        DateTime x = new DateTime(mYear, mMonth, mDay, mHour, mMinute);
-        tourneyScoreByRound.setTeeTime(x.toDate().getTime());
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(Calendar.YEAR, mYear);
+        cal.set(Calendar.MONTH, mMonth);
+        cal.set(Calendar.DAY_OF_MONTH, mDay);
+        cal.set(Calendar.HOUR_OF_DAY, mHour);
+        cal.set(Calendar.MINUTE, mMinute);
+        tourneyScoreByRound.setTeeTime(cal.getTimeInMillis());
         tourneyScoreByRound.setTee(tee);
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.UPDATE_TEE_TIMES);
@@ -324,14 +344,15 @@ public class TeeTimeRequestFragment extends Fragment implements
             }
             listView.setSelection(index);
         }
-        DateTime x = new DateTime(tournament.getStartDate());
-        date = x.toDate().getTime();
-        txtDate.setText(sdf.format(x.toDate()));
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.setTimeInMillis(tournament.getStartDate());
+        date = tournament.getStartDate();
+        txtDate.setText(sdf.format(cal.getTime()));
         mHour = 7;
         mMinute = 0;
-        mYear = x.getYear();
-        mMonth = x.getMonthOfYear();
-        mDay = x.getDayOfMonth();
+        mYear = cal.get(Calendar.YEAR);
+        mMonth = cal.get(Calendar.MONTH) + 1;
+        mDay = cal.get(Calendar.DAY_OF_MONTH);
         fillFields();
 
     }

@@ -10,12 +10,14 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
-import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -139,9 +141,10 @@ public class TeeTimeAdapter extends ArrayAdapter<LeaderBoardDTO> {
         if (time == 0) {
             return "00:00";
         }
-        DateTime dateTime = new DateTime(time);
-        int hr = dateTime.hourOfDay().get();
-        int min = dateTime.minuteOfHour().get();
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.setTimeInMillis(time);
+        int hr = cal.get(Calendar.HOUR_OF_DAY);
+        int min = cal.get(Calendar.MINUTE);
         StringBuilder sb = new StringBuilder();
         if (hr < 10) {
             sb.append("0").append(hr).append(":");

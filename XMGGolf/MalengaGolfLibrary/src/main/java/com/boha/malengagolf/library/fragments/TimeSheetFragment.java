@@ -9,16 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.ToastUtil;
-import org.joda.time.DateTime;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -116,9 +118,10 @@ public class TimeSheetFragment extends Fragment {
             txtPlayer.setText(board.getPlayer().getFullName());
 
             if (x.getTeeTime() > 0) {
-                DateTime s = new DateTime(x.getTeeTime());
-                int hr = s.getHourOfDay();
-                int min = s.getMinuteOfHour();
+                Calendar cal = GregorianCalendar.getInstance();
+                cal.setTimeInMillis(x.getTeeTime());
+                int hr = cal.get(Calendar.HOUR_OF_DAY);
+                int min = cal.get(Calendar.MINUTE);
                 StringBuilder sb = new StringBuilder();
                 if (hr < 10) {
                     sb.append("0").append(hr).append(":");

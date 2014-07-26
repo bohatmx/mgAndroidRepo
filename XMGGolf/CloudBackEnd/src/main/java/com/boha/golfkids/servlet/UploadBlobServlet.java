@@ -59,13 +59,14 @@ public class UploadBlobServlet extends HttpServlet {
 
             String servingUrl = imagesService.getServingUrl(servingOptions);
             blob.setServingUrl(servingUrl);
+            blob.setBlobKey(blobKey.getKeyString());
             resp.setUploadBlob(blob);
             //TODO - database table update - store servingUrl and blobKey
 
-            log.log(Level.WARNING, "----- Blobstore url: " + blob.getServingUrl());
+            log.log(Level.WARNING, "----- BlobstoreService servingUrl: " + blob.getServingUrl());
         } catch (Exception e) {
             resp.setStatusCode(99);
-            resp.setMessage("Unable to create upload URL");
+            resp.setMessage("Unable to upload image");
             log.log(Level.SEVERE, "Unable to create upload URL", e);
         } finally {
             String json = gson.toJson(resp);
