@@ -18,7 +18,7 @@ import com.android.volley.VolleyError;
 import com.boha.malengagolf.admin.ClubScorecardActivity;
 import com.boha.malengagolf.library.GolfCourseMapActivity;
 import com.boha.malengagolf.admin.R;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.*;
 import com.fourmob.datetimepicker.date.DatePickerDialog;

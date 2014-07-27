@@ -13,7 +13,7 @@ import com.android.volley.VolleyError;
 import com.boha.malengagolf.EventReporter.fragments.AndroidCrashListFragment;
 import com.boha.malengagolf.EventReporter.fragments.ServerLogFragment;
 import com.boha.malengagolf.EventReporter.fragments.SeverEventListFragment;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.ErrorStoreAndroidDTO;
 import com.boha.malengagolf.library.data.ErrorStoreDTO;
 import com.boha.malengagolf.library.data.RequestDTO;

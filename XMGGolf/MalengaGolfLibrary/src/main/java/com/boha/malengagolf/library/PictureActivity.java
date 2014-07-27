@@ -23,15 +23,31 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.ParentDTO;
+import com.boha.malengagolf.library.data.PhotoUploadDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
+import com.boha.malengagolf.library.data.ScorerDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.data.VideoClipContainer;
+import com.boha.malengagolf.library.data.VideoClipDTO;
+import com.boha.malengagolf.library.util.CacheVideoUtil;
+import com.boha.malengagolf.library.util.GLToolbox;
+import com.boha.malengagolf.library.util.ImageUtil;
+import com.boha.malengagolf.library.util.PictureUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.TextureRenderer;
+import com.boha.malengagolf.library.util.ToastUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Created by aubreyM on 2014/04/21.
@@ -267,7 +283,6 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
             photoFile = null;
             try {
                 photoFile = createImageFile();

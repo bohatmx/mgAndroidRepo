@@ -17,7 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.adapters.TourneyPlayerAdapter;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.*;
 

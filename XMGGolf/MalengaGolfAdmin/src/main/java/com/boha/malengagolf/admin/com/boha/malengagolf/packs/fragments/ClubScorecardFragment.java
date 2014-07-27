@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.admin.R;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.ClubCourseDTO;
 import com.boha.malengagolf.library.data.ClubDTO;
 import com.boha.malengagolf.library.data.RequestDTO;

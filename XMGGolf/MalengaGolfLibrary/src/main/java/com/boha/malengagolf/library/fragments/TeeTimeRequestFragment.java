@@ -21,7 +21,7 @@ import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.TimeSheetActivity;
 import com.boha.malengagolf.library.adapters.TeeTimeAdapter;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;

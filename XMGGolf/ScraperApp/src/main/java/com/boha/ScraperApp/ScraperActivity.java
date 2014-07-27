@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.*;
 import com.android.volley.VolleyError;
 import com.boha.ScraperApp.scraper.*;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.base.CityDTO;
 import com.boha.malengagolf.library.data.CountryDTO;
 import com.boha.malengagolf.library.data.ProvinceDTO;

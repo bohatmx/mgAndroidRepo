@@ -18,7 +18,7 @@ import android.widget.Spinner;
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.GolfCourseMapActivity;
 import com.boha.malengagolf.library.PictureActivity;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.fragments.GolfGroupTournamentListFragment;
 import com.boha.malengagolf.library.fragments.SplashFragment;

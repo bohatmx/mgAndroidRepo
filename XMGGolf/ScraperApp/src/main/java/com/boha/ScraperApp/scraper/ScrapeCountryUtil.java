@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.CountryDTO;
 import com.boha.malengagolf.library.data.ProvinceDTO;
 import com.boha.malengagolf.library.util.LoaderRequestDTO;

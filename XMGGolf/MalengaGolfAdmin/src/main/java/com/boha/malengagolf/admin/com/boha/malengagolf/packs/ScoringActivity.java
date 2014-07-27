@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.admin.R;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.SharedUtil;

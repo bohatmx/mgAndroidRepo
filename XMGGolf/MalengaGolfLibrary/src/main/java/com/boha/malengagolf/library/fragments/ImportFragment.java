@@ -12,7 +12,7 @@ import android.widget.*;
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.adapters.ImportPlayerAdapter;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.*;
 import com.boha.malengagolf.library.util.bean.ImportException;

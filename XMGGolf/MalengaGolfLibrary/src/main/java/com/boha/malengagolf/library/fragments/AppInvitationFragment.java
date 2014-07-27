@@ -19,7 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;

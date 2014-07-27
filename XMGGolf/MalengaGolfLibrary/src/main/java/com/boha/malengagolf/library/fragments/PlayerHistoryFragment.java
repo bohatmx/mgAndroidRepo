@@ -16,7 +16,7 @@ import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.ScoreCardActivity;
 import com.boha.malengagolf.library.adapters.PlayerHistoryAdapter;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.RequestDTO;

@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.GcmDeviceDTO;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
@@ -25,7 +25,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 
 import java.util.ArrayList;
 
-import static com.boha.malengagolf.library.base.BaseVolley.BohaVolleyListener;
+import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.BohaVolleyListener;
 
 public class SignInActivity extends FragmentActivity implements
 

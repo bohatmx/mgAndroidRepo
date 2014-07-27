@@ -1,1 +1,1 @@
-include ':app', ':ProximityApp'
+include ':app', ':ProximityApp', ':ProximityBackEnd', ':ProximityLib', ':ProximityCMS'

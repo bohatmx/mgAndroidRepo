@@ -2,7 +2,7 @@ package com.boha.ScraperApp.scraper;
 
 import android.content.Context;
 import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.CountryDTO;
 import com.boha.malengagolf.library.util.*;
 

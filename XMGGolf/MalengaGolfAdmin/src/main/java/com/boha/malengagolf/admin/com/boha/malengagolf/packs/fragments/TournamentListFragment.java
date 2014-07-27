@@ -18,7 +18,7 @@ import com.boha.malengagolf.library.*;
 import com.boha.malengagolf.admin.MainPagerActivity;
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.adapters.TournamentAdapter;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
 import com.boha.malengagolf.library.fragments.TournamentListListener;

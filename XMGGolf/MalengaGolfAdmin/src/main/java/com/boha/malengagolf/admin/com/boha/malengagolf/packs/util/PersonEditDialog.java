@@ -15,7 +15,7 @@ import android.widget.*;
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.AppInvitationActivity;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
 import com.boha.malengagolf.library.util.*;

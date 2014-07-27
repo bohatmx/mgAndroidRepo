@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.*;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -24,7 +24,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.boha.malengagolf.library.base.BaseVolley.*;
+import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.*;
 
 public class RegistrationActivity extends FragmentActivity implements
 

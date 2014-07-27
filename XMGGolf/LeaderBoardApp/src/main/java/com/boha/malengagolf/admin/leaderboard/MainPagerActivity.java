@@ -17,7 +17,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.GolfCourseMapActivity;
 import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.PictureActivity;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;

@@ -18,7 +18,7 @@ import com.boha.malengagolf.library.PictureActivity;
 import com.boha.malengagolf.library.ScoringByHoleActivity;
 import com.boha.malengagolf.library.TeeTimeActivity;
 import com.boha.malengagolf.library.adapters.TourneyPlayerAdapter;
-import com.boha.malengagolf.library.base.BaseVolley;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.*;
 import com.boha.malengagolf.library.volley.toolbox.BohaVolley;
