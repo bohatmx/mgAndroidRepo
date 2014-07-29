@@ -26,6 +26,15 @@ public class ResponseDTO implements Serializable {
     private UploadBlobDTO uploadBlob;
     private UploadUrlDTO uploadUrl;
     private List<String> imageFileNames;
+    private List<CompanyDTO> companyList;
+
+    public List<CompanyDTO> getCompanyList() {
+        return companyList;
+    }
+
+    public void setCompanyList(List<CompanyDTO> companyList) {
+        this.companyList = companyList;
+    }
 
     public List<String> getImageFileNames() {
         return imageFileNames;

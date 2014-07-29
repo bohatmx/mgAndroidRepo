@@ -82,14 +82,14 @@ public class BeaconRegisterActivity extends FragmentActivity
     public void onBeaconRegistered(final List<BeaconDTO> list) {
 
         ResponseDTO resp;
-        CacheUtil.getCachedData(ctx,CacheUtil.CACHE_BRANCHES, new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedData(ctx,CacheUtil.CACHE_COMPANIES, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
                     for (BranchDTO dto: response.getBranchList()) {
                         if (dto.getBranchID() == list.get(0).getBranchID()) {
                             dto.setBeaconList(list);
-                            CacheUtil.cacheData(ctx,response,CacheUtil.CACHE_BRANCHES,new CacheUtil.CacheUtilListener() {
+                            CacheUtil.cacheData(ctx,response,CacheUtil.CACHE_COMPANIES,new CacheUtil.CacheUtilListener() {
                                 @Override
                                 public void onFileDataDeserialized(ResponseDTO response) {
 

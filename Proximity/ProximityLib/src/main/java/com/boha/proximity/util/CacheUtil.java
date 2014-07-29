@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
  */
 public class CacheUtil {
 
-    public static final int CACHE_BRANCHES = 1;
+    public static final int CACHE_COMPANIES = 1;
 
     public interface CacheUtilListener {
         public void onFileDataDeserialized(ResponseDTO response);
@@ -32,7 +32,7 @@ public class CacheUtil {
     static ResponseDTO response;
     static CacheUtilListener listener;
     static Context ctx;
-    static final String BRANCHES_JSON = "branches.json";
+    static final String COMPANIES_JSON = "companies.json";
 
     public static void cacheData(Context context, ResponseDTO r, int type, CacheUtilListener cacheUtilListener) {
         dataType = type;
@@ -60,11 +60,11 @@ public class CacheUtil {
             try {
                 switch (dataType) {
 
-                    case CACHE_BRANCHES:
+                    case CACHE_COMPANIES:
                         json = gson.toJson(response);
-                        outputStream = ctx.openFileOutput(BRANCHES_JSON, Context.MODE_PRIVATE);
+                        outputStream = ctx.openFileOutput(COMPANIES_JSON, Context.MODE_PRIVATE);
                         write(outputStream, json);
-                        file = ctx.getFileStreamPath(BRANCHES_JSON);
+                        file = ctx.getFileStreamPath(COMPANIES_JSON);
                         break;
 
                     default:
@@ -108,9 +108,12 @@ public class CacheUtil {
             Log.e(LOG, "########### doInBackground: getting cached data ....");
             try {
                 switch (dataType) {
-                    case CACHE_BRANCHES:
-                        stream = ctx.openFileInput(BRANCHES_JSON);
+                    case CACHE_COMPANIES:
+                        stream = ctx.openFileInput(COMPANIES_JSON);
                         response = getData(stream);
+                        if (response != null) {
+                            Log.w(LOG, "#### cached data retrived, companies: " + response.getCompanyList().size());
+                        }
                         break;
                 }
 

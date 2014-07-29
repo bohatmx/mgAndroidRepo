@@ -13,11 +13,13 @@ public class Statics {
     //google cloud http://mggolf-303.appspot.com/golf?JSON={requestType:38,golfGroupID:21}
     //public static final String URL = "http://mggolf-303.appspot.com/";
 
+    //public static final String URL = "http://bohamaker.com:8051/proximity/";
+    //public static final String IMAGE_URL = "http://bohamaker.com:8051/proximity_images/";
+
 	public static final String URL = "http://192.168.1.111:8050/proximity/";
 	public static final String IMAGE_URL = "http://192.168.1.111:8050/proximity_images/";
 
     public static final String SERVLET_ADMIN = "admin?JSON=";
-
 
     public static final String UPLOAD_URL_REQUEST = "uploadUrl?";
     public static final String UPLOAD_BLOB = "uploadBlob?";

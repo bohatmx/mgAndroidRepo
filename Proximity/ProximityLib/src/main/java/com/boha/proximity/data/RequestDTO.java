@@ -31,6 +31,7 @@ public class RequestDTO implements Serializable {
     public static final int GET_BEACONS_BY_MAC_ADDRESS = 12;
     public static final int GET_COMPANY_BEACONS = 33;
     public static final int GET_BEACON_IMAGE_FILES = 14;
+    public static final int GET_COMPANIES = 15;
 
 
     public String getMacAddress() {

@@ -8,41 +8,44 @@
     tools:context=".fragments.BranchDTOFragment">
 
     <RelativeLayout
-        android:id="@+id/FBL_lay1"
+        android:id="@+id/FCL_lay1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:background="@color/white">
+
         <TextView
-            android:text="Company Name"
+            android:text="Blossum Inc."
             android:layout_alignParentLeft="true"
-            android:id="@+id/FBL_txtCompany"
-            style="@style/Title2TextStyleBlue"
+            android:id="@+id/FCL_txtCompany"
+            style="@style/Title1TextStyleBlue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center" />
+
         <TextView
             android:text="00"
             android:layout_alignParentRight="true"
-            android:id="@+id/FBL_txtCount"
+            android:id="@+id/FCL_txtCount"
             android:textSize="24sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center" />
 
-        </RelativeLayout>
+    </RelativeLayout>
+
     <RelativeLayout
-        android:id="@+id/FBL_branchLayout"
+        android:id="@+id/FCL_companyLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dp"
-        android:layout_below="@id/FBL_lay1"
+        android:layout_below="@id/FCL_lay1"
         android:background="@color/white">
 
         <EditText
-            android:hint="Enter Branch Name."
+            android:hint="Enter Company Name."
             android:layout_alignParentLeft="true"
-            android:id="@+id/FBL_editBranch"
+            android:id="@+id/FCL_editCompany"
             android:inputType="textCapWords"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,31 +56,31 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp" android:orientation="horizontal"
             android:layout_marginBottom="20dp"
-            android:layout_below="@id/FBL_editBranch">
+            android:layout_below="@id/FCL_editCompany">
             <Button
                 android:text="Cancel"
-                android:id="@+id/FBL_btnCancel"
+                android:id="@+id/FCL_btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center" />
             <Button
-                android:text="Save Branch"
-                android:id="@+id/FBL_btnSave"
+                android:text="Save Company"
+                android:id="@+id/FCL_btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center" />
-        </LinearLayout>
+            </LinearLayout>
+
 
     </RelativeLayout>
 
     <ListView
-        android:id="@+id/FBL_list"
+        android:id="@+id/FCL_list"
         android:dividerHeight="2dp"
         android:layout_marginTop="15dp"
-        android:layout_below="@id/FBL_branchLayout"
+        android:layout_below="@id/FCL_companyLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
 
 </RelativeLayout>

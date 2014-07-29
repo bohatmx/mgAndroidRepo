@@ -20,8 +20,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.boha.proximity.cms.R;
-import com.boha.proximity.cms.adapters.BranchAdapter;
-import com.boha.proximity.data.BranchDTO;
+import com.boha.proximity.cms.adapters.CompanyAdapter;
 import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.data.RequestDTO;
 import com.boha.proximity.data.ResponseDTO;
@@ -29,30 +28,27 @@ import com.boha.proximity.library.Statics;
 import com.boha.proximity.util.CacheUtil;
 import com.boha.proximity.volley.BaseVolley;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by aubreyM on 2014/06/13.
  */
-public class BranchListFragment extends Fragment {
-    public interface BranchListFragmentListener {
-        public void onBranchPicked(BranchDTO branch);
-
+public class CompanyListFragment extends Fragment {
+    public interface CompanyListFragmentListener {
+        public void onCompanyPicked(CompanyDTO branch);
         public void setBusy();
-
         public void setNotBusy();
     }
 
-    BranchListFragmentListener listener;
+    CompanyListFragmentListener listener;
 
     @Override
     public void onAttach(Activity a) {
-        if (a instanceof BranchListFragmentListener) {
-            listener = (BranchListFragmentListener) a;
+        if (a instanceof CompanyListFragmentListener) {
+            listener = (CompanyListFragmentListener) a;
         } else {
             throw new UnsupportedOperationException("Host " + a.getLocalClassName() +
-                    " must implement BranchListFragmentListener");
+                    " must implement CompanyListFragmentListener");
         }
         Log.e(LOG, "##### Fragment hosted by " + a.getLocalClassName());
         super.onAttach(a);
@@ -64,21 +60,22 @@ public class BranchListFragment extends Fragment {
         ctx = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
-                .inflate(R.layout.fragment_branch_list, container, false);
+                .inflate(R.layout.fragment_company_list, container, false);
         setFields();
         return view;
 
     }
 
+
     private void setFields() {
 
-        txtCount = (TextView) view.findViewById(R.id.FBL_txtCount);
-        txtCompany = (TextView) view.findViewById(R.id.FBL_txtCompany);
-        listView = (ListView) view.findViewById(R.id.FBL_list);
-        editName = (EditText) view.findViewById(R.id.FBL_editBranch);
-        editLayout = view.findViewById(R.id.FBL_branchLayout);
-        btnSave = (Button) view.findViewById(R.id.FBL_btnSave);
-        btnCancel = (Button) view.findViewById(R.id.FBL_btnCancel);
+        txtCount = (TextView) view.findViewById(R.id.FCL_txtCount);
+        listView = (ListView) view.findViewById(R.id.FCL_list);
+
+        editName = (EditText)view.findViewById(R.id.FCL_editCompany);
+        editLayout = view.findViewById(R.id.FCL_companyLayout);
+        btnSave = (Button)view.findViewById(R.id.FCL_btnSave);
+        btnCancel = (Button)view.findViewById(R.id.FCL_btnCancel);
         editLayout.setVisibility(View.GONE);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,68 +88,43 @@ public class BranchListFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 hideKeyboard();
-                saveBranch();
+                saveCompany();
             }
         });
     }
-    void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) ctx
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(editName.getWindowToken(), 0);
-    }
-    private void saveBranch() {
+
+    private void saveCompany() {
 
         if (editName.getText().toString().isEmpty()) {
-            Toast.makeText(ctx, "Please enter branch name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, "Please enter company name", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
         RequestDTO w = new RequestDTO();
-        w.setRequestType(RequestDTO.REGISTER_BRANCH);
-        BranchDTO c = new BranchDTO();
-        c.setBranchName(editName.getText().toString());
-        c.setCompanyID(company.getCompanyID());
-        w.setBranch(c);
+        w.setRequestType(RequestDTO.REGISTER_COMPANY);
+        CompanyDTO c = new CompanyDTO();
+        c.setCompanyName(editName.getText().toString());
+        w.setCompany(c);
 
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx,new BaseVolley.BohaVolleyListener() {
             @Override
-            public void onResponseReceived(ResponseDTO resp) {
-                if (resp.getStatusCode() > 0) {
-                    Toast.makeText(ctx, resp.getMessage(), Toast.LENGTH_LONG).show();
+            public void onResponseReceived(ResponseDTO response) {
+                if (response.getStatusCode() > 0) {
+                    Toast.makeText(ctx, response.getMessage(), Toast.LENGTH_LONG).show();
                     return;
                 }
-                response = resp;
-                branchList.add(0, resp.getBranch());
+                companyList.add(0, response.getCompany());
                 hideEditLayout();
                 adapter.notifyDataSetChanged();
-                txtCount.setText("" + branchList.size());
-                //TODO - cache this new branch - 
-                CacheUtil.getCachedData(ctx, CacheUtil.CACHE_COMPANIES, new CacheUtil.CacheUtilListener() {
+                txtCount.setText(""+companyList.size());
+                ResponseDTO r = new ResponseDTO();
+                r.setCompanyList(companyList);
+                CacheUtil.cacheData(ctx,r,CacheUtil.CACHE_COMPANIES,new CacheUtil.CacheUtilListener() {
                     @Override
-                    public void onFileDataDeserialized(ResponseDTO r) {
-                        if (r != null) {
-                            for (CompanyDTO c : r.getCompanyList()) {
-                                if (c.getCompanyName().equalsIgnoreCase(editName.getText().toString())) {
-                                    if (c.getBranchList() == null)
-                                        c.setBranchList(new ArrayList<BranchDTO>());
-                                    c.getBranchList().add(0, r.getBranch());
-                                    break;
-                                }
-                            }
-                            CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_COMPANIES, new CacheUtil.CacheUtilListener() {
-                                @Override
-                                public void onFileDataDeserialized(ResponseDTO response) {
+                    public void onFileDataDeserialized(ResponseDTO response) {
 
-                                }
-
-                                @Override
-                                public void onDataCached() {
-
-                                }
-                            });
-                        }
                     }
 
                     @Override
@@ -168,32 +140,26 @@ public class BranchListFragment extends Fragment {
             }
         });
     }
-
-    ResponseDTO response;
-
     private void setList() {
-        adapter = new BranchAdapter(ctx, R.layout.branch_item, branchList);
+        adapter = new CompanyAdapter(ctx, R.layout.company_item, companyList);
         listView.setAdapter(adapter);
-        txtCount.setText("" + branchList.size());
+        txtCount.setText("" + companyList.size());
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                branch = branchList.get(i);
-                listener.onBranchPicked(branch);
+                company = companyList.get(i);
+                listener.onCompanyPicked(company);
             }
         });
     }
 
-    public void setBranchList(List<BranchDTO> branchList, CompanyDTO company) {
-        this.branchList = branchList;
-        this.company = company;
+    public void setCompanyList(List<CompanyDTO> companyList) {
+        this.companyList = companyList;
         setList();
-        txtCompany.setText(company.getCompanyName());
-        if (branchList == null || branchList.isEmpty()) {
+        if (companyList == null || companyList.isEmpty()) {
             showEditLayout();
         }
     }
-
     EditText editName;
     Button btnSave, btnCancel;
     View editLayout;
@@ -204,7 +170,6 @@ public class BranchListFragment extends Fragment {
         a.setDuration(500);
         editLayout.startAnimation(a);
     }
-
     private void hideEditLayout() {
         Animation a = AnimationUtils.loadAnimation(ctx, R.anim.abc_slide_out_top);
         a.setDuration(500);
@@ -226,16 +191,19 @@ public class BranchListFragment extends Fragment {
         });
         editLayout.startAnimation(a);
     }
-
+    void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(editName.getWindowToken(), 0);
+    }
     View view;
     Context ctx;
     CompanyDTO company;
-    List<BranchDTO> branchList;
-    BranchDTO branch;
-    BranchAdapter adapter;
+    List<CompanyDTO> companyList;
+    CompanyAdapter adapter;
 
     ListView listView;
-    TextView txtCount, txtCompany;
+    TextView  txtCount, txtCompany;
 
     static final String LOG = "BranchListFragment";
 }
