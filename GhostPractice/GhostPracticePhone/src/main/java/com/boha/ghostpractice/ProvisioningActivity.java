@@ -48,7 +48,7 @@ public class ProvisioningActivity extends Activity {
 		setFields();
 		
 		//TODO - Remove when done
-		saveTestPreferences();
+		//saveTestPreferences();
         checkPrefs();
 		
 	}

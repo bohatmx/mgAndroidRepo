@@ -112,7 +112,7 @@ public class CacheUtil {
                         stream = ctx.openFileInput(COMPANIES_JSON);
                         response = getData(stream);
                         if (response != null) {
-                            Log.w(LOG, "#### cached data retrived, companies: " + response.getCompanyList().size());
+                            Log.w(LOG, "#### cached data retrived, companies: " );
                         }
                         break;
                 }

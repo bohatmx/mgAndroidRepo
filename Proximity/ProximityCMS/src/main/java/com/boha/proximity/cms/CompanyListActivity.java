@@ -34,7 +34,7 @@ public class CompanyListActivity extends ActionBarActivity
     @Override
     public void onResume() {
         Log.w(LOG, "########## onResume");
-        getCachedData();
+       // getCachedData();
         super.onResume();
     }
 
