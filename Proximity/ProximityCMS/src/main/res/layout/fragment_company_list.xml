@@ -27,7 +27,9 @@
             android:text="00"
             android:layout_alignParentRight="true"
             android:id="@+id/FCL_txtCount"
-            android:textSize="24sp"
+            style="@style/Title1TextStyleBlue"
+            android:textColor="@color/green"
+            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center" />

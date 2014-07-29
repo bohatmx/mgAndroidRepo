@@ -65,6 +65,7 @@ public class CacheUtil {
                         outputStream = ctx.openFileOutput(COMPANIES_JSON, Context.MODE_PRIVATE);
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(COMPANIES_JSON);
+                        Log.e(LOG, "######### data has been cached");
                         break;
 
                     default:
@@ -112,7 +113,7 @@ public class CacheUtil {
                         stream = ctx.openFileInput(COMPANIES_JSON);
                         response = getData(stream);
                         if (response != null) {
-                            Log.w(LOG, "#### cached data retrived, companies: " );
+                            Log.w(LOG, "#### cached data retrived, companies: " + response.getCompanyList().size() );
                         }
                         break;
                 }

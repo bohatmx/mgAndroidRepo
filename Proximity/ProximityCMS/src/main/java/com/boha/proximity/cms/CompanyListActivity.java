@@ -34,7 +34,6 @@ public class CompanyListActivity extends ActionBarActivity
     @Override
     public void onResume() {
         Log.w(LOG, "########## onResume");
-       // getCachedData();
         super.onResume();
     }
 
@@ -80,7 +79,7 @@ public class CompanyListActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.company_list, menu);
         mMenu = menu;
-
+        getCachedData();
         return true;
     }
 

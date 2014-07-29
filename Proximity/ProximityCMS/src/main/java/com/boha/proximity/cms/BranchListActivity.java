@@ -17,8 +17,6 @@ import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.data.RequestDTO;
 import com.boha.proximity.data.ResponseDTO;
 import com.boha.proximity.library.Statics;
-import com.boha.proximity.util.CacheUtil;
-import com.boha.proximity.util.SharedUtil;
 import com.boha.proximity.volley.BaseVolley;
 
 public class BranchListActivity extends ActionBarActivity
@@ -42,7 +40,7 @@ public class BranchListActivity extends ActionBarActivity
     private void getCompanyBeacons() {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_COMPANY_BEACONS);
-        w.setCompanyID(SharedUtil.getCompany(ctx).getCompanyID());
+        w.setCompanyID(company.getCompanyID());
 
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
@@ -57,17 +55,6 @@ public class BranchListActivity extends ActionBarActivity
                     return;
                 }
                 branchListFragment.setBranchList(response.getBranchList(), company);
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_COMPANIES, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                    }
-                });
             }
 
             @Override
@@ -82,23 +69,7 @@ public class BranchListActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.branch_list, menu);
         mMenu = menu;
-        if (company == null) {
-            CacheUtil.getCachedData(ctx, CacheUtil.CACHE_COMPANIES, new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO response) {
-                    if (response != null) {
-                        branchListFragment.setBranchList(response.getBranchList(), company);
-                    } else {
-                        getCompanyBeacons();
-                    }
-                }
 
-                @Override
-                public void onDataCached() {
-
-                }
-            });
-        }
         return true;
     }
 
@@ -106,10 +77,7 @@ public class BranchListActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            getCompanyBeacons();
-            return true;
-        }
+
         if (id == R.id.action_add) {
             branchListFragment.showEditLayout();
             return true;
@@ -119,7 +87,7 @@ public class BranchListActivity extends ActionBarActivity
 
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.action_refresh);
+            final MenuItem refreshItem = mMenu.findItem(R.id.action_add);
             if (refreshItem != null) {
                 if (refreshing) {
                     refreshItem.setActionView(R.layout.action_bar_progess);
