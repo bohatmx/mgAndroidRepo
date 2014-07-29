@@ -2,19 +2,26 @@ package com.boha.beacon.beaconsapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.PhotoUploadDTO;
 import com.boha.proximity.library.Statics;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -56,7 +63,9 @@ public class PromotionFragment extends Fragment implements PageFragment{
             fileName = b.getString("fileName");
             beacon = (BeaconDTO)b.getSerializable("beacon");
         }
+        setDrawables();
         setFields();
+
         return view;
     }
 
@@ -65,7 +74,7 @@ public class PromotionFragment extends Fragment implements PageFragment{
     }
 
     private void setFields() {
-        image = (NetworkImageView)view.findViewById(R.id.image);
+        image = (ImageView)view.findViewById(R.id.image);
         StringBuilder sb = new StringBuilder();
         sb.append(Statics.IMAGE_URL).append(PhotoUploadDTO.COMPANY_PREFIX).append(beacon.getCompanyID());
         sb.append("/").append(PhotoUploadDTO.BRANCH_PREFIX).append(beacon.getBranchID()).append("/");
@@ -73,17 +82,46 @@ public class PromotionFragment extends Fragment implements PageFragment{
         sb.append(fileName);
 
         Log.e(LOG, "imageURL: " + sb.toString());
-        image.setImageUrl(sb.toString(), imageLoader);
+        //image.setImageUrl(sb.toString(), imageLoader);
+        Picasso.with(ctx).load(sb.toString()).into(image, new Callback() {
+            @Override
+            public void onSuccess() {
 
+            }
+
+            @Override
+            public void onError() {
+                image.setImageDrawable(getRandomImage());
+            }
+        });
+    }
+    private Drawable getRandomImage() {
+
+        int index = rand.nextInt(drawables.size() - 1);
+        return drawables.get(index);
     }
     BeaconDTO beacon;
+    Random rand = new Random(System.currentTimeMillis());
     Context ctx;
     View view;
     ImageLoader imageLoader;
-    NetworkImageView image;
+    ImageView image;
     static final String LOG = PromotionFragment.class.getName();
     String fileName;
     BranchDTO branch;
 
 
+    private List<Drawable> drawables = new ArrayList<Drawable>();
+    private void setDrawables() {
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic1));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic2));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic3));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic4));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic5));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic6));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic7));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic8));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic9));
+        drawables.add(ctx.getResources().getDrawable(R.drawable.golf_pic10));
+    }
 }

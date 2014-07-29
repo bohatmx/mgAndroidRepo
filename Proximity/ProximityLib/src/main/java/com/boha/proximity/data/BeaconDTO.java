@@ -15,7 +15,7 @@ import java.util.List;
 public class BeaconDTO implements Serializable {
 
     private int beaconID;
-    private String macAddress, beaconName;
+    private String macAddress, beaconName,companyName, branchName;
     private String proximityUUID;
     private int major;
     private int minor;
@@ -29,6 +29,22 @@ public class BeaconDTO implements Serializable {
 
     public void setCompanyID(int companyID) {
         this.companyID = companyID;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName;
     }
 
     public List<String> getImageFileNameList() {

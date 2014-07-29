@@ -51,7 +51,7 @@ public class MainPagerActivity extends FragmentActivity {
             getCachedBeaconList();
         }
 
-
+        setTitle("");
     }
 
     @Override
@@ -71,11 +71,10 @@ public class MainPagerActivity extends FragmentActivity {
             }
         }
         beaconDTO = beacon;
-
+        getActionBar().setSubtitle(beacon.getBeaconName());
         pageList = new ArrayList<PageFragment>();
-        //pageList.add(new MainFragment());
         Log.e(TAG, "#############---> building pages for beacon, "
-                + "major: " + beacon.getMajor() + " minor: " + beacon.getMinor());
+                + "company: " + beacon.getCompanyName() + " branch: " + beacon.getBranchName());
         if (beacon.getImageFileNameList() != null) {
             for (String item : beacon.getImageFileNameList()) {
                 PromotionFragment pf = new PromotionFragment();
@@ -167,6 +166,9 @@ public class MainPagerActivity extends FragmentActivity {
                     Toast.makeText(ctx, r.getMessage(), Toast.LENGTH_LONG).show();
                     return;
                 }
+                BeaconDTO b = r.getBeaconList().get(0);
+                setTitle(b.getCompanyName());
+
                 serverBeaconsLoaded = true;
                 response = r;
                 findStoreBeacons();
@@ -211,7 +213,7 @@ public class MainPagerActivity extends FragmentActivity {
 
                     @Override
                     public void onDataCached() {
-                        findStoreBeacons();
+
                     }
                 });
 
@@ -289,30 +291,8 @@ public class MainPagerActivity extends FragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String title = "Title";
-            switch (position) {
-//                case 0:
-//                    title = "Cover Page";
-//                    break;
-                case 0:
-                    title = PROMOTION + " " + 1;
-                    break;
-                case 1:
-                    title = PROMOTION + " " + 2;
-                    break;
-                case 2:
-                    title = PROMOTION + " " + 3;
-                    break;
-                case 3:
-                    title = PROMOTION + " " + 4;
-                    break;
-                case 4:
-                    title = PROMOTION + " " + 5;
-                    break;
+            String title = PROMOTION + " " + (position + 1);
 
-                default:
-                    break;
-            }
             return title;
         }
     }
@@ -384,7 +364,7 @@ public class MainPagerActivity extends FragmentActivity {
 
     Context ctx;
     List<PageFragment> pageList;
-    static final String PROMOTION = "PROMOTION", TAG = MainPagerActivity.class.getName();
+    static final String PROMOTION = "Content Page", TAG = MainPagerActivity.class.getName();
     PagerAdapter mPagerAdapter;
     BeaconManager beaconManager;
     List<Beacon> beaconList;
