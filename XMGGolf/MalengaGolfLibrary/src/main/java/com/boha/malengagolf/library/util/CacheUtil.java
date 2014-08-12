@@ -85,7 +85,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(Constants.SCORER_LIST);
                         if (file != null) {
-                            Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.w(LOG, ".....Scorers Data cache json written to disk,  - path: " + file.getAbsolutePath() +
                                     " - length: " + file.length() + " items: " + response.getScorers().size());
                         }
                         break;
@@ -95,7 +95,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(Constants.ADMIN_LIST);
                         if (file != null) {
-                            Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.w(LOG, "......Admins Data cache json written to disk,  - path: " + file.getAbsolutePath() +
                                     " - length: " + file.length() + " items: " + response.getAdministrators().size());
                         }
                         break;
@@ -105,7 +105,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(Constants.TOURNAMENT_LIST);
                         if (file != null) {
-                            Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.w(LOG, ".....Tournament Data cache json written to disk,  - path: " + file.getAbsolutePath() +
                                     " - length: " + file.length() + response.getTournaments().size());
                         }
                         break;
@@ -115,7 +115,7 @@ public class CacheUtil {
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(Constants.GOLF_GROUPS);
                         if (file != null) {
-                            Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
+                            Log.w(LOG, "......GolfGroup Data cache json written to disk,  - path: " + file.getAbsolutePath() +
                                     " - length: " + file.length() + " items: " + response.getGolfGroups().size());
                         }
                         break;

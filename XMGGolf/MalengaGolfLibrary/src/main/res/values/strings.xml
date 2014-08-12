@@ -24,7 +24,7 @@
 
     <string name="done">Done</string>
     <string name="get_number">Get Number</string>
-    <string name="number_tourn">Number of Tournaments</string>
+    <string name="number_tourn">Tournaments</string>
     <string name="number_rounds">Number of Rounds</string>
     <string name="rounds">Rounds</string>
     <string name="avg_per_round">Strokes Per Round</string>

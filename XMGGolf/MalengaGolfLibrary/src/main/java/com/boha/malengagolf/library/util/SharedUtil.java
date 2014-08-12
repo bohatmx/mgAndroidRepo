@@ -12,10 +12,47 @@ import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.*;
 import com.google.gson.Gson;
 
+import java.util.Date;
 import java.util.Random;
 
 public class SharedUtil {
+    public static final String SCROLL_INDEX = "scrollIndex",
+        SCROLL_TIME = "sTime";
+    public static void setScrollIndex(Context ctx, int index) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
 
+        Editor ed = sp.edit();
+        ed.putInt(SCROLL_INDEX, index);
+        ed.putLong(SCROLL_TIME, new Date().getTime());
+        ed.commit();
+        Log.w("SharedUtil", "#### scroll index saved: " + index);
+
+    }
+    public static int getScrollIndex(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        int j = sp.getInt(SCROLL_INDEX, 0);
+
+        return j;
+    }
+    public static void setSessionID(Context ctx, String sessionID) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+
+        Editor ed = sp.edit();
+        ed.putString(Statics.SESSION_ID, sessionID);
+        ed.commit();
+        Log.w("SharedUtil", "#### web socket session ID saved: " + sessionID);
+
+    }
+    public static String getSessionID(Context ctx) {
+        SharedPreferences sp = PreferenceManager
+                .getDefaultSharedPreferences(ctx);
+        String j = sp.getString(Statics.SESSION_ID, null);
+
+        return j;
+    }
 
     public static void saveLocation(Context ctx, double latitude, double longitude) {
 

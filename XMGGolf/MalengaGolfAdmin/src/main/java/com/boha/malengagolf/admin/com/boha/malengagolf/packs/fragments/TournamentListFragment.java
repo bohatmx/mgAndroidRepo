@@ -54,7 +54,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             throw new UnsupportedOperationException("Host "
                     + a.getLocalClassName() + " must implement TournamentListener");
         }
-        Log.i(LOG,
+        Log.d(LOG,
                 "onAttach ---- Fragment called and hosted by "
                         + a.getLocalClassName()
         );
@@ -123,8 +123,9 @@ public class TournamentListFragment extends Fragment implements PageFragment {
 
             @Override
             public void viewLeaderBoard(TournamentDTO t) {
-                Log.d(LOG, "################# tournamentType: " + t.getTournamentType());
+                Log.d(LOG, "################# viewLeaderBoard tournamentType: " + t.getTournamentType());
                 tournament = t;
+                SharedUtil.setScrollIndex(ctx,0);
                 Intent x1 = new Intent(ctx, LeaderBoardPager.class);
                 x1.putExtra("tournament", t);
                 x1.putExtra("golfGroup", golfGroup);
@@ -216,7 +217,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             }
         });
         listView.setAdapter(adapter);
-        registerForContextMenu(listView);
+        //registerForContextMenu(listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

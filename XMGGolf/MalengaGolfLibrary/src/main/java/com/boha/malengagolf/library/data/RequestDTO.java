@@ -13,15 +13,15 @@ import java.util.List;
 @SuppressWarnings(value = "unused")
 public class RequestDTO implements Serializable {
 
-    private String email, pin, gcmRegistrationID;
-    private int golfGroupID;
-    private int winnerFlag, leaderBoardID, appUserID;
-    private int requestType;
-    private boolean zippedResponse = true;
-    private int personalPlayerID, type, tournamentType;
-    private double latitude, longitude;
-    private int radius, radiusType, page;
-    private int tournamentID, playerID, countryID, provinceID, clubCourseID;
+    private String email, pin, gcmRegistrationID, sessionID;
+    private Integer golfGroupID;
+    private Integer winnerFlag, leaderBoardID, appUserID;
+    private Integer requestType;
+    private Boolean zippedResponse;
+    private Integer personalPlayerID, type, tournamentType;
+    private Double latitude, longitude;
+    private Integer radius, radiusType, page;
+    private Integer tournamentID, playerID, countryID, provinceID, clubCourseID;
 
     private GcmDeviceDTO gcmDevice;
     private List<Integer> idList;
@@ -46,10 +46,10 @@ public class RequestDTO implements Serializable {
     private TourneyScoreByRoundTeamDTO tourneyScoreByRoundTeam;
 
     //
-    public static final int KILOMETRES = 1, MILES = 2, RADIUS = 30;
-    public static final int ADMIN_LOGIN = 1;
-    public static final int ADD_GOLF_GROUP = 2;
-    public static final int UPDATE_GOLF_GROUP = 3;
+    public static final Integer KILOMETRES = 1, MILES = 2, RADIUS = 30;
+    public static final Integer ADMIN_LOGIN = 1;
+    public static final Integer ADD_GOLF_GROUP = 2;
+    public static final Integer UPDATE_GOLF_GROUP = 3;
     public static final int ADD_TOURNAMENT = 4;
     public static final int UPDATE_TOURNAMENT = 5;
     public static final int ADD_TOURNAMENT_PLAYER = 6;
@@ -128,6 +128,8 @@ public class RequestDTO implements Serializable {
     public static final int IMPORT_PLAYERS = 85;
 
     public static final int GET_CLUBS_NEARBY = 119;
+    public static final int GET_CLUBS_IN_STATE = 120;
+    public static final int REGISTER_FOR_TOURNAMENT_UPDATES = 121;
 
     public static final int STROKE_PLAY_INDIVIDUAL = 1;
     public static final int STABLEFORD_INDIVIDUAL = 2;
@@ -137,6 +139,14 @@ public class RequestDTO implements Serializable {
 
     private ImportPlayerDTO importPlayer;
     private List<ImportPlayerDTO> importPlayers;
+
+    public String getSessionID() {
+        return sessionID;
+    }
+
+    public void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
+    }
 
     public List<ImportPlayerDTO> getImportPlayers() {
         return importPlayers;
@@ -178,19 +188,19 @@ public class RequestDTO implements Serializable {
         this.idList = idList;
     }
 
-    public int getTournamentType() {
+    public Integer getTournamentType() {
         return tournamentType;
     }
 
-    public void setTournamentType(int tournamentType) {
+    public void setTournamentType(Integer tournamentType) {
         this.tournamentType = tournamentType;
     }
 
-    public int getAppUserID() {
+    public Integer getAppUserID() {
         return appUserID;
     }
 
-    public void setAppUserID(int appUserID) {
+    public void setAppUserID(Integer appUserID) {
         this.appUserID = appUserID;
     }
 
@@ -218,16 +228,16 @@ public class RequestDTO implements Serializable {
         this.clubCourse = clubCourse;
     }
 
-    public int getPage() {
+    public Integer getPage() {
         return page;
     }
 
-    public void setPage(int page) {
+    public void setPage(Integer page) {
         this.page = page;
     }
 
     public double getLatitude() {
-        return latitude;
+        return latitude.doubleValue();
     }
 
     public void setLatitude(double latitude) {
@@ -235,26 +245,26 @@ public class RequestDTO implements Serializable {
     }
 
     public double getLongitude() {
-        return longitude;
+        return longitude.doubleValue();
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    public int getRadius() {
+    public Integer getRadius() {
         return radius;
     }
 
-    public void setRadius(int radius) {
+    public void setRadius(Integer radius) {
         this.radius = radius;
     }
 
-    public int getRadiusType() {
+    public Integer getRadiusType() {
         return radiusType;
     }
 
-    public void setRadiusType(int radiusType) {
+    public void setRadiusType(Integer radiusType) {
         this.radiusType = radiusType;
     }
 
@@ -274,27 +284,27 @@ public class RequestDTO implements Serializable {
         this.videoClip = videoClip;
     }
 
-    public int getWinnerFlag() {
+    public Integer getWinnerFlag() {
         return winnerFlag;
     }
 
-    public void setWinnerFlag(int winnerFlag) {
+    public void setWinnerFlag(Integer winnerFlag) {
         this.winnerFlag = winnerFlag;
     }
 
-    public int getLeaderBoardID() {
+    public Integer getLeaderBoardID() {
         return leaderBoardID;
     }
 
-    public void setLeaderBoardID(int leaderBoardID) {
+    public void setLeaderBoardID(Integer leaderBoardID) {
         this.leaderBoardID = leaderBoardID;
     }
 
-    public int getPersonalPlayerID() {
+    public Integer getPersonalPlayerID() {
         return personalPlayerID;
     }
 
-    public void setPersonalPlayerID(int personalPlayerID) {
+    public void setPersonalPlayerID(Integer personalPlayerID) {
         this.personalPlayerID = personalPlayerID;
     }
 
@@ -338,51 +348,51 @@ public class RequestDTO implements Serializable {
         this.pin = pin;
     }
 
-    public int getGolfGroupID() {
+    public Integer getGolfGroupID() {
         return golfGroupID;
     }
 
-    public void setGolfGroupID(int golfGroupID) {
+    public void setGolfGroupID(Integer golfGroupID) {
         this.golfGroupID = golfGroupID;
     }
 
-    public int getTournamentID() {
+    public Integer getTournamentID() {
         return tournamentID;
     }
 
-    public void setTournamentID(int tournamentID) {
+    public void setTournamentID(Integer tournamentID) {
         this.tournamentID = tournamentID;
     }
 
-    public int getPlayerID() {
+    public Integer getPlayerID() {
         return playerID;
     }
 
-    public void setPlayerID(int playerID) {
+    public void setPlayerID(Integer playerID) {
         this.playerID = playerID;
     }
 
-    public int getCountryID() {
+    public Integer getCountryID() {
         return countryID;
     }
 
-    public void setCountryID(int countryID) {
+    public void setCountryID(Integer countryID) {
         this.countryID = countryID;
     }
 
-    public int getProvinceID() {
+    public Integer getProvinceID() {
         return provinceID;
     }
 
-    public void setProvinceID(int provinceID) {
+    public void setProvinceID(Integer provinceID) {
         this.provinceID = provinceID;
     }
 
-    public int getClubCourseID() {
+    public Integer getClubCourseID() {
         return clubCourseID;
     }
 
-    public void setClubCourseID(int clubCourseID) {
+    public void setClubCourseID(Integer clubCourseID) {
         this.clubCourseID = clubCourseID;
     }
 
@@ -474,11 +484,11 @@ public class RequestDTO implements Serializable {
         this.scorer = scorer;
     }
 
-    public int getRequestType() {
+    public Integer getRequestType() {
         return requestType;
     }
 
-    public void setRequestType(int requestType) {
+    public void setRequestType(Integer requestType) {
         this.requestType = requestType;
     }
 

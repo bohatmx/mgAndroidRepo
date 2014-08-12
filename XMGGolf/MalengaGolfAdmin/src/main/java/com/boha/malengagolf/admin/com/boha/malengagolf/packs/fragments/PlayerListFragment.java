@@ -48,7 +48,7 @@ public class PlayerListFragment extends Fragment implements PageFragment {
             throw new UnsupportedOperationException("Host "
                     + a.getLocalClassName() + " must implement PlayerListener");
         }
-        Log.i(LOG,
+        Log.d(LOG,
                 "onAttach ---- Fragment called and hosted by "
                         + a.getLocalClassName());
         super.onAttach(a);

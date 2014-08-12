@@ -8,8 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ImageView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.MGPageFragment;
@@ -55,20 +55,17 @@ public class SplashFragment extends Fragment implements MGPageFragment, LeaderBo
     @Override
     public void onResume() {
         setFields();
-        bar.setVisibility(View.GONE);
         super.onResume();
     }
 
-    @SuppressWarnings("deprecation")
+
     public void setFields() {
-        background = view.findViewById(R.id.SPLASH_background);
-        txtLoading = (TextView) view.findViewById(R.id.SPLASH_txtLoading);
+        image = (ImageView) view.findViewById(R.id.SPLASH_image);
         try {
-            background.setBackgroundDrawable(SharedUtil.getRandomSplash(ctx));
+            image.setImageDrawable(SharedUtil.getRandomSplash(ctx));
         } catch (OutOfMemoryError e) {
             Log.e("Splash", "-----------------------> OutOfMemoryError");
         }
-        bar = (ProgressBar) view.findViewById(R.id.SPLASH_progress);
     }
 
     public void setList() {
@@ -76,9 +73,7 @@ public class SplashFragment extends Fragment implements MGPageFragment, LeaderBo
     }
 
 
-    View background;
-    TextView txtLoading;
+    ImageView image;
     Context ctx;
     View view;
-    ProgressBar bar;
 }

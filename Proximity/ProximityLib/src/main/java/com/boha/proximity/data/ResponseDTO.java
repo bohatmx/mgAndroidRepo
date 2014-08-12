@@ -27,6 +27,34 @@ public class ResponseDTO implements Serializable {
     private UploadUrlDTO uploadUrl;
     private List<String> imageFileNames;
     private List<CompanyDTO> companyList;
+    private List<ErrorStoreAndroidDTO> errorStoreAndroidList;
+    private List<ErrorStoreDTO> errorStoreList;
+    private String log;
+
+
+    public String getLog() {
+        return log;
+    }
+
+    public void setLog(String log) {
+        this.log = log;
+    }
+
+    public List<ErrorStoreAndroidDTO> getErrorStoreAndroidList() {
+        return errorStoreAndroidList;
+    }
+
+    public void setErrorStoreAndroidList(List<ErrorStoreAndroidDTO> errorStoreAndroidList) {
+        this.errorStoreAndroidList = errorStoreAndroidList;
+    }
+
+    public List<ErrorStoreDTO> getErrorStoreList() {
+        return errorStoreList;
+    }
+
+    public void setErrorStoreList(List<ErrorStoreDTO> errorStoreList) {
+        this.errorStoreList = errorStoreList;
+    }
 
     public List<CompanyDTO> getCompanyList() {
         return companyList;

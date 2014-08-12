@@ -361,6 +361,20 @@
         <item name="android:textSize">12sp</item>
         <item name="android:background">@drawable/xred_box</item>
     </style>
+    <style name="RedCircle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xred_oval</item>
+    </style>
+    <style name="GreenCircle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xgreen_oval</item>
+    </style>
 
     <style name="GreenCountBox" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/white</item>
@@ -372,7 +386,8 @@
     <style name="GreenCountBoxSmall" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">5dp</item>
         <item name="android:background">@drawable/xgreen_box</item>
     </style>
 

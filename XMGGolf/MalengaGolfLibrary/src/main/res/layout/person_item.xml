@@ -83,14 +83,15 @@
             android:layout_below="@+id/PSN_txtBirthdate"
             android:layout_alignLeft="@id/PSN_txtName"
             android:layout_width="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="15dp"
             android:layout_height="wrap_content">
 
         <TextView
                 android:id="@+id/PSN_txtCounterLabel"
                 android:text="Count Something"
-                style="@style/TextStyleGrey"
-                android:textSize="14sp"
+                style="@style/Title2TextStyleBlack"
+                android:textSize="16sp"
+            android:layout_centerVertical="true"
                 android:layout_width="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_height="wrap_content"/>
@@ -98,11 +99,11 @@
         <TextView
                 android:id="@+id/PSN_txtCounter"
                 android:text="@string/zero"
-                style="@style/RedCountBoxSmall"
-                android:layout_alignBaseline="@id/PSN_txtCounterLabel"
+                style="@style/RedCircle"
                 android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_marginRight="5dp"
+                android:layout_marginLeft="10dp"
                 android:layout_marginBottom="20dp"
                 android:layout_height="wrap_content"/>
     </RelativeLayout>

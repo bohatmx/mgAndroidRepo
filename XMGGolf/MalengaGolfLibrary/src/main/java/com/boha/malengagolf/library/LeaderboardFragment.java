@@ -1,5 +1,7 @@
 package com.boha.malengagolf.library;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,16 +11,31 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.adapters.LeaderboardOneRoundAdapter;
+import com.boha.malengagolf.library.data.LeaderBoardCarrierDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.util.CompleteRounds;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.LeaderBoardPage;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -38,6 +55,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         public void setBusy();
 
         public void setNotBusy();
+
         public void onScoreCardRequested(LeaderBoardDTO leaderBoard);
     }
 
@@ -63,7 +81,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
-        Log.i(LOG, "onCreateView");
+        Log.i(LOG, "onCreateView...................................");
         ctx = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
@@ -71,6 +89,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         setFields();
         Bundle bundle = getArguments();
         if (bundle != null) {
+            Log.d(LOG, "----------------onCreateView bundle has data ...");
             tournament = (TournamentDTO) bundle.getSerializable("tournament");
             leaderBoardCarrier = (LeaderBoardCarrierDTO) bundle.getSerializable("carrier");
             setLeaderBoardList(tournament, leaderBoardCarrier);
@@ -147,6 +166,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             return;
         }
     }
+
     private void showWithdrawConfirmDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setTitle(ctx.getResources().getString(R.string.withdraw))
@@ -187,14 +207,14 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         }
         leaderboardListener.setBusy();
 
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx,new BaseVolley.BohaVolleyListener() {
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
             public void onResponseReceived(ResponseDTO response) {
                 leaderboardListener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx,response)) {
+                if (!ErrorUtil.checkServerError(ctx, response)) {
                     return;
                 }
-                ToastUtil.toast(ctx,ctx.getResources().getString(R.string.withdrawn));
+                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.withdrawn));
 
             }
 
@@ -230,6 +250,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
                     }
                 }).show();
     }
+
     private void closeLeaderBoard() {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.CLOSE_LEADERBORD);
@@ -239,7 +260,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             return;
         }
         leaderboardListener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx,new BaseVolley.BohaVolleyListener() {
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
             public void onResponseReceived(ResponseDTO response) {
                 leaderboardListener.setNotBusy();
@@ -262,9 +283,10 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     int selectedIndex;
     static final Locale loc = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMMM yyyy HH:mm", loc);
+
     public void setList() {
 
-        Log.i(LOG, "setList............. ");
+        Log.i(LOG, "------------------ setList............. ");
         goodList = new ArrayList<LeaderBoardDTO>();
         List<LeaderBoardDTO> bList = new ArrayList<LeaderBoardDTO>();
         for (LeaderBoardDTO x : leaderBoardList) {
@@ -295,8 +317,16 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             leaderboardAdapter = new LeaderboardAdapter(ctx,
                     R.layout.leaderboard_item,
                     leaderBoardList,
-                    tournament.getGolfRounds(), tournament.getPar(), imageLoader);
+                    tournament.getGolfRounds(), tournament.getPar(), imageLoader,
+                    new LeaderboardAdapter.LeaderBoardListener() {
+                        @Override
+                        public void onScrollToItem(int index) {
+                            SharedUtil.setScrollIndex(ctx, index);
+                        }
+                    }
+            );
             listView.setAdapter(leaderboardAdapter);
+
         }
         registerForContextMenu(listView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -328,13 +358,26 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
             }
         });
+        listView.setSelection(SharedUtil.getScrollIndex(ctx));
+        listView.smoothScrollToPosition(SharedUtil.getScrollIndex(ctx));
+        //TODO - animate timestamp
+        final ObjectAnimator an = ObjectAnimator.ofFloat(txtTimeStamp, View.SCALE_X, 0);
+        an.setRepeatCount(1);
+        an.setDuration(1000);
+        an.setRepeatMode(ValueAnimator.REVERSE);
+
+        an.start();
     }
 
+    private int scrollIndex;
+
     private void setPositions(List<LeaderBoardDTO> list) {
+        Log.d(LOG, "####------------- setPositions ............");
         int mPosition = 1;
         int running = 1, score = 999;
-        switch(tournament.getTournamentType()) {
+        switch (tournament.getTournamentType()) {
             case RequestDTO.STABLEFORD_INDIVIDUAL:
+                Log.e(LOG, "####------------- setPositions STABLEFORD_INDIVIDUAL");
                 for (LeaderBoardDTO lb : list) {
                     if (lb.isTied()) {
                         if (score == 999) {
@@ -360,6 +403,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
                 }
                 break;
             case RequestDTO.STROKE_PLAY_INDIVIDUAL:
+                Log.e(LOG, "####------------- setPositions STROKE_PLAY_INDIVIDUAL");
                 for (LeaderBoardDTO lb : list) {
                     if (lb.isTied()) {
                         if (score == 999) {
@@ -389,6 +433,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     }
 
     public void setLeaderBoardList(TournamentDTO tournament, LeaderBoardCarrierDTO carrier) {
+        Log.d(LOG, "########## setLeaderBoardList from carrier....");
         this.tournament = tournament;
         this.leaderBoardCarrier = carrier;
         txTourneyName.setText(tournament.getTourneyName());

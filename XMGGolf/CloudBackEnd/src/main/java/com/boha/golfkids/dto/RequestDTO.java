@@ -119,6 +119,7 @@ public class RequestDTO {
 
     public static final int GET_CLUBS_NEARBY = 119;
     public static final int GET_CLUBS_IN_STATE = 120;
+    public static final int REGISTER_FOR_TOURNAMENT_UPDATES = 121;
 
     public static final int PICTURES_FULL_SIZE = 1;
     public static final int PICTURES_THUMBNAILS = 2;

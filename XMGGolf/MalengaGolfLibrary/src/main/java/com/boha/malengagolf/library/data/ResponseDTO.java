@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class ResponseDTO implements Serializable{
     private int statusCode, totalPages, totalClubs;
-    private String message;
+    private String message, sessionID;
     private LeaderBoardDTO leaderBoard;
     private AppUserDTO appUser;
     private CountryDTO country;
@@ -46,6 +46,14 @@ public class ResponseDTO implements Serializable{
     private List<VideoClipDTO> videoClips;
     private UploadBlobDTO uploadBlob;
     private UploadUrlDTO uploadUrl;
+
+    public String getSessionID() {
+        return sessionID;
+    }
+
+    public void setSessionID(String sessionID) {
+        this.sessionID = sessionID;
+    }
 
     public UploadBlobDTO getUploadBlob() {
         return uploadBlob;

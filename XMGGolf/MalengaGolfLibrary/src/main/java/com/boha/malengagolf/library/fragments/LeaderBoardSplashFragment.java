@@ -8,8 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ImageView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.SharedUtil;
@@ -47,35 +47,22 @@ public class LeaderBoardSplashFragment extends Fragment implements  LeaderBoardP
         return view;
     }
 
-    public void setLoading(boolean isOn) {
-        if (isOn) {
-            bar.setVisibility(View.GONE);
-        }
-        else {
-            bar.setVisibility(View.GONE);
-        }
-    }
 
     @Override
     public void onResume() {
         setFields();
-        bar.setVisibility(View.GONE);
         super.onResume();
     }
 
-    @SuppressWarnings("deprecation")
     public void setFields() {
-        background = view.findViewById(R.id.SPLASH_background);
-        txtLoading = (TextView) view.findViewById(R.id.SPLASH_txtLoading);
-        background.setBackgroundDrawable(SharedUtil.getRandomSplash(ctx));
-        bar = (ProgressBar) view.findViewById(R.id.SPLASH_progress);
+        image = (ImageView) view.findViewById(R.id.SPLASH_image);
+        image.setImageDrawable(SharedUtil.getRandomSplash(ctx));
+
     }
 
 
 
-    View background;
-    TextView txtLoading;
+    ImageView image;
     Context ctx;
     View view;
-    ProgressBar bar;
 }

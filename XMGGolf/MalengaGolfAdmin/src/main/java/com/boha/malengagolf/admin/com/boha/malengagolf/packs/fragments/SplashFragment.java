@@ -11,8 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ImageView;
+
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.AppInvitationActivity;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
@@ -59,21 +59,17 @@ public class SplashFragment extends Fragment implements PageFragment, LeaderBoar
     @Override
     public void onResume() {
         setFields();
-        bar.setVisibility(View.GONE);
         super.onResume();
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void setFields() {
-        background = view.findViewById(R.id.SPLASH_background);
-        txtLoading = (TextView) view.findViewById(R.id.SPLASH_txtLoading);
+        image = (ImageView)view.findViewById(R.id.SPLASH_image);
         try {
-            background.setBackgroundDrawable(SharedUtil.getRandomSplash(ctx));
+            image.setImageDrawable(SharedUtil.getRandomSplash(ctx));
         } catch (OutOfMemoryError e) {
-            Log.e("Splash", "---------------------------->                                                                      OutOfMemoryError occcured");
+            Log.e("Splash", "----------------------------> OutOfMemoryError occcured");
         }
-        bar = (ProgressBar) view.findViewById(R.id.SPLASH_progress);
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,9 +108,7 @@ public class SplashFragment extends Fragment implements PageFragment, LeaderBoar
                 }).show();
 
     }
-    View background;
-    TextView txtLoading;
+    ImageView image;
     Context ctx;
     View view;
-    ProgressBar bar;
 }

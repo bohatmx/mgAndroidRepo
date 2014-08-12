@@ -25,6 +25,9 @@ import java.util.Locale;
 
 public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
+    public interface LeaderBoardListener {
+        public void onScrollToItem(int index);
+    }
     private final LayoutInflater mInflater;
     private final int mLayoutRes;
     private List<LeaderBoardDTO> mList;
@@ -33,14 +36,18 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
     private GolfGroupDTO golfGroup;
     private ImageLoader imageLoader;
 
+    private LeaderBoardListener listener;
     public LeaderboardAdapter(Context context,
                               int textViewResourceId,
-                              List<LeaderBoardDTO> list, int rounds, int par, ImageLoader imageLoader) {
+                              List<LeaderBoardDTO> list, int rounds,
+                              int par, ImageLoader imageLoader,
+                              LeaderBoardListener listener) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
         ctx = context;
         this.rounds = rounds;
+        this.listener = listener;
         this.par = par;
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -139,6 +146,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         }
 
         LeaderBoardDTO p = mList.get(position);
+        listener.onScrollToItem(position);
         if (p.getWinnerFlag() > 0) {
             v.winner.setVisibility(View.VISIBLE);
         } else {
@@ -278,7 +286,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
         } else {
             v.vp.setVisibility(View.VISIBLE);
-            formatStrokes(v.txtPar, p.getParStatus());
+            formatStrokes(v.txtPar, p.getParStatus(), v.txtPosition);
         }
 
 //        int x = position % 2;
@@ -351,17 +359,20 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
     }
 
 
-    private void formatStrokes(TextView txt, int parStatus) {
+    private void formatStrokes(TextView txt, int parStatus, TextView pos) {
         if (parStatus == 0) { //Even par
             txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            pos.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval));
             txt.setText(ctx.getResources().getString(R.string.even));
         }
         if (parStatus > 0) { //under par
             txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            pos.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
             txt.setText("-" + parStatus);
         }
         if (parStatus < 0) { //over par
             txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            pos.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval));
             txt.setText("+" + (parStatus * -1));
         }
 

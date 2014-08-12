@@ -30,6 +30,7 @@ public class ScoringByHoleActivity extends FragmentActivity
                 .findFragmentById(R.id.SBH_fragment);
         tournament = (TournamentDTO) getIntent().getSerializableExtra("tournament");
         leaderBoard = (LeaderBoardDTO) getIntent().getSerializableExtra("leaderBoard");
+        leaderBoard.setTournamentID(tournament.getTournamentID());
         if (leaderBoard == null) throw new UnsupportedOperationException("Leaderboard is null. Why da fuck?");
         golfGroup = SharedUtil.getGolfGroup(ctx);
         administrator = SharedUtil.getAdministrator(ctx);

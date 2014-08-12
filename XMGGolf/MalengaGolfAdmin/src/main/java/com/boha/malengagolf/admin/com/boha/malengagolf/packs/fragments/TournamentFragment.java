@@ -52,7 +52,7 @@ public class TournamentFragment extends Fragment {
             throw new UnsupportedOperationException("Host "
                     + a.getLocalClassName() + " must implement TournamentFragment.TournamentListener");
         }
-        Log.i(LOG,
+        Log.d(LOG,
                 "onAttach ---- Fragment called and hosted by "
                         + a.getLocalClassName()
         );
@@ -647,6 +647,7 @@ public class TournamentFragment extends Fragment {
             return;
         }
         tournamentListener.setBusy();
+
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, req, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
             public void onResponseReceived(ResponseDTO r) {

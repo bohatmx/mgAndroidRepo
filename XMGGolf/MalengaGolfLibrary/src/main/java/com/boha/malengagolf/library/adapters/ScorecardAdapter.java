@@ -1,7 +1,6 @@
 package com.boha.malengagolf.library.adapters;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.ClubCourseDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
@@ -505,7 +505,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
                 vh.txtHole9.setTextColor(ctx.getResources().getColor(R.color.blue));
             }
         }
-        Log.w("adap", "Processinhg hole 10, p.getScore10: " + p.getScore10() + " cc parHole10: " + cc.getParHole10() + " " + cc.getClubName() + " - " + cc.getCourseName());
+        //Log.w("adap", "Processinhg hole 10, p.getScore10: " + p.getScore10() + " cc parHole10: " + cc.getParHole10() + " " + cc.getClubName() + " - " + cc.getCourseName());
         if (p.getScore10() == 0) {
             vh.txtHole10.setTextColor(ctx.getResources().getColor(R.color.grey2));
         } else if (cc.getParHole10() == p.getScore10()) {

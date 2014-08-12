@@ -13,12 +13,27 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import com.android.volley.VolleyError;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.boha.malengagolf.library.R;
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
+import com.boha.malengagolf.library.util.CompleteRounds;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -406,31 +421,76 @@ public class ScoringByHoleFragment extends Fragment {
     private void submitScore() {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.UPDATE_TOURNAMENT_SCORES);
-        w.setLeaderBoard(leaderBoard);
+        w.setTournamentType(tournament.getTournamentType());
+
+        LeaderBoardDTO lb = new LeaderBoardDTO();
+        lb.setTournamentID(tournament.getTournamentID());
+        lb.setLeaderBoardID(leaderBoard.getLeaderBoardID());
+        lb.setTourneyScoreByRoundList(new ArrayList<TourneyScoreByRoundDTO>());
+        for (TourneyScoreByRoundDTO tsbr: leaderBoard.getTourneyScoreByRoundList()) {
+            TourneyScoreByRoundDTO cc = new TourneyScoreByRoundDTO();
+            cc = tsbr;
+            cc.setClubCourse(null);
+            lb.getTourneyScoreByRoundList().add(cc);
+        }
+        w.setLeaderBoard(lb);
 
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
         scoringByHoleListener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                scoringByHoleListener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
+            public void onMessage(ResponseDTO r) {
+
                 response = r;
+                scoringByHoleListener.setNotBusy();
                 Log.i(LOG, "Scores submitted OK, telling listener -> tourneyPlayerScoreList");
-                scoringByHoleListener.scoringSubmitted(r.getLeaderBoardList());
+                scoringByHoleListener.scoringSubmitted(response.getLeaderBoardList());
+
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                scoringByHoleListener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                Log.e(LOG,message);
+
+                //TODO tell a listener to show error
+                //Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                mSessionID = sessionID;
             }
         });
+
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                scoringByHoleListener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                response = r;
+//                Log.i(LOG, "Scores submitted OK, telling listener -> tourneyPlayerScoreList");
+//                scoringByHoleListener.scoringSubmitted(r.getLeaderBoardList());
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                scoringByHoleListener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
+
+    String mSessionID;
 
     private void showScoringCompleteDialog() {
 
@@ -1725,7 +1785,7 @@ public class ScoringByHoleFragment extends Fragment {
                 calculateTotal();
             }
         });
-    //################################################## points
+        //################################################## points
         btnDownX1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -3240,7 +3300,6 @@ public class ScoringByHoleFragment extends Fragment {
             btnUpX11, btnUpX12, btnUpX13, btnUpX14, btnUpX15, btnUpX16, btnUpX17, btnUpX18;
 
 
-
     TextView btnDown1, btnDown2, btnDown3, btnDown4, btnDown5, btnDown6, btnDown7, btnDown8, btnDown9,
             btnDown10, btnDown11, btnDown12, btnDown13, btnDown14, btnDown15, btnDown16, btnDown17,
             btnDown18, txtTotal;
@@ -3249,7 +3308,8 @@ public class ScoringByHoleFragment extends Fragment {
             btnDownX10, btnDownX11, btnDownX12, btnDownX13, btnDownX14, btnDownX15, btnDownX16, btnDownX17,
             btnDownX18;
     View vPoints1, vPoints2, vPoints3, vPoints4, vPoints5, vPoints6, vPoints7, vPoints8, vPoints9,
-            vPoints10, vPoints11, vPoints12, vPoints13, vPoints14,vPoints15, vPoints16, vPoints17, vPoints18;
+            vPoints10, vPoints11, vPoints12, vPoints13, vPoints14, vPoints15, vPoints16, vPoints17, vPoints18;
+
     private void showPoints() {
         vPoints1.setVisibility(View.VISIBLE);
         vPoints2.setVisibility(View.VISIBLE);
@@ -3270,6 +3330,7 @@ public class ScoringByHoleFragment extends Fragment {
         vPoints17.setVisibility(View.VISIBLE);
         vPoints18.setVisibility(View.VISIBLE);
     }
+
     private void hidePoints() {
         vPoints1.setVisibility(View.GONE);
         vPoints2.setVisibility(View.GONE);
@@ -3290,6 +3351,7 @@ public class ScoringByHoleFragment extends Fragment {
         vPoints17.setVisibility(View.GONE);
         vPoints18.setVisibility(View.GONE);
     }
+
     int currentRound;
     Spinner spinner;
     View view;
