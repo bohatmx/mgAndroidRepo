@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.boha.proximity.cms.FileNames;
 import com.boha.proximity.cms.R;
 import com.boha.proximity.cms.adapters.BeaconAdapter;
 import com.boha.proximity.data.BeaconDTO;
@@ -19,6 +20,7 @@ import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.util.SharedUtil;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -68,6 +70,29 @@ public class BeaconListFragment extends Fragment {
     }
 
 
+    public BeaconDTO updateImageFiles(FileNames f) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        for (String name: f.getFileNames()) {
+            int index = getIndex(name);
+            if (index > -1) {
+                beacon.getImageFileNameList().remove(index);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        return beacon;
+    }
+    private int getIndex(String deleted) {
+        int index = 0;
+        for (String s: beacon.getImageFileNameList()) {
+            if (s.equalsIgnoreCase(deleted)) {
+                return index;
+            }
+            index++;
+
+        }
+
+        return -1;
+    }
     private void setList() {
         adapter = new BeaconAdapter(ctx, R.layout.beacon_item, beaconList);
         listView.setAdapter(adapter);
@@ -83,6 +108,7 @@ public class BeaconListFragment extends Fragment {
 
     public void setBranch(BranchDTO branch) {
         this.branch = branch;
+        if (branch.getBeaconList() == null) return;
         beaconList = branch.getBeaconList();
         txtBranch.setText(branch.getBranchName());
         setList();

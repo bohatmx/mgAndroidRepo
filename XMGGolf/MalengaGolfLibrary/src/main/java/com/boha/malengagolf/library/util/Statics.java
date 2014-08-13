@@ -9,12 +9,14 @@ public class Statics {
      * REMOTE URL - bohamaker back end - production
      */
     //
+    //public static final String WEBSOCKET_URL = "wss://bohamaker.com/golf/";
    //public static final String URL = "https://bohamaker.com/golf/";
    //public static final String IMAGE_URL = "https://bohamaker.com/golf_images/";
 
     //google cloud http://mggolf-303.appspot.com/golf?JSON={requestType:38,golfGroupID:21}
     //public static final String URL = "http://mggolf-303.appspot.com/";
 
+    public static final String WEBSOCKET_URL = "ws://192.168.1.111:8055/golf/";
 	public static final String URL = "http://192.168.1.111:8055/golf/";
 	public static final String IMAGE_URL = "http://192.168.1.111:8055/golf_images/";
 
@@ -35,8 +37,8 @@ public class Statics {
     public static final String UPLOAD_BLOB = "uploadBlob?";
     public static final String CRASH_REPORTS_URL = URL + "crash?";
 
-    public static final String WEBSOCKET_URL = "ws://192.168.1.111:8055/golf/",
-            SCORER_ENDPOINT = "wsscorer",
+
+    public static final String        SCORER_ENDPOINT = "wsscorer",
             ADMIN_ENDPOINT = "wsadmin",
             PLAYER_ENDPOINT = "wsplayer",
             LEADERBOARD_ENDPOINT = "wsleaderboard";

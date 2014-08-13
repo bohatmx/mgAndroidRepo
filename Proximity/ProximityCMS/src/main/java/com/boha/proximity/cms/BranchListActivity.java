@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.boha.proximity.cms.fragments.BranchListFragment;
+import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.data.RequestDTO;
@@ -111,9 +112,35 @@ public class BranchListActivity extends ActionBarActivity
         }
         Intent i = new Intent(this, BeaconListActivity.class);
         i.putExtra("branch", branch);
-        startActivity(i);
+        startActivityForResult(i,BRANCH_REQ);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (response != null) {
+            Intent w = new Intent();
+            w.putExtra("response", response);
+            setResult(RESULT_OK, w);
+            finish();
+        }
+        super.onBackPressed();
+    }
+
+    ResponseDTO response;
+    @Override
+    public void onActivityResult(int reqCode, int result, Intent data) {
+        switch (reqCode) {
+            case BRANCH_REQ:
+                if (result == RESULT_OK) {
+                    BeaconDTO d = (BeaconDTO)data.getSerializableExtra("beacon");
+                    if (d != null) {
+                        branchListFragment.updateBeacon(d);
+                    }
+                }
+                break;
+        }
+    }
+    static final int BRANCH_REQ = 913;
     private void startDialog(final BranchDTO branch) {
         AlertDialog.Builder diag = new AlertDialog.Builder(this);
         diag.setTitle("Beacon Search")

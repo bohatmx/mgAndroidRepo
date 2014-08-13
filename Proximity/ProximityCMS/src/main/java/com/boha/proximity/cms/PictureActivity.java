@@ -3,6 +3,7 @@ package com.boha.proximity.cms;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -24,14 +25,12 @@ import android.widget.Toast;
 
 import com.android.volley.VolleyError;
 import com.boha.proximity.data.BeaconDTO;
-import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.data.PhotoUploadDTO;
 import com.boha.proximity.data.ResponseDTO;
 import com.boha.proximity.data.UploadBlobDTO;
 import com.boha.proximity.util.BlobUpload;
 import com.boha.proximity.util.ImageUpload;
 import com.boha.proximity.util.ImageUtil;
-import com.boha.proximity.util.SharedUtil;
 import com.boha.proximity.volley.BaseVolley;
 
 import java.io.File;
@@ -48,21 +47,28 @@ public class PictureActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
         ctx = getApplicationContext();
-        beacon = (BeaconDTO)getIntent().getSerializableExtra("beacon");
+        beacon = (BeaconDTO) getIntent().getSerializableExtra("beacon");
         setFields();
         setTitle("Beacon Content");
         getActionBar().setSubtitle(beacon.getBeaconName());
     }
 
     private void setFields() {
-        btnSave = (Button)findViewById(R.id.BAA_btnSave);
-        btnTakePic = (Button)findViewById(R.id.BAA_btnTakePicture);
-        image = (ImageView)findViewById(R.id.BAA_image);
+        btnSave = (Button) findViewById(R.id.BAA_btnSave);
+        btnTakePic = (Button) findViewById(R.id.BAA_btnTakePicture);
+        btnPick = (Button) findViewById(R.id.BAA_btnPick);
+        image = (ImageView) findViewById(R.id.BAA_image);
 
         btnTakePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dispatchTakePictureIntent();
+            }
+        });
+        btnPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dispatchPickPictureIntent();
             }
         });
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -90,11 +96,12 @@ public class PictureActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     private void sendThumbnail() {
         Log.e(LOG, "..........sendThumbnail ........: " + thumbUri.toString());
-        CompanyDTO c = SharedUtil.getCompany(ctx);
-        uploadImage(c.getCompanyID(), beacon.getBranchID(), beacon.getBeaconID(), thumbUri.toString());
+        uploadImage(beacon.getCompanyID(), beacon.getBranchID(), beacon.getBeaconID(), thumbUri.toString());
     }
+
     private void sendBlobThumbnail() {
         Log.e(LOG, "..........sendThumbnail ........: " + currentThumbFile.getAbsolutePath());
 
@@ -128,6 +135,7 @@ public class PictureActivity extends ActionBarActivity {
             }
         });
     }
+
     Bitmap bitmapForScreen;
 
     class PhotoTask extends AsyncTask<Void, Void, Integer> {
@@ -205,6 +213,7 @@ public class PictureActivity extends ActionBarActivity {
             }
         }
     }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -223,6 +232,13 @@ public class PictureActivity extends ActionBarActivity {
             }
         }
     }
+
+    private void dispatchPickPictureIntent() {
+        Intent i = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(i, IMAGE_PICKER_SELECT);
+    }
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -252,6 +268,7 @@ public class PictureActivity extends ActionBarActivity {
         Log.i(LOG, "Full file length: " + currentFullFile.length());
 
     }
+
     @Override
     public void onActivityResult(final int requestCode, final int resultCode,
                                  final Intent data) {
@@ -263,10 +280,27 @@ public class PictureActivity extends ActionBarActivity {
                     }
                 }
                 break;
+            case IMAGE_PICKER_SELECT:
+                Bitmap bm = getBitmapFromCameraData(data, ctx);
+                new PickTask().execute(bm);
+                break;
 
         }
     }
-    public  void uploadImage(int companyID, int branchID, int beaconID, String uri) {
+
+    public static Bitmap getBitmapFromCameraData(Intent data, Context context) {
+        Uri selectedImage = data.getData();
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        return BitmapFactory.decodeFile(picturePath);
+    }
+
+    List<String> uploadedFileNames = new ArrayList<String>();
+    public void uploadImage(int companyID, int branchID, int beaconID, String uri) {
 
         File imageFile = new File(Uri.parse(uri).getPath());
         Log.i("pic", "Uri for upload: " + uri);
@@ -278,7 +312,7 @@ public class PictureActivity extends ActionBarActivity {
             dto.setCompanyID(companyID);
             dto.setBranchID(branchID);
             dto.setBeaconID(beaconID);
-            ImageUpload.upload(dto, files, ctx ,
+            ImageUpload.upload(dto, files, ctx,
                     new ImageUpload.ImageUploadListener() {
                         @Override
                         public void onUploadError() {
@@ -290,6 +324,7 @@ public class PictureActivity extends ActionBarActivity {
                         @Override
                         public void onImageUploaded(ResponseDTO response) {
                             if (response.getStatusCode() == 0) {
+                                uploadedFileNames.add(response.getMessage());
                                 Toast.makeText(ctx, "Content uploaded", Toast.LENGTH_SHORT).show();
                             } else {
                                 Log.e(LOG,
@@ -302,11 +337,82 @@ public class PictureActivity extends ActionBarActivity {
             );
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if (uploadedFileNames.size() > 0) {
+            Intent t = new Intent();
+            t.putExtra("fileNames",new FileNames(uploadedFileNames));
+            setResult(RESULT_OK,t);
+        }
+        finish();
+    }
+
+
     @Override
     public void onPause() {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         super.onPause();
     }
+
+    class PickTask extends AsyncTask<Bitmap, Void, Integer> {
+
+        @Override
+        protected Integer doInBackground(Bitmap... bitmaps) {
+
+            Bitmap bm = bitmaps[0];
+            Bitmap thumb = null;
+            try {
+                getLog(bm, "Raw Camera");
+                //scale and rotate for the screen
+                Matrix matrix = new Matrix();
+                matrix.postScale(1.0f, 1.0f);
+                //matrix.postRotate(rotate);
+                bitmapForScreen = Bitmap.createBitmap
+                        (bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
+                getLog(bitmapForScreen, "Screen");
+
+                //get thumbnail for upload
+                if (bm.getHeight() > 600 || bm.getWidth() > 600) {
+                    Matrix matrixThumbnail = new Matrix();
+                    matrixThumbnail.postScale(0.4f, 0.4f);
+                    //matrixThumbnail.postRotate(rotate);
+                     thumb = Bitmap.createBitmap
+                            (bitmapForScreen, 0, 0, bitmapForScreen.getWidth(),
+                                    bitmapForScreen.getHeight(), matrixThumbnail, true);
+                    getLog(thumb, "Thumb");
+                } else {
+                     thumb = bm;
+                }
+
+                currentFullFile = ImageUtil.getFileFromBitmap(bm, "m" + System.currentTimeMillis() + ".jpg");
+                currentThumbFile = ImageUtil.getFileFromBitmap(thumb, "t" + System.currentTimeMillis() + ".jpg");
+                thumbUri = Uri.fromFile(currentThumbFile);
+                fullUri = Uri.fromFile(currentFullFile);
+                getFileLengths();
+            } catch (Exception e) {
+                Log.e("pic", "Fuck it!", e);
+                return 1;
+            }
+
+
+            return 0;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            if (result > 0) {
+                //TODO - error
+                return;
+            }
+            if (thumbUri != null) {
+                image.setImageBitmap(bitmapForScreen);
+                image.setAlpha(1.0f);
+                btnSave.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
     Context ctx;
     Uri fileUri;
     ImageView image;
@@ -316,7 +422,7 @@ public class PictureActivity extends ActionBarActivity {
     String mCurrentPhotoPath;
     File photoFile;
     private BeaconDTO beacon;
-    Button btnTakePic, btnSave;
+    Button btnTakePic, btnSave, btnPick;
     TextView beaconName;
-    static final int CAPTURE_IMAGE = 11331;
+    static final int CAPTURE_IMAGE = 11331, IMAGE_PICKER_SELECT = 11221;
 }

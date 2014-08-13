@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.boha.proximity.cms.R;
 import com.boha.proximity.cms.adapters.BranchAdapter;
+import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.data.RequestDTO;
@@ -171,6 +172,17 @@ public class BranchListFragment extends Fragment {
 
     ResponseDTO response;
 
+    public void updateBeacon(BeaconDTO b) {
+        for (BranchDTO branch: branchList) {
+            for (BeaconDTO beacon: branch.getBeaconList()) {
+                if (beacon.getBeaconID() == b.getBeaconID()) {
+                    beacon.setImageFileNameList(b.getImageFileNameList());
+                    adapter.notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
+    }
     private void setList() {
         adapter = new BranchAdapter(ctx, R.layout.branch_item, branchList);
         listView.setAdapter(adapter);

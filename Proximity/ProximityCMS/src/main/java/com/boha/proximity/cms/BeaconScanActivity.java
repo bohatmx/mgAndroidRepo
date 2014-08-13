@@ -14,9 +14,13 @@ import android.widget.Toast;
 import com.boha.proximity.cms.fragments.BeaconScanFragment;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
+import com.boha.proximity.data.ResponseDTO;
 import com.boha.proximity.library.ProxiApplication;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BeaconScanActivity extends FragmentActivity implements BeaconScanFragment.BeaconScanListener {
 
@@ -131,10 +135,36 @@ public class BeaconScanActivity extends FragmentActivity implements BeaconScanFr
         Intent i = new Intent(this, BeaconRegisterActivity.class);
         i.putExtra("branch", branch);
         i.putExtra("beacon", beacon);
-        startActivity(i);
+        startActivityForResult(i, REGISTER_BEACON);
     }
     @Override
     public void onBeaconManageRequested(BeaconDTO beacon) {
        //TODO - start activity to manage data items
     }
+    static final int REGISTER_BEACON = 5734;
+    @Override
+    public void onBackPressed() {
+        if (registeredBeacons != null) {
+            Intent t = new Intent();
+            ResponseDTO r = new ResponseDTO();
+            r.setBeaconList(registeredBeacons);
+            t.putExtra("beacons", r);
+            setResult(RESULT_OK,t);
+        }
+        finish();
+    }
+
+    @Override
+    public void onActivityResult(int reqCode, int result, Intent data) {
+        switch (reqCode) {
+            case REGISTER_BEACON:
+                if (result == RESULT_OK) {
+                    BeaconDTO beacon = (BeaconDTO)data.getSerializableExtra("beacon");
+                    registeredBeacons.add(beacon);
+                }
+                break;
+
+        }
+    }
+    private List<BeaconDTO> registeredBeacons = new ArrayList<BeaconDTO>();
 }

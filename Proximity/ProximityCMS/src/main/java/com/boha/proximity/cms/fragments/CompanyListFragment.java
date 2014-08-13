@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.android.volley.VolleyError;
 import com.boha.proximity.cms.R;
 import com.boha.proximity.cms.adapters.CompanyAdapter;
+import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.data.RequestDTO;
 import com.boha.proximity.data.ResponseDTO;
@@ -67,6 +68,18 @@ public class CompanyListFragment extends Fragment {
     }
 
 
+    public void setCompanyData(List<BranchDTO> list) {
+
+        if (list != null && !list.isEmpty()) {
+            for (CompanyDTO c : companyList) {
+                if (list.get(0).getCompanyID() == c.getCompanyID()) {
+                    c.setBranchList(list);
+                    break;
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
     private void setFields() {
 
         txtCount = (TextView) view.findViewById(R.id.FCL_txtCount);

@@ -18,7 +18,7 @@ public class RequestDTO implements Serializable {
     private BranchDTO branch;
     private BeaconDTO beacon;
     private BeaconDataItemDTO beaconDataItem;
-    private String macAddress;
+    private String macAddress, fileName;
 
     public static final int REGISTER_COMPANY = 1;
     public static final int REGISTER_BRANCH = 2;
@@ -33,7 +33,21 @@ public class RequestDTO implements Serializable {
     public static final int GET_BEACON_IMAGE_FILES = 14;
     public static final int GET_COMPANIES = 15;
     public static final int GET_ERROR_REPORTS = 73;
+    //
+    public static final int DELETE_ALL_BEACON_IMAGES = 20;
+    public static final int DELETE_BEACON_IMAGE = 21;
+    public static final int DELETE_BEACON = 22;
+    public static final int DELETE_ALL_BEACONS = 23;
+    //
 
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
     public String getMacAddress() {
         return macAddress;

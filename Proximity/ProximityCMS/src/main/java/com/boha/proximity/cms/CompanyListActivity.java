@@ -18,6 +18,8 @@ import com.boha.proximity.library.Statics;
 import com.boha.proximity.util.CacheUtil;
 import com.boha.proximity.volley.BaseVolley;
 
+import org.acra.ACRA;
+
 public class CompanyListActivity extends ActionBarActivity
         implements CompanyListFragment.CompanyListFragmentListener {
 
@@ -27,6 +29,7 @@ public class CompanyListActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_list);
         ctx = getApplicationContext();
+        ACRA.getErrorReporter().putCustomData("name", "CMS App");
         companyListFragment = (CompanyListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);
     }
@@ -89,9 +92,9 @@ public class CompanyListActivity extends ActionBarActivity
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
                     companyListFragment.setCompanyList(response.getCompanyList());
-                } else {
-                    getCompanies();
                 }
+                    getCompanies();
+
             }
 
             @Override
@@ -137,9 +140,24 @@ public class CompanyListActivity extends ActionBarActivity
 
         Intent i = new Intent(this, BranchListActivity.class);
         i.putExtra("company", company);
-        startActivity(i);
+        startActivityForResult(i, COMPANY_REQ);
     }
 
+    @Override
+    public void onActivityResult(int reqCode, int result, Intent data) {
+        switch (reqCode) {
+            case COMPANY_REQ:
+                if (result == RESULT_OK) {
+                    ResponseDTO r = (ResponseDTO)data.getSerializableExtra("response");
+                    if (r != null) {
+                        companyListFragment.setCompanyData(r.getBranchList());
+                    }
+                }
+
+                break;
+        }
+    }
+    static final int COMPANY_REQ = 731;
     @Override
     public void setBusy() {
         setRefreshActionButtonState(true);

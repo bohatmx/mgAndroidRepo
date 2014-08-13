@@ -23,12 +23,19 @@
         android:padding="16dp" android:orientation="horizontal"
         android:layout_height="wrap_content">
         <Button
+            android:text="Pick Content"
+            android:id="@+id/BAA_btnPick"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
             android:text="Take Picture"
             android:id="@+id/BAA_btnTakePicture"
             android:scaleType="centerCrop"
             android:layout_weight="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
         <Button
             android:text="Save Content"
             android:id="@+id/BAA_btnSave"

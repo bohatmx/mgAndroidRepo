@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.boha.proximity.cms.fragments.BeaconListFragment;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
+import com.boha.proximity.data.ResponseDTO;
 
 public class BeaconListActivity extends ActionBarActivity
         implements BeaconListFragment.BeaconListFragmentListener {
@@ -19,8 +20,8 @@ public class BeaconListActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beacon_list);
         ctx = getApplicationContext();
-        branch = (BranchDTO)getIntent().getSerializableExtra("branch");
-        beaconListFragment = (BeaconListFragment)getSupportFragmentManager()
+        branch = (BranchDTO) getIntent().getSerializableExtra("branch");
+        beaconListFragment = (BeaconListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);
         beaconListFragment.setBranch(branch);
         setTitle("Registered Beacons");
@@ -28,11 +29,11 @@ public class BeaconListActivity extends ActionBarActivity
 
 
     BranchDTO branch;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.beacon_list, menu);
+        getMenuInflater().inflate(R.menu.branch_beacon_list, menu);
         mMenu = menu;
-        menu.getItem(1).setVisible(false);
         return true;
     }
 
@@ -44,14 +45,18 @@ public class BeaconListActivity extends ActionBarActivity
 
             return true;
         }
-        if (id == R.id.action_range) {
-            Intent i = new Intent(this, BeaconScanActivity.class);
-            i.putExtra("branch", branch);
-            startActivity(i);
+        if (id == R.id.action_add) {
+            Intent q = new Intent(this, BeaconScanActivity.class);
+            q.putExtra("branch", branch);
+            startActivityForResult(q,SCAN_REQ);
+
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
+
+    static final int SCAN_REQ = 8765;
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(R.id.action_range);
@@ -71,11 +76,48 @@ public class BeaconListActivity extends ActionBarActivity
 
     @Override
     public void onBeaconPicked(BeaconDTO beacon) {
-        Intent w = new Intent(this, PictureActivity.class);
+        Intent w = new Intent(this, BeaconImageGridActivity.class);
         w.putExtra("beacon", beacon);
-        startActivity(w);
+        startActivityForResult(w, BEACON_IMAGES);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (updatedbBeacon != null) {
+            Intent w = new Intent();
+            w.putExtra("beacon", updatedbBeacon);
+            setResult(RESULT_OK, w);
+        }
+
+
+        finish();
+
+    }
+
+    BeaconDTO updatedbBeacon;
+    @Override
+    public void onActivityResult(int reqCode, int result, Intent data) {
+        switch (reqCode) {
+            case BEACON_IMAGES:
+                if (result == RESULT_OK) {
+                    FileNames f = (FileNames)data.getSerializableExtra("fileNames");
+                    if (f != null) {
+                        updatedbBeacon = beaconListFragment.updateImageFiles(f);
+                    }
+                }
+                break;
+            case SCAN_REQ:
+                if (result == RESULT_OK) {
+                    ResponseDTO r = (ResponseDTO)data.getSerializableExtra("beacons");
+                    branch.setBeaconList(r.getBeaconList());
+                    beaconListFragment.setBranch(branch);
+                }
+
+                break;
+        }
+    }
+
+    static final int BEACON_IMAGES = 313;
 
     @Override
     public void setBusy() {
@@ -86,6 +128,7 @@ public class BeaconListActivity extends ActionBarActivity
     public void setNotBusy() {
         setRefreshActionButtonState(false);
     }
+
     @Override
     public void onPause() {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
