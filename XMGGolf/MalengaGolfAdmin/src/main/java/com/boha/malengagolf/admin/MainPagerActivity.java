@@ -195,87 +195,22 @@ public class MainPagerActivity extends FragmentActivity
         }
         setBusy();
 
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,r,new WebSocketUtil.WebSocketListener() {
-            @Override
-            public void onMessage(ResponseDTO r) {
-                response = r;
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setNotBusy();
-                        splashFragment.setLoading(false);
-                        setSplashFrament();
-                        buildPages();
-                        getNearbyClubs();
-                    }
-                });
-
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_ADMINS, new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {}
-                    @Override
-                    public void onDataCached() {
-                        Log.w(LOG, "------- >> onDataCached - Administrators");
-                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_PLAYERS, new CacheUtil.CacheUtilListener() {
-                            @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {}
-                            @Override
-                            public void onDataCached() {
-                                Log.w(LOG, "------- >> onDataCached - Players");
-                                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_SCORERS, new CacheUtil.CacheUtilListener() {
-                                    @Override
-                                    public void onFileDataDeserialized(ResponseDTO response) {}
-                                    @Override
-                                    public void onDataCached() {
-                                        Log.w(LOG, "------- >> onDataCached - Scorers");
-                                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
-                                            @Override
-                                            public void onFileDataDeserialized(ResponseDTO response) {}
-                                            @Override
-                                            public void onDataCached() {
-                                                Log.w(LOG, "------- >> onDataCached - Tournaments");
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-
-            }
-
-            @Override
-            public void onClose() {
-
-            }
-
-            @Override
-            public void onError(String message) {
-                ToastUtil.errorToast(ctx, message);
-            }
-
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-
-            }
-        });
-
-//        MGApp app = (MGApp) getApplication();
-//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, app, new BaseVolley.BohaVolleyListener() {
+//        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,r,new WebSocketUtil.WebSocketListener() {
 //            @Override
-//            public void onResponseReceived(ResponseDTO r) {
-//                setNotBusy();
-//                splashFragment.setLoading(false);
-//                if (r.getStatusCode() > 0) {
-//                    ToastUtil.errorToast(ctx, r.getMessage());
-//                    return;
-//                }
+//            public void onMessage(ResponseDTO r) {
 //                response = r;
-//                setSplashFrament();
-//                buildPages();
-//                getNearbyClubs();
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        setNotBusy();
+//                        splashFragment.setLoading(false);
+//                        setSplashFrament();
+//                        buildPages();
+//                        getNearbyClubs();
+//                    }
+//                });
+//
 //                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_ADMINS, new CacheUtil.CacheUtilListener() {
 //                    @Override
 //                    public void onFileDataDeserialized(ResponseDTO response) {}
@@ -309,16 +244,81 @@ public class MainPagerActivity extends FragmentActivity
 //                    }
 //                });
 //
+//            }
+//
+//            @Override
+//            public void onClose() {
 //
 //            }
 //
 //            @Override
-//            public void onVolleyError(VolleyError error) {
-//                setNotBusy();
-//                splashFragment.setLoading(false);
-//                ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+//            public void onError(String message) {
+//                ToastUtil.errorToast(ctx, message);
+//            }
+//
+//            @Override
+//            public void onSessionIDreceived(String sessionID) {
+//
 //            }
 //        });
+
+        MGApp app = (MGApp) getApplication();
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, app, new BaseVolley.BohaVolleyListener() {
+            @Override
+            public void onResponseReceived(ResponseDTO r) {
+                setNotBusy();
+                splashFragment.setLoading(false);
+                if (r.getStatusCode() > 0) {
+                    ToastUtil.errorToast(ctx, r.getMessage());
+                    return;
+                }
+                response = r;
+                setSplashFrament();
+                buildPages();
+                getNearbyClubs();
+                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_ADMINS, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {}
+                    @Override
+                    public void onDataCached() {
+                        Log.w(LOG, "------- >> onDataCached - Administrators");
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_PLAYERS, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {}
+                            @Override
+                            public void onDataCached() {
+                                Log.w(LOG, "------- >> onDataCached - Players");
+                                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_SCORERS, new CacheUtil.CacheUtilListener() {
+                                    @Override
+                                    public void onFileDataDeserialized(ResponseDTO response) {}
+                                    @Override
+                                    public void onDataCached() {
+                                        Log.w(LOG, "------- >> onDataCached - Scorers");
+                                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
+                                            @Override
+                                            public void onFileDataDeserialized(ResponseDTO response) {}
+                                            @Override
+                                            public void onDataCached() {
+                                                Log.w(LOG, "------- >> onDataCached - Tournaments");
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onVolleyError(VolleyError error) {
+                setNotBusy();
+                splashFragment.setLoading(false);
+                ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+            }
+        });
     }
 
     @Override

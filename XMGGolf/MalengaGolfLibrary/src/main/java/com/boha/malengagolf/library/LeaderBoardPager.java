@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardCarrierDTO;
@@ -22,11 +23,10 @@ import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.LeaderBoardSplashFragment;
 import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
-import com.boha.malengagolf.library.util.ToastUtil;
-import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
@@ -128,40 +128,40 @@ public class LeaderBoardPager extends FragmentActivity
         w.setRequestType(RequestDTO.REGISTER_FOR_TOURNAMENT_UPDATES);
         w.setTournamentID(tournament.getTournamentID());
         w.setSessionID(SharedUtil.getSessionID(ctx));
-
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
-            @Override
-            public void onMessage(ResponseDTO response) {
-                Log.e(LOG, "############ response from register updates, status code: " + response.getStatusCode());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshLeaderBoard();
-                    }
-                });
-            }
-
-            @Override
-            public void onClose() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ToastUtil.errorToast(ctx,message);
-                    }
-                });
-            }
-
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                mSessionID = sessionID;
-                Log.w(LOG, "Session ID received: " + mSessionID);
-            }
-        });
+//
+//        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+//            @Override
+//            public void onMessage(ResponseDTO response) {
+//                Log.e(LOG, "############ response from register updates, status code: " + response.getStatusCode());
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        refreshLeaderBoard();
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onClose() {
+//
+//            }
+//
+//            @Override
+//            public void onError(final String message) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ToastUtil.errorToast(ctx,message);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onSessionIDreceived(String sessionID) {
+//                mSessionID = sessionID;
+//                Log.w(LOG, "Session ID received: " + mSessionID);
+//            }
+//        });
     }
 
     private void refreshLeaderBoard() {
@@ -177,89 +177,21 @@ public class LeaderBoardPager extends FragmentActivity
             return;
         }
         setRefreshActionButtonState(true);
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w, new WebSocketUtil.WebSocketListener() {
-            @Override
-            public void onMessage(ResponseDTO r) {
-                response = r;
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(LOG,"### onMessage received ... about to build pages");
-                        setRefreshActionButtonState(false);
-                        setSplashFrament();
-                        buildPages();
-                    }
-                });
-
-
-                if (tournament.getUseAgeGroups() == 0) {
-                    for (LeaderBoardDTO d : response.getLeaderBoardList()) {
-                        d.setTimeStamp(new Date().getTime());
-                    }
-
-                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
-
-                        }
-
-                        @Override
-                        public void onDataCached() {
-
-                        }
-                    });
-                } else {
-                    for (LeaderBoardCarrierDTO c : response.getLeaderBoardCarriers()) {
-                        for (LeaderBoardDTO d : c.getLeaderBoardList()) {
-                            d.setTimeStamp(new Date().getTime());
-                        }
-                    }
-                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADERBOARD_CARRIERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
-
-                        }
-
-                        @Override
-                        public void onDataCached() {
-
-                        }
-                    });
-                }
-
-            }
-
-            @Override
-            public void onClose() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ToastUtil.errorToast(ctx,message);
-                    }
-                });
-            }
-
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                mSessionID = sessionID;
-            }
-        });
-
-
-//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w, new WebSocketUtil.WebSocketListener() {
 //            @Override
-//            public void onResponseReceived(ResponseDTO r) {
-//                setRefreshActionButtonState(false);
-//                if (!ErrorUtil.checkServerError(ctx, r)) {
-//                    return;
-//                }
+//            public void onMessage(ResponseDTO r) {
 //                response = r;
+//
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        Log.i(LOG,"### onMessage received ... about to build pages");
+//                        setRefreshActionButtonState(false);
+//                        setSplashFrament();
+//                        buildPages();
+//                    }
+//                });
+//
 //
 //                if (tournament.getUseAgeGroups() == 0) {
 //                    for (LeaderBoardDTO d : response.getLeaderBoardList()) {
@@ -296,17 +228,85 @@ public class LeaderBoardPager extends FragmentActivity
 //                    });
 //                }
 //
-//                setSplashFrament();
-//                buildPages();
+//            }
+//
+//            @Override
+//            public void onClose() {
 //
 //            }
 //
 //            @Override
-//            public void onVolleyError(VolleyError error) {
-//                setRefreshActionButtonState(false);
-//                ErrorUtil.showServerCommsError(ctx);
+//            public void onError(final String message) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ToastUtil.errorToast(ctx,message);
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onSessionIDreceived(String sessionID) {
+//                mSessionID = sessionID;
 //            }
 //        });
+
+
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+            @Override
+            public void onResponseReceived(ResponseDTO r) {
+                setRefreshActionButtonState(false);
+                if (!ErrorUtil.checkServerError(ctx, r)) {
+                    return;
+                }
+                response = r;
+
+                if (tournament.getUseAgeGroups() == 0) {
+                    for (LeaderBoardDTO d : response.getLeaderBoardList()) {
+                        d.setTimeStamp(new Date().getTime());
+                    }
+
+                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                        @Override
+                        public void onFileDataDeserialized(ResponseDTO response) {
+
+                        }
+
+                        @Override
+                        public void onDataCached() {
+
+                        }
+                    });
+                } else {
+                    for (LeaderBoardCarrierDTO c : response.getLeaderBoardCarriers()) {
+                        for (LeaderBoardDTO d : c.getLeaderBoardList()) {
+                            d.setTimeStamp(new Date().getTime());
+                        }
+                    }
+                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADERBOARD_CARRIERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                        @Override
+                        public void onFileDataDeserialized(ResponseDTO response) {
+
+                        }
+
+                        @Override
+                        public void onDataCached() {
+
+                        }
+                    });
+                }
+
+                setSplashFrament();
+                buildPages();
+
+            }
+
+            @Override
+            public void onVolleyError(VolleyError error) {
+                setRefreshActionButtonState(false);
+                ErrorUtil.showServerCommsError(ctx);
+            }
+        });
 
     }
 

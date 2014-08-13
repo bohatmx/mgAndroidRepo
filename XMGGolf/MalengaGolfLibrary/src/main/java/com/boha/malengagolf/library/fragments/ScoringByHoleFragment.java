@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.AdministratorDTO;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
@@ -29,10 +30,10 @@ import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.CompleteRounds;
+import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
-import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
@@ -440,54 +441,54 @@ public class ScoringByHoleFragment extends Fragment {
         }
         scoringByHoleListener.setBusy();
 
-        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
-            @Override
-            public void onMessage(ResponseDTO r) {
-
-                response = r;
-                scoringByHoleListener.setNotBusy();
-                Log.i(LOG, "Scores submitted OK, telling listener -> tourneyPlayerScoreList");
-                scoringByHoleListener.scoringSubmitted(response.getLeaderBoardList());
-
-            }
-
-            @Override
-            public void onClose() {
-
-            }
-
-            @Override
-            public void onError(final String message) {
-                Log.e(LOG,message);
-
-                //TODO tell a listener to show error
-                //Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                mSessionID = sessionID;
-            }
-        });
-
-//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
 //            @Override
-//            public void onResponseReceived(ResponseDTO r) {
-//                scoringByHoleListener.setNotBusy();
-//                if (!ErrorUtil.checkServerError(ctx, r)) {
-//                    return;
-//                }
+//            public void onMessage(ResponseDTO r) {
+//
 //                response = r;
+//                scoringByHoleListener.setNotBusy();
 //                Log.i(LOG, "Scores submitted OK, telling listener -> tourneyPlayerScoreList");
-//                scoringByHoleListener.scoringSubmitted(r.getLeaderBoardList());
+//                scoringByHoleListener.scoringSubmitted(response.getLeaderBoardList());
+//
 //            }
 //
 //            @Override
-//            public void onVolleyError(VolleyError error) {
-//                scoringByHoleListener.setNotBusy();
-//                ErrorUtil.showServerCommsError(ctx);
+//            public void onClose() {
+//
+//            }
+//
+//            @Override
+//            public void onError(final String message) {
+//                Log.e(LOG,message);
+//
+//                //TODO tell a listener to show error
+//                //Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onSessionIDreceived(String sessionID) {
+//                mSessionID = sessionID;
 //            }
 //        });
+
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+            @Override
+            public void onResponseReceived(ResponseDTO r) {
+                scoringByHoleListener.setNotBusy();
+                if (!ErrorUtil.checkServerError(ctx, r)) {
+                    return;
+                }
+                response = r;
+                Log.i(LOG, "Scores submitted OK, telling listener -> tourneyPlayerScoreList");
+                scoringByHoleListener.scoringSubmitted(r.getLeaderBoardList());
+            }
+
+            @Override
+            public void onVolleyError(VolleyError error) {
+                scoringByHoleListener.setNotBusy();
+                ErrorUtil.showServerCommsError(ctx);
+            }
+        });
     }
 
     String mSessionID;

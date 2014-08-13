@@ -26,7 +26,7 @@ public class SharedUtil {
         ed.putInt(SCROLL_INDEX, index);
         ed.putLong(SCROLL_TIME, new Date().getTime());
         ed.commit();
-        Log.w("SharedUtil", "#### scroll index saved: " + index);
+        //Log.w("SharedUtil", "#### scroll index saved: " + index);
 
     }
     public static int getScrollIndex(Context ctx) {
