@@ -321,6 +321,7 @@ public class MainPagerActivity extends FragmentActivity
         });
     }
 
+    boolean isUsingCachedData;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_pager_menu, menu);
@@ -348,8 +349,9 @@ public class MainPagerActivity extends FragmentActivity
                                                         response.setScorers(r.getScorers());
                                                     }
                                                     setSplashFrament();
+                                                    isUsingCachedData = true;
                                                     buildPages();
-                                                    getGolfGroupData();
+
                                                 }
 
                                                 @Override
@@ -570,6 +572,10 @@ public class MainPagerActivity extends FragmentActivity
 
         initializeAdapter();
         mPager.setCurrentItem(1, true);
+        if (isUsingCachedData) {
+            isUsingCachedData = false;
+            //getGolfGroupData();
+        }
 
     }
 

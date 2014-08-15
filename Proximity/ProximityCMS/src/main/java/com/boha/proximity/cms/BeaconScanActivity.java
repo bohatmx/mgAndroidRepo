@@ -15,7 +15,7 @@ import com.boha.proximity.cms.fragments.BeaconScanFragment;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.ResponseDTO;
-import com.boha.proximity.library.ProxiApplication;
+import com.boha.proximity.library.ProximityApplication;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
 
@@ -31,7 +31,7 @@ public class BeaconScanActivity extends FragmentActivity implements BeaconScanFr
         setContentView(R.layout.activity_beacon_scan);
         ctx = getApplicationContext();
         branch = (BranchDTO) getIntent().getSerializableExtra("branch");
-        ProxiApplication app = (ProxiApplication) getApplication();
+        ProximityApplication app = (ProximityApplication) getApplication();
         beaconManager = app.getBeaconManager();
         beaconScanFragment = (BeaconScanFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);

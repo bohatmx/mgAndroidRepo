@@ -20,7 +20,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.RequestDTO;
 import com.boha.proximity.data.ResponseDTO;
-import com.boha.proximity.library.ProxiApplication;
+import com.boha.proximity.library.ProximityApplication;
 import com.boha.proximity.library.Statics;
 import com.boha.proximity.volley.BaseVolley;
 import com.estimote.sdk.Beacon;
@@ -43,7 +43,7 @@ public class MainPagerActivity extends FragmentActivity {
         ctx = getApplicationContext();
         setContentView(R.layout.activity_main);
         mPager = (ViewPager) findViewById(R.id.pager);
-        ProxiApplication app = (ProxiApplication) getApplication();
+        ProximityApplication app = (ProximityApplication) getApplication();
         beaconManager = app.getBeaconManager();
         imageLoader = app.getImageLoader();
 

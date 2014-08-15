@@ -16,8 +16,8 @@ public class Statics {
     //public static final String URL = "https://bohamaker.com/proximity/";
     //public static final String IMAGE_URL = "https://bohamaker.com/proximity_images/";
 
-	public static final String URL = "http://192.168.1.111:8050/proximity/";
-	public static final String IMAGE_URL = "http://192.168.1.111:8050/proximity_images/";
+	public static final String URL = "http://10.4.3.221:8050/proximity/";
+	public static final String IMAGE_URL = "http://10.4.3.221:8050/proximity_images/";
 
     public static final String SERVLET_ADMIN = "admin?JSON=";
 

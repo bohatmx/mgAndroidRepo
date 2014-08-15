@@ -19,6 +19,7 @@ import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.util.MGPageFragment;
 import com.etsy.android.grid.StaggeredGridView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,7 +70,13 @@ public class StaggeredPlayerGridFragment extends Fragment implements MGPageFragm
     }
 
     public void setLeaderBoardList(final List<LeaderBoardDTO> lb) {
-        this.leaderBoardList = lb;
+        leaderBoardList = new ArrayList<>();
+        for (LeaderBoardDTO b: lb) {
+            if (b.getParStatus() == LeaderBoardDTO.NO_PAR_STATUS) {
+                continue;
+            }
+            leaderBoardList.add(b);
+        }
         mAdapter = new StaggeredGridPlayerAdapter(leaderBoardList, ctx, listener);
 
         mGridView.setGridPadding(0, 10, 0, 10);

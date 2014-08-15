@@ -24,7 +24,7 @@ import org.acra.annotation.ReportsCrashes;
                 ReportField.LOGCAT},
         socketTimeout = 3000
 )
-public class ProxiApplication extends Application {
+public class ProximityApplication extends Application {
 
     @Override
     public void onCreate() {
@@ -39,12 +39,18 @@ public class ProxiApplication extends Application {
     private BeaconManager beaconManager;
 
     public ImageLoader getImageLoader() {
+        if (imageLoader == null) {
+            imageLoader = BohaVolley.getImageLoader(getApplicationContext());
+        }
         return imageLoader;
     }
 
     public BeaconManager getBeaconManager() {
+        if (beaconManager == null) {
+            beaconManager = new BeaconManager(getApplicationContext());
+        }
         return beaconManager;
     }
-    static final String LOG = ProxiApplication.class.getName();
+    static final String LOG = ProximityApplication.class.getName();
     ImageLoader imageLoader;
 }

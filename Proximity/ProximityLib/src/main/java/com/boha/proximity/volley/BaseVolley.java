@@ -40,11 +40,6 @@ public class BaseVolley {
         public void onVolleyError(VolleyError error);
     }
 
-
-    private static void setVolley(Context ctx) {
-        requestQueue = BohaVolley.getRequestQueue(ctx);
-    }
-
     static BohaVolleyListener bohaVolleyListener;
 
     public static boolean checkNetworkOnDevice(Context context) {
@@ -217,7 +212,6 @@ public class BaseVolley {
     protected static BohaRequest bohaRequest;
     protected static RequestQueue requestQueue;
     protected ImageLoader imageLoader;
-    protected static String suff;
     static final String LOG = "BaseVolley";
     static final int MAX_RETRIES = 10;
     static final long SLEEP_TIME = 3000;

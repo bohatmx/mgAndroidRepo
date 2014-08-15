@@ -180,6 +180,7 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
             StaggeredPlayerGridFragment spgf = new StaggeredPlayerGridFragment();
             Bundle b2 = new Bundle();
             ResponseDTO w = new ResponseDTO();
+            setPositions(carrier.getLeaderBoardList());
             w.setLeaderBoardList(carrier.getLeaderBoardList());
             w.setTournaments(new ArrayList<TournamentDTO>());
             w.getTournaments().add(tournament);
@@ -208,7 +209,66 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
             }
         });
     }
+    private void setPositions(List<LeaderBoardDTO> list) {
+        Log.d(LOG, "####------------- setPositions ............");
+        int mPosition = 1;
+        int running = 1, score = 999;
+        switch (tournament.getTournamentType()) {
+            case RequestDTO.STABLEFORD_INDIVIDUAL:
+                Log.e(LOG, "####------------- setPositions STABLEFORD_INDIVIDUAL");
+                for (LeaderBoardDTO lb : list) {
+                    if (lb.isTied()) {
+                        if (score == 999) {
+                            score = lb.getTotalPoints();
+                            mPosition = running;
+                            lb.setPosition(mPosition);
+                        } else {
+                            if (score == lb.getTotalPoints()) {
+                                lb.setPosition(mPosition);
+                            } else {
+                                score = lb.getTotalPoints();
+                                mPosition = running;
+                                lb.setPosition(mPosition);
+                            }
+                        }
 
+                    } else {
+                        score = 999;
+                        lb.setPosition(running);
+                    }
+
+                    running++;
+                }
+                break;
+            case RequestDTO.STROKE_PLAY_INDIVIDUAL:
+                Log.e(LOG, "####------------- setPositions STROKE_PLAY_INDIVIDUAL");
+                for (LeaderBoardDTO lb : list) {
+                    if (lb.isTied()) {
+                        if (score == 999) {
+                            score = lb.getParStatus();
+                            mPosition = running;
+                            lb.setPosition(mPosition);
+                        } else {
+                            if (score == lb.getParStatus()) {
+                                lb.setPosition(mPosition);
+                            } else {
+                                score = lb.getParStatus();
+                                mPosition = running;
+                                lb.setPosition(mPosition);
+                            }
+                        }
+
+                    } else {
+                        score = 999;
+                        lb.setPosition(running);
+                    }
+
+                    running++;
+                }
+                break;
+        }
+
+    }
     @Override
     public void setBusy() {
         setRefreshActionButtonState(true);

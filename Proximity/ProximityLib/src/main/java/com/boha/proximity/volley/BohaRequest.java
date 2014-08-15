@@ -31,7 +31,8 @@ public class BohaRequest extends Request<ResponseDTO> {
     }
 
     public BohaRequest(int method, String url,
-                       Listener<ResponseDTO> responseListener, ErrorListener errorListener) {
+                       Listener<ResponseDTO> responseListener,
+                       ErrorListener errorListener) {
         super(method, url, errorListener);
         this.listener = responseListener;
         this.errorListener = errorListener;
