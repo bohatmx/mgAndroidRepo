@@ -62,7 +62,7 @@ public class WebSocketUtil {
             } else {
                 String json = gson.toJson(req);
                 mWebSocketClient.send(json);
-                Log.w(LOG, "########### web socket message sent\n" + json);
+                Log.w(LOG, "########### web socket message sent\n" + json + " \nto " + mWebSocketClient.getURI().toString());
             }
         } catch (WebsocketNotConnectedException e) {
             try {
@@ -87,7 +87,8 @@ public class WebSocketUtil {
                 Log.w(LOG, "########## WEBSOCKET Opened: " + serverHandshake.getHttpStatusMessage());
                 String json = gson.toJson(request);
                 mWebSocketClient.send(json);
-                Log.d(LOG, "########### web socket request sent after onOpen\n" + json);
+                Log.d(LOG, "########### web socket request sent after onOpen\n" + json
+                + "\nto " + mWebSocketClient.getURI().toString());
             }
 
             @Override

@@ -5,13 +5,15 @@
 
     <item
         android:id="@+id/action_add"
-        android:title="Refresh Images"
+        android:title="Add Images"
         android:icon="@drawable/ic_action_new"
         android:orderInCategory="110"
+
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
+        android:visible="false"
         android:icon="@drawable/ic_action_refresh"
         android:orderInCategory="100"
         app:showAsAction="ifRoom" />

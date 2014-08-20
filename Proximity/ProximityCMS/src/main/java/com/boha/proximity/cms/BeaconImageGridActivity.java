@@ -4,24 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.boha.proximity.cms.fragments.BeaconDeleteDialog;
 import com.boha.proximity.cms.fragments.BeaconImageGridFragment;
 import com.boha.proximity.data.BeaconDTO;
-import com.boha.proximity.data.RequestDTO;
-import com.boha.proximity.data.ResponseDTO;
-import com.boha.proximity.library.Statics;
-import com.boha.proximity.volley.BaseVolley;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconImageGridActivity extends ActionBarActivity implements BeaconImageGridFragment.BeaconImageGridListener{
+public class BeaconImageGridActivity extends ActionBarActivity implements BeaconImageGridFragment.BeaconImageGridListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +44,16 @@ public class BeaconImageGridActivity extends ActionBarActivity implements Beacon
         switch (req) {
             case BEACON_PIC_REQ:
                 if (res == RESULT_OK) {
-                    FileNames f = (FileNames)data.getSerializableExtra("fileNames");
+                    FileNames f = (FileNames) data.getSerializableExtra("fileNames");
                     beacon.getImageFileNameList().addAll(f.getFileNames());
                     fragment.setBeacon(beacon);
                 }
                 break;
         }
     }
+
     static final int BEACON_PIC_REQ = 1155;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -65,22 +61,26 @@ public class BeaconImageGridActivity extends ActionBarActivity implements Beacon
         if (id == R.id.action_add) {
             Intent t = new Intent(this, PictureActivity.class);
             t.putExtra("beacon", beacon);
-            startActivityForResult(t,BEACON_PIC_REQ);
+            startActivityForResult(t, BEACON_PIC_REQ);
             return true;
         }
         if (id == R.id.action_delete) {
-            BeaconDeleteDialog diag = new BeaconDeleteDialog();
+            final BeaconDeleteDialog diag = new BeaconDeleteDialog();
             diag.setContext(ctx);
             diag.setBeacon(beacon);
             diag.setListener(new BeaconDeleteDialog.BeaconDeleteListener() {
                 @Override
                 public void onImagesDeleted() {
-
+                    Toast.makeText(ctx, "Beacon images removed from list", Toast.LENGTH_SHORT).show();
+                    fragment.imagesDeleted();
+                    diag.dismiss();
                 }
 
                 @Override
                 public void onBeaconDeleted() {
-
+                    Toast.makeText(ctx, "Beacon removed from list", Toast.LENGTH_SHORT).show();
+                    beaconDeleted = true;
+                    onBackPressed();
                 }
             });
             diag.show(getSupportFragmentManager(), "BEACON_DELETE");
@@ -92,32 +92,6 @@ public class BeaconImageGridActivity extends ActionBarActivity implements Beacon
         return super.onOptionsItemSelected(item);
     }
 
-    private void removeAllImages() {
-        RequestDTO d = new RequestDTO();
-        d.setRequestType(RequestDTO.DELETE_ALL_BEACON_IMAGES);
-        d.setBeaconID(beacon.getBeaconID());
-        d.setBranchID(beacon.getBranchID());
-        d.setCompanyID(beacon.getCompanyID());
-
-        if (!BaseVolley.checkNetworkOnDevice(ctx)) return;
-        setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,d,ctx,new BaseVolley.BohaVolleyListener() {
-            @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (response.getStatusCode() == 0) {
-                    Log.d("BeaconImageGridActivity", response.getMessage());
-                    Toast.makeText(ctx,"Beacon images removed", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                Toast.makeText(ctx,"Communications with server have failed", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
 
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
@@ -135,6 +109,7 @@ public class BeaconImageGridActivity extends ActionBarActivity implements Beacon
     Menu mMenu;
     BeaconImageGridFragment fragment;
     Context ctx;
+    boolean beaconDeleted;
 
     @Override
     public void onPause() {
@@ -146,16 +121,23 @@ public class BeaconImageGridActivity extends ActionBarActivity implements Beacon
     public void onImageRemoved(String fileName) {
         removedFileNames.add(fileName);
     }
+
     private List<String> removedFileNames = new ArrayList<String>();
+
     @Override
     public void onBackPressed() {
+        Intent w = new Intent();
+        w.putExtra("beacon", beacon);
+        if (beaconDeleted) {
+            w.putExtra("beaconDeleteed", beaconDeleted);
+        }
         if (removedFileNames.size() > 0) {
-            Intent w = new Intent();
             FileNames fn = new FileNames(removedFileNames);
             w.putExtra("fileNames", fn);
-            setResult(RESULT_OK, w);
-
         }
+
+
+        setResult(RESULT_OK, w);
         finish();
     }
 }

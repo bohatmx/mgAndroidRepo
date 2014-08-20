@@ -155,15 +155,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainPagerActivity" />
         </activity>
-        <activity
-            android:name="com.boha.malengagolf.library.LeaderboardActivity"
-            android:parentActivityName=".MainPagerActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainPagerActivity" />
-        </activity>
+
         <activity
             android:name="com.boha.malengagolf.library.ScoreCardActivity"
             android:parentActivityName=".MainPagerActivity"

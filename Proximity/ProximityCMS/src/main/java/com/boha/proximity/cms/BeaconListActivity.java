@@ -48,7 +48,7 @@ public class BeaconListActivity extends ActionBarActivity
         if (id == R.id.action_add) {
             Intent q = new Intent(this, BeaconScanActivity.class);
             q.putExtra("branch", branch);
-            startActivityForResult(q,SCAN_REQ);
+            startActivityForResult(q, SCAN_REQ);
 
             return true;
         }
@@ -57,6 +57,7 @@ public class BeaconListActivity extends ActionBarActivity
     }
 
     static final int SCAN_REQ = 8765;
+
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
             final MenuItem refreshItem = mMenu.findItem(R.id.action_range);
@@ -76,6 +77,7 @@ public class BeaconListActivity extends ActionBarActivity
 
     @Override
     public void onBeaconPicked(BeaconDTO beacon) {
+        selectedBeacon = beacon;
         Intent w = new Intent(this, BeaconImageGridActivity.class);
         w.putExtra("beacon", beacon);
         startActivityForResult(w, BEACON_IMAGES);
@@ -94,21 +96,31 @@ public class BeaconListActivity extends ActionBarActivity
 
     }
 
-    BeaconDTO updatedbBeacon;
+    private BeaconDTO updatedbBeacon, selectedBeacon;
+
     @Override
     public void onActivityResult(int reqCode, int result, Intent data) {
         switch (reqCode) {
             case BEACON_IMAGES:
                 if (result == RESULT_OK) {
-                    FileNames f = (FileNames)data.getSerializableExtra("fileNames");
+                    FileNames f = (FileNames) data.getSerializableExtra("fileNames");
                     if (f != null) {
-                        updatedbBeacon = beaconListFragment.updateImageFiles(f);
+                        selectedBeacon.getImageFileNameList().addAll(f.getFileNames());
+                        beaconListFragment.setUpdatedBeacon(selectedBeacon);
+                        updatedbBeacon = selectedBeacon;
+                    }
+                    boolean deleted = data.getBooleanExtra("beaconDeleted", false);
+                    BeaconDTO b = (BeaconDTO) data.getSerializableExtra("beacon");
+                    if (deleted) {
+                        beaconListFragment.beaconDeleted(b);
+                    } else {
+                        beaconListFragment.setUpdatedBeacon(b);
                     }
                 }
                 break;
             case SCAN_REQ:
                 if (result == RESULT_OK) {
-                    ResponseDTO r = (ResponseDTO)data.getSerializableExtra("beacons");
+                    ResponseDTO r = (ResponseDTO) data.getSerializableExtra("beacons");
                     branch.setBeaconList(r.getBeaconList());
                     beaconListFragment.setBranch(branch);
                 }

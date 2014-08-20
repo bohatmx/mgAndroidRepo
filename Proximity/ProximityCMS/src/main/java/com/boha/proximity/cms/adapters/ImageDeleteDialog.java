@@ -42,7 +42,7 @@ public class ImageDeleteDialog extends DialogFragment {
         image = (ImageView) view.findViewById(R.id.image);
         btnNo = (Button) view.findViewById(R.id.no);
         btnYes = (Button)view.findViewById(R.id.yes);
-        getDialog().setTitle("Remove Beacon Image");
+        getDialog().setTitle(beacon.getBeaconName());
 
         btnNo.setOnClickListener(new View.OnClickListener() {
             @Override

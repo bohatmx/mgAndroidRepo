@@ -12,7 +12,7 @@
         android:id="@+id/image"
         android:src="@drawable/wave3"
         android:layout_width="400dp"
-        android:layout_height="400dp"/>
+        android:layout_height="600dp"/>
     <TextView
         android:id="@+id/number"
         android:background="@drawable/xred_oval"

@@ -51,6 +51,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
         w.setTournaments(tournamentList);
         Bundle b = new Bundle();
         b.putSerializable("response", w);
+        b.putSerializable("scorer",SharedUtil.getScorer(ctx));
         tournamentListFragment.setArguments(b);
         pageFragmentList.add(tournamentListFragment);
 

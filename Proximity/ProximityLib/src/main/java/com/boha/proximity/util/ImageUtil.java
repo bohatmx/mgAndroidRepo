@@ -225,7 +225,7 @@ public class ImageUtil {
             if (rootDir == null) {
                 rootDir = Environment.getRootDirectory();
             }
-            File imgDir = new File(rootDir, "mggolf");
+            File imgDir = new File(rootDir, "prox");
             if (!imgDir.exists()) {
                 imgDir.mkdir();
             }

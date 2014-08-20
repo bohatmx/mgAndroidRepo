@@ -13,24 +13,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.boha.malengagolf.library.data.AdministratorDTO;
 import com.boha.malengagolf.library.data.AgeGroupDTO;
+import com.boha.malengagolf.library.data.AppUserDTO;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardCarrierDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.ScorerDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.SplashFragment;
 import com.boha.malengagolf.library.fragments.StaggeredListener;
 import com.boha.malengagolf.library.fragments.StaggeredPlayerGridFragment;
 import com.boha.malengagolf.library.gallery.StaggeredTournamentGridFragment;
-import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.MGPageFragment;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +51,10 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
         ctx = getApplicationContext();
 
         tournament = (TournamentDTO) getIntent().getSerializableExtra("tournament");
+        administrator = (AdministratorDTO) getIntent().getSerializableExtra("administrator");
+        scorer = (ScorerDTO) getIntent().getSerializableExtra("scorer");
+        player = (PlayerDTO) getIntent().getSerializableExtra("player");
+        appUser = (AppUserDTO) getIntent().getSerializableExtra("appUser");
         golfGroup = SharedUtil.getGolfGroup(ctx);
 
         mPager = (ViewPager) findViewById(R.id.pager);
@@ -69,7 +76,7 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
                 runOnUiThread(new Runnable(){
                     @Override
                     public void run() {
-                        getPlayerPictures();
+                        getLeaderBoard();
                     }});
             }
         };
@@ -81,69 +88,39 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
     SplashFragment splashFragment;
     int currentPageIndex;
     ImageLoader imageLoader;
+    private AdministratorDTO administrator;
+    private AppUserDTO appUser;
+    private ScorerDTO scorer;
+    private PlayerDTO player;
     static final long DELAY = 60000, PERIOD = DELAY * 3;
 
 
 
-    private void getPlayerPictures() {
-        Log.w(LOG, ".....getPlayerPictures, really getting leaderboard");
+    private void getLeaderBoard() {
+        Log.w(LOG, ".....getLeaderBoard");
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_LEADERBOARD);
         w.setTournamentID(tournament.getTournamentID());
         w.setTournamentType(tournament.getTournamentType());
+        w.setSessionID(SharedUtil.getSessionID(ctx));
+        if (administrator != null) {
+            w.setAdministratorID(administrator.getAdministratorID());
+        }
+        if (appUser != null) {
+            w.setAppUserID(appUser.getAppUserID());
+        }
+        if (scorer != null) {
+            w.setScorerID(scorer.getScorerID());
+        }
+        if (player != null) {
+            w.setPlayerID(player.getPlayerID());
+        }
         setRefreshActionButtonState(true);
 
-//        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
-//            @Override
-//            public void onMessage(ResponseDTO r) {
-//
-//                carriers = new ArrayList<LeaderBoardCarrierDTO>();
-//                if (tournament.getUseAgeGroups() == 0) {
-//                    LeaderBoardCarrierDTO c = new LeaderBoardCarrierDTO();
-//                    c.setLeaderBoardList(r.getLeaderBoardList());
-//                    carriers.add(c);
-//                } else {
-//                    carriers = r.getLeaderBoardCarriers();
-//                }
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        setRefreshActionButtonState(false);
-//                        buildPages();
-//                        mPager.setCurrentItem(currentPageIndex, true);
-//                        //TODO = check if scoring complete - kill timer
-//                    }
-//                });
-//
-//            }
-//
-//            @Override
-//            public void onClose() {
-//
-//            }
-//
-//            @Override
-//            public void onError(final String message) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ToastUtil.errorToast(ctx,message);
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onSessionIDreceived(String sessionID) {
-//                mSessionID = sessionID;
-//            }
-//        });
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
+            public void onMessage(ResponseDTO r) {
+
                 carriers = new ArrayList<LeaderBoardCarrierDTO>();
                 if (tournament.getUseAgeGroups() == 0) {
                     LeaderBoardCarrierDTO c = new LeaderBoardCarrierDTO();
@@ -152,17 +129,64 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
                 } else {
                     carriers = r.getLeaderBoardCarriers();
                 }
-                buildPages();
-                mPager.setCurrentItem(currentPageIndex, true);
-                //TODO = check if scoring complete - kill timer
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        buildPages();
+                        mPager.setCurrentItem(currentPageIndex, true);
+                        //TODO = check if scoring complete - kill timer
+                    }
+                });
+
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                mSessionID = sessionID;
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                carriers = new ArrayList<LeaderBoardCarrierDTO>();
+//                if (tournament.getUseAgeGroups() == 0) {
+//                    LeaderBoardCarrierDTO c = new LeaderBoardCarrierDTO();
+//                    c.setLeaderBoardList(r.getLeaderBoardList());
+//                    carriers.add(c);
+//                } else {
+//                    carriers = r.getLeaderBoardCarriers();
+//                }
+//                buildPages();
+//                mPager.setCurrentItem(currentPageIndex, true);
+//                //TODO = check if scoring complete - kill timer
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     List<LeaderBoardCarrierDTO> carriers;
@@ -326,7 +350,7 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.gallery, menu);
         mMenu = menu;
-        getPlayerPictures();
+        getLeaderBoard();
         return true;
     }
 
@@ -352,7 +376,7 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
 
         }
         if (item.getItemId() == R.id.menu_refresh) {
-            getPlayerPictures();
+            getLeaderBoard();
             return true;
 
         }

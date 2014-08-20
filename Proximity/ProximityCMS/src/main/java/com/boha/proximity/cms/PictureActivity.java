@@ -82,6 +82,7 @@ public class PictureActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.picture, menu);
+        mMenu = menu;
         return true;
     }
 
@@ -312,20 +313,27 @@ public class PictureActivity extends ActionBarActivity {
             dto.setCompanyID(companyID);
             dto.setBranchID(branchID);
             dto.setBeaconID(beaconID);
+
+            final long start = System.currentTimeMillis();
+            setRefreshActionButtonState(true);
             ImageUpload.upload(dto, files, ctx,
                     new ImageUpload.ImageUploadListener() {
                         @Override
                         public void onUploadError() {
-
+                            setRefreshActionButtonState(false);
                             Log.e(LOG,
-                                    "Error uploading - onUploadError");
+                                    "%%%%%%%%% --- Error uploading - onUploadError");
+                            Toast.makeText(ctx, "Error uploading Content. Please try again.", Toast.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onImageUploaded(ResponseDTO response) {
+                            setRefreshActionButtonState(false);
+                            long end = System.currentTimeMillis();
+                            Log.e(LOG, "#### image upload, elapsed seconds: " + (end-start)/1000);
                             if (response.getStatusCode() == 0) {
                                 uploadedFileNames.add(response.getMessage());
-                                Toast.makeText(ctx, "Content uploaded", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ctx, "Content uploaded", Toast.LENGTH_LONG).show();
                             } else {
                                 Log.e(LOG,
                                         "Error uploading - "
@@ -348,6 +356,22 @@ public class PictureActivity extends ActionBarActivity {
         finish();
     }
 
+
+
+    public void setRefreshActionButtonState(final boolean refreshing) {
+        if (mMenu != null) {
+            final MenuItem refreshItem = mMenu.findItem(R.id.action_view);
+            if (refreshItem != null) {
+                if (refreshing) {
+                    refreshItem.setActionView(R.layout.action_bar_progess);
+                } else {
+                    refreshItem.setActionView(null);
+                }
+            }
+        }
+    }
+
+    Menu mMenu;
 
     @Override
     public void onPause() {

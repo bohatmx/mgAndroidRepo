@@ -13,15 +13,18 @@ import java.util.List;
 @SuppressWarnings(value = "unused")
 public class RequestDTO implements Serializable {
 
+    public static final int ADMIN = 1, PLAYER = 2, SCORER = 3, PARENT = 4, VOLUNTEER = 5, APP_USER = 6;
+
+
     private String email, pin, gcmRegistrationID, sessionID;
     private Integer golfGroupID;
     private Integer winnerFlag, leaderBoardID, appUserID;
     private Integer requestType;
     private Boolean zippedResponse;
-    private Integer personalPlayerID, type, tournamentType;
+    private Integer personalPlayerID, type, tournamentType, viewerType;
     private Double latitude, longitude;
     private Integer radius, radiusType, page;
-    private Integer tournamentID, playerID, countryID, provinceID, clubCourseID;
+    private Integer tournamentID, playerID, countryID,scorerID, administratorID, provinceID, clubCourseID;
 
     private GcmDeviceDTO gcmDevice;
     private List<Integer> idList;
@@ -129,7 +132,10 @@ public class RequestDTO implements Serializable {
 
     public static final int GET_CLUBS_NEARBY = 119;
     public static final int GET_CLUBS_IN_STATE = 120;
-    public static final int REGISTER_FOR_TOURNAMENT_UPDATES = 121;
+    public static final int REGISTER_ADMIN_FOR_TOURNAMENT_UPDATES = 121;
+    public static final int REGISTER_APPUSER_FOR_TOURNAMENT_UPDATES = 122;
+    public static final int REGISTER_SCORER_FOR_TOURNAMENT_UPDATES = 123;
+    public static final int REGISTER_PLAYER_FOR_TOURNAMENT_UPDATES = 124;
 
     public static final int STROKE_PLAY_INDIVIDUAL = 1;
     public static final int STABLEFORD_INDIVIDUAL = 2;
@@ -139,6 +145,30 @@ public class RequestDTO implements Serializable {
 
     private ImportPlayerDTO importPlayer;
     private List<ImportPlayerDTO> importPlayers;
+
+    public Integer getViewerType() {
+        return viewerType;
+    }
+
+    public void setViewerType(Integer viewerType) {
+        this.viewerType = viewerType;
+    }
+
+    public Integer getScorerID() {
+        return scorerID;
+    }
+
+    public void setScorerID(Integer scorerID) {
+        this.scorerID = scorerID;
+    }
+
+    public Integer getAdministratorID() {
+        return administratorID;
+    }
+
+    public void setAdministratorID(Integer administratorID) {
+        this.administratorID = administratorID;
+    }
 
     public String getSessionID() {
         return sessionID;

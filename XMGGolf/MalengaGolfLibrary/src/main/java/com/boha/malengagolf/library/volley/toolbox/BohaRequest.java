@@ -77,6 +77,8 @@ public class BohaRequest extends Request<ResponseDTO> {
             Log.e(LOG, "Unable to complete request: " + dto.getMessage(), e);
             return Response.error(new VolleyError(dto.getMessage()));
         }
+        end = System.currentTimeMillis();
+        Log.e(LOG,"#### comms elapsed time in seconds: " + getElapsed(start,end));
         return Response.success(dto,
                 HttpHeaderParser.parseCacheHeaders(response));
     }

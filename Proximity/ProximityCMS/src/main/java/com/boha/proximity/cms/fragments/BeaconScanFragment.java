@@ -190,6 +190,10 @@ public class BeaconScanFragment extends Fragment {
         beaconDTOList = branch.getBeaconList();
         txtBranch.setText(branch.getBranchName());
 
+        if (listView != null) {
+            findStoreBeacons();
+        }
+
     }
 
 

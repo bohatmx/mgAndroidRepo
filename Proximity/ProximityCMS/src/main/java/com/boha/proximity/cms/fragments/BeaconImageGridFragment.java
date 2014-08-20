@@ -19,6 +19,7 @@ import com.boha.proximity.cms.adapters.ImageDeleteDialog;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -97,15 +98,17 @@ public class BeaconImageGridFragment extends Fragment {
 
     }
 
+    public void imagesDeleted() {
+        beacon.setImageFileNameList(new ArrayList<String>());
+        beaconImageList = new ArrayList<String>();
+        adapter.notifyDataSetChanged();
+    }
     public void setBeacon(BeaconDTO beacon) {
         this.beacon = beacon;
         beaconImageList = beacon.getImageFileNameList();
         setGrid();
     }
 
-    private void confirmRemoval() {
-
-    }
     View view;
     Context ctx;
     List<String> beaconImageList;

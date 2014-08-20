@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.boha.proximity.cms.FileNames;
 import com.boha.proximity.cms.R;
 import com.boha.proximity.cms.adapters.BeaconAdapter;
 import com.boha.proximity.data.BeaconDTO;
@@ -20,7 +19,6 @@ import com.boha.proximity.data.BranchDTO;
 import com.boha.proximity.data.CompanyDTO;
 import com.boha.proximity.util.SharedUtil;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -69,30 +67,22 @@ public class BeaconListFragment extends Fragment {
 
     }
 
-
-    public BeaconDTO updateImageFiles(FileNames f) {
-        HashMap<String, String> map = new HashMap<String, String>();
-        for (String name: f.getFileNames()) {
-            int index = getIndex(name);
-            if (index > -1) {
-                beacon.getImageFileNameList().remove(index);
+    public void beaconDeleted(BeaconDTO b) {
+        int i = 0, index = -1;
+        for (BeaconDTO beacon: beaconList) {
+            if (beacon.getBeaconID() == b.getBeaconID()) {
+                index = i;
+                break;
             }
+            i++;
         }
-        adapter.notifyDataSetChanged();
-        return beacon;
-    }
-    private int getIndex(String deleted) {
-        int index = 0;
-        for (String s: beacon.getImageFileNameList()) {
-            if (s.equalsIgnoreCase(deleted)) {
-                return index;
-            }
-            index++;
-
+        if (index > -1) {
+            beaconList.remove(index);
+            adapter.notifyDataSetChanged();
+            txtCount.setText("" + beaconList.size());
         }
-
-        return -1;
     }
+
     private void setList() {
         adapter = new BeaconAdapter(ctx, R.layout.beacon_item, beaconList);
         listView.setAdapter(adapter);
@@ -106,8 +96,20 @@ public class BeaconListFragment extends Fragment {
         });
     }
 
+    public void setUpdatedBeacon(BeaconDTO b) {
+        Log.i(LOG,"###### setUpdatedBeacon beacon images: " + b.getImageFileNameList().size());
+        for (BeaconDTO beacon: beaconList) {
+            if (b.getBeaconID() == beacon.getBeaconID()) {
+                beacon.setImageFileNameList(b.getImageFileNameList());
+                adapter.notifyDataSetChanged();
+                break;
+            }
+        }
+    }
+
     public void setBranch(BranchDTO branch) {
         this.branch = branch;
+        if (branch == null) throw new UnsupportedOperationException("Branch is NULL");
         if (branch.getBeaconList() == null) return;
         beaconList = branch.getBeaconList();
         txtBranch.setText(branch.getBranchName());

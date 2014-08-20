@@ -123,6 +123,9 @@ public class BeaconRegisterFragment extends Fragment {
                 Toast.makeText(ctx,"Beacon registered, branch has "
                                 + response.getBeaconList().size(),
                         Toast.LENGTH_LONG).show();
+                Log.e(LOG,"Beacon registered, branch has "
+                        + response.getBeaconList().size());
+                listener.onBeaconRegistered(response.getBeaconList());
 
             }
 
@@ -136,9 +139,10 @@ public class BeaconRegisterFragment extends Fragment {
     private boolean isScanning;
     private List<BeaconDTO> beaconDTOList;
 
-    public void setBranch(BranchDTO branch, BeaconDTO scannedBeacon) {
+    public void setBranch(BranchDTO branch, BeaconDTO scannedBeacon, BeaconRegisterListener listener) {
         this.branch = branch;
         this.beacon = scannedBeacon;
+        this.listener = listener;
         beaconDTOList = branch.getBeaconList();
         txtBranch.setText(branch.getBranchName());
 

@@ -17,7 +17,8 @@ import java.util.Random;
 
 public class SharedUtil {
     public static final String SCROLL_INDEX = "scrollIndex",
-        SCROLL_TIME = "sTime";
+        SCROLL_TIME = "sTime", SESSION_ID = "sesID";
+
     public static void setScrollIndex(Context ctx, int index) {
         SharedPreferences sp = PreferenceManager
                 .getDefaultSharedPreferences(ctx);

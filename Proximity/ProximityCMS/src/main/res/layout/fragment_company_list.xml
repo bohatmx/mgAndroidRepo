@@ -15,7 +15,7 @@
         android:background="@color/white">
 
         <TextView
-            android:text="Blossum Inc."
+            android:text="BlossUm Inc."
             android:layout_alignParentLeft="true"
             android:id="@+id/FCL_txtCompany"
             style="@style/Title1TextStyleBlue"

@@ -11,7 +11,7 @@
         <TextView
             android:id="@+id/PIC_txtTitle"
             android:text="Beacon Images"
-            style="@style/Title2TextStyleBlack"
+            style="@style/Title3TextStyleBlack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView

@@ -7,19 +7,31 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.boha.malengagolf.library.*;
+
+import com.boha.malengagolf.library.AppInvitationActivity;
+import com.boha.malengagolf.library.LeaderBoardPager;
+import com.boha.malengagolf.library.PictureActivity;
+import com.boha.malengagolf.library.R;
+import com.boha.malengagolf.library.TournamentPlayerListActivity;
 import com.boha.malengagolf.library.adapters.TournamentAdapter;
 import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.AppUserDTO;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.ScorerDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.util.MGPageFragment;
 import com.boha.malengagolf.library.util.SharedUtil;
-import com.boha.malengagolf.library.util.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +135,9 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
                         tournament = t;
                         Intent x1 = new Intent(ctx, LeaderBoardPager.class);
                         x1.putExtra("tournament", t);
+                        x1.putExtra("player",player);
+                        x1.putExtra("scorer",scorer);
+                        x1.putExtra("appUser",appUser);
                         startActivity(x1);
                     }
 
@@ -197,7 +212,6 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
         if (response == null) response = new ResponseDTO();
         response.setTournaments(tList);
         setList();
-//        //TODO - set listview to the added tournament??
 
 
     }
@@ -251,6 +265,9 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
             Intent x1 = new Intent(ctx, LeaderBoardPager.class);
             x1.putExtra("tournament", tournament);
             x1.putExtra("golfGroup", golfGroup);
+            x1.putExtra("player",player);
+            x1.putExtra("scorer",scorer);
+            x1.putExtra("appUser",appUser);
             startActivity(x1);
             return true;
         }
@@ -260,10 +277,6 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
 
     }
 
-
-    private void underConstruction() {
-        ToastUtil.toast(ctx, "Feature under construction. Watch the space!");
-    }
 
 
     int selectedTourneyIndex;
@@ -281,5 +294,21 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
     View view;
     ResponseDTO response;
     int type;
+    ScorerDTO scorer;
+    PlayerDTO player;
+    AppUserDTO appUser;
+
+    public void setScorer(ScorerDTO scorer) {
+        this.scorer = scorer;
+    }
+
+    public void setPlayer(PlayerDTO player) {
+        this.player = player;
+    }
+
+    public void setAppUser(AppUserDTO appUser) {
+        this.appUser = appUser;
+    }
+
     public static final int APP_USER = 3;
 }

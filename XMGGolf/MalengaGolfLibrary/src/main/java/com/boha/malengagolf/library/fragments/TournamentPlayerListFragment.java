@@ -80,15 +80,12 @@ public class TournamentPlayerListFragment extends Fragment {
             return;
         }
         listener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
+            public void onMessage(ResponseDTO r) {
                 listener.setNotBusy();
                 if (!ErrorUtil.checkServerError(ctx, r)) {
                     return;
-                }
-                if (r.getLeaderBoardList().isEmpty()) {
-
                 }
                 leaderBoardList = r.getLeaderBoardList();
                 setList();
@@ -107,11 +104,53 @@ public class TournamentPlayerListFragment extends Fragment {
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
                 listener.setNotBusy();
                 ErrorUtil.showServerCommsError(ctx);
             }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx, sessionID);
+            }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                listener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                if (r.getLeaderBoardList().isEmpty()) {
+//
+//                }
+//                leaderBoardList = r.getLeaderBoardList();
+//                setList();
+//                checkScoringCompletion();
+//                CacheUtil.cacheData(ctx,r,CacheUtil.CACHE_TOURN_PLAYERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                listener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     public void refresh(List<LeaderBoardDTO> list) {

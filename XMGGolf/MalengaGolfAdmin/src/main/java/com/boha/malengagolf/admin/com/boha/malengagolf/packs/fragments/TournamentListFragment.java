@@ -129,6 +129,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                 Intent x1 = new Intent(ctx, LeaderBoardPager.class);
                 x1.putExtra("tournament", t);
                 x1.putExtra("golfGroup", golfGroup);
+                x1.putExtra("administrator", SharedUtil.getAdministrator(ctx));
                 startActivity(x1);
             }
 
@@ -303,6 +304,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                 Intent x1 = new Intent(ctx, LeaderBoardPager.class);
                 x1.putExtra("tournament", tournament);
                 x1.putExtra("golfGroup", golfGroup);
+                x1.putExtra("administrator", SharedUtil.getAdministrator(ctx));
                 startActivity(x1);
                 return true;
             case R.id.menu_delete:

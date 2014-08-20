@@ -52,7 +52,8 @@
             android:id="@+id/DEL_chkImages"
             android:text="Delete all beacon images"
             android:layout_width="wrap_content"
-            android:checked="true"
+            android:checked="false"
+            android:enabled="false"
             android:layout_height="wrap_content" />
 
         <RadioButton
@@ -60,6 +61,7 @@
             android:text="Remove the Beacon itself"
             android:layout_below="@id/DEL_chkImages"
             android:layout_marginTop="20dp"
+            android:checked="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RadioGroup>

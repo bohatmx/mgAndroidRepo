@@ -161,6 +161,18 @@ public class ScoringByHoleActivity extends FragmentActivity
         onBackPressed();
     }
 
+    @Override
+    public void onError(final String message) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                ToastUtil.errorToast(ctx,message);
+            }
+        });
+
+    }
+
 
     List<LeaderBoardDTO> updatedTeeList;
 

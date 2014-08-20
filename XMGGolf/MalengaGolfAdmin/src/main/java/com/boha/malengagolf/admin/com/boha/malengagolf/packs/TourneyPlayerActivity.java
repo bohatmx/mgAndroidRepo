@@ -161,17 +161,26 @@ public class TourneyPlayerActivity extends Activity {
             return;
         }
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
+            public void onMessage(ResponseDTO r) {
+
                 response = r;
-                leaderBoardList = r.getLeaderBoardList();
-                setList();
-                checkScoringCompletion();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        leaderBoardList = response.getLeaderBoardList();
+                        setList();
+                        checkScoringCompletion();
+                    }
+                });
+
                 CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
@@ -183,15 +192,61 @@ public class TourneyPlayerActivity extends Activity {
 
                     }
                 });
+            }
+
+            @Override
+            public void onClose() {
 
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                response = r;
+//                leaderBoardList = r.getLeaderBoardList();
+//                setList();
+//                checkScoringCompletion();
+//                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void setPlayerSpinner() {
@@ -369,6 +424,7 @@ public class TourneyPlayerActivity extends Activity {
         super.onSaveInstanceState(b);
     }
 
+    TextView txtPCount;
     private void setFields() {
         golfGroup = SharedUtil.getGolfGroup(ctx);
         topLayout = findViewById(R.id.TP_topLayout);
@@ -382,6 +438,7 @@ public class TourneyPlayerActivity extends Activity {
         btnAddPlayer = (Button) findViewById(R.id.TP_btnAddPlayer);
         playerSpinner = (Spinner) findViewById(R.id.TP_spinnerPlayers);
         txtCount = (TextView) findViewById(R.id.TP_count);
+        txtPCount = (TextView) findViewById(R.id.TP_txtCount);
         checkAll = (CheckBox) findViewById(R.id.TP_checkAll);
         checkAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -419,6 +476,7 @@ public class TourneyPlayerActivity extends Activity {
 
         MGApp mgApp = (MGApp) getApplication();
         txtCount.setText("" + leaderBoardList.size());
+        txtPCount.setText("" + leaderBoardList.size());
         boolean useAgeGroups = false;
         if (tournament.getUseAgeGroups() == 1) useAgeGroups = true;
         adapter = new TourneyPlayerAdapter(ctx,
@@ -437,11 +495,20 @@ public class TourneyPlayerActivity extends Activity {
             @Override
             public void onScoringRequested(LeaderBoardDTO l) {
                 leaderBoard = l;
+                int index = 0;
+                for (LeaderBoardDTO dto: leaderBoardList) {
+                    if (l.getLeaderBoardID() == dto.getLeaderBoardID()) {
+                        selectedIndex = index;
+                        break;
+                    }
+                    index++;
+                }
                 startScoringActivity();
             }
         });
         listView.setAdapter(adapter);
         registerForContextMenu(listView);
+        listView.setSelection(selectedIndex);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -656,7 +723,7 @@ public class TourneyPlayerActivity extends Activity {
         Log.w(LOG, "onActivityResult request: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == GO_SCORING) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.w(LOG, "...getting response object ... to reset list");
+                Log.w(LOG, "...getting response object ... to reset list, index: " + selectedIndex);
                 ResponseDTO d = (ResponseDTO) data.getSerializableExtra("response");
                 leaderBoardList = d.getLeaderBoardList();
                 setList();
@@ -687,6 +754,7 @@ public class TourneyPlayerActivity extends Activity {
         leaderBoardList.remove(index);
         adapter.notifyDataSetChanged();
         txtCount.setText("" + leaderBoardList.size());
+        txtPCount.setText("" + leaderBoardList.size());
 
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
@@ -696,22 +764,64 @@ public class TourneyPlayerActivity extends Activity {
         w.setTournamentID(tournament.getTournamentID());
         w.setPlayerID(leaderBoard.getPlayer().getPlayerID());
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
+            public void onMessage(final ResponseDTO response) {
+                if (response.getStatusCode() > 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtil.errorToast(ctx, response.getMessage());
+
+                        }
+                    });
                     return;
                 }
-                //ToastUtil.toast(ctx, ctx.getResources().getString(R.string.player_removed));
+                Log.e(LOG, "#### Tournament player removed");
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, "Communications link closed. Please try again");
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(final String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                //ToastUtil.toast(ctx, ctx.getResources().getString(R.string.player_removed));
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     @Override
@@ -723,9 +833,6 @@ public class TourneyPlayerActivity extends Activity {
         finish();
     }
 
-    private void underConstruction() {
-        ToastUtil.toast(ctx, "Feature under construction. Watch the space!");
-    }
     private void confirmRemoval(final int index) {
         AlertDialog.Builder diag = new AlertDialog.Builder(this);
         diag.setTitle(ctx.getResources().getString(com.boha.malengagolf.library.R.string.remove_player))

@@ -1,16 +1,16 @@
 package com.boha.proximity.cms;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.boha.proximity.cms.fragments.BeaconRegisterFragment;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.BranchDTO;
-import com.boha.proximity.data.ResponseDTO;
-import com.boha.proximity.util.CacheUtil;
 
 import java.util.List;
 
@@ -26,12 +26,13 @@ public class BeaconRegisterActivity extends FragmentActivity
         beacon = (BeaconDTO)getIntent().getSerializableExtra("beacon");
         beaconRegisterFragment = (BeaconRegisterFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);
-        beaconRegisterFragment.setBranch(branch, beacon);
+        beaconRegisterFragment.setBranch(branch, beacon, this);
     }
 
 
     BranchDTO branch;
     BeaconDTO beacon;
+    boolean beaconRegistered;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.beacon_list, menu);
@@ -80,35 +81,21 @@ public class BeaconRegisterActivity extends FragmentActivity
 
     @Override
     public void onBeaconRegistered(final List<BeaconDTO> list) {
+        Log.d(LOG, "onBeaconRegistered, list: " + list.size());
+        beaconRegistered = true;
+        branch.setBeaconList(list);
+        onBackPressed();
 
-        ResponseDTO resp;
-        CacheUtil.getCachedData(ctx,CacheUtil.CACHE_COMPANIES, new CacheUtil.CacheUtilListener() {
-            @Override
-            public void onFileDataDeserialized(ResponseDTO response) {
-                if (response != null) {
-                    for (BranchDTO dto: response.getBranchList()) {
-                        if (dto.getBranchID() == list.get(0).getBranchID()) {
-                            dto.setBeaconList(list);
-                            CacheUtil.cacheData(ctx,response,CacheUtil.CACHE_COMPANIES,new CacheUtil.CacheUtilListener() {
-                                @Override
-                                public void onFileDataDeserialized(ResponseDTO response) {
-
-                                }
-
-                                @Override
-                                public void onDataCached() {
-                                    finish();
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onDataCached() {
-
-            }
-        });
     }
+    @Override
+    public void onBackPressed() {
+        if (beaconRegistered = true) {
+            Intent i = new Intent();
+            i.putExtra("branch", branch);
+            setResult(RESULT_OK, i);
+        }
+
+        finish();
+    }
+    static final String LOG = BeaconRegisterActivity.class.getName();
 }

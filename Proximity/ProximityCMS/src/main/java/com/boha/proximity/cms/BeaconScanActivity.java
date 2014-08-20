@@ -159,8 +159,10 @@ public class BeaconScanActivity extends FragmentActivity implements BeaconScanFr
         switch (reqCode) {
             case REGISTER_BEACON:
                 if (result == RESULT_OK) {
-                    BeaconDTO beacon = (BeaconDTO)data.getSerializableExtra("beacon");
-                    registeredBeacons.add(beacon);
+                    BranchDTO branchDTO = (BranchDTO)data.getSerializableExtra("branch");
+                    registeredBeacons = branchDTO.getBeaconList();
+                    branch.setBeaconList(branchDTO.getBeaconList());
+                    beaconScanFragment.setBranch(branch);
                 }
                 break;
 
