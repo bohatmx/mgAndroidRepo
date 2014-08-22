@@ -9,20 +9,41 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.*;
+import android.view.ContextMenu;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.*;
+
 import com.boha.malengagolf.admin.MainPagerActivity;
 import com.boha.malengagolf.admin.R;
+import com.boha.malengagolf.library.AppInvitationActivity;
+import com.boha.malengagolf.library.LeaderBoardPager;
+import com.boha.malengagolf.library.MGGalleryActivity;
+import com.boha.malengagolf.library.MessageActivity;
+import com.boha.malengagolf.library.PictureActivity;
+import com.boha.malengagolf.library.TeeTimeActivity;
 import com.boha.malengagolf.library.adapters.TournamentAdapter;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
 import com.boha.malengagolf.library.fragments.TournamentListListener;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -407,22 +428,62 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                             return;
                         }
                         tournamentListener.setBusy();
-                        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+                        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
                             @Override
-                            public void onResponseReceived(ResponseDTO r) {
-                                tournamentListener.setNotBusy();
-                                if (!ErrorUtil.checkServerError(ctx, r)) {
-                                    return;
-                                }
-                                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_removed));
+                            public void onMessage(final ResponseDTO response) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tournamentListener.setNotBusy();
+                                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                                            return;
+                                        }
+                                        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_removed));
+                                    }
+                                });
                             }
 
                             @Override
-                            public void onVolleyError(VolleyError error) {
-                                tournamentListener.setNotBusy();
-                                ErrorUtil.showServerCommsError(ctx);
+                            public void onClose() {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(final String message) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastUtil.errorToast(ctx, message);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onSessionIDreceived(String sessionID) {
+                                SharedUtil.setSessionID(ctx, sessionID);
                             }
                         });
+//                        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//                            @Override
+//                            public void onResponseReceived(ResponseDTO r) {
+//                                tournamentListener.setNotBusy();
+//                                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                                    return;
+//                                }
+//                                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_removed));
+//                            }
+//
+//                            @Override
+//                            public void onVolleyError(VolleyError error) {
+//                                tournamentListener.setNotBusy();
+//                                ErrorUtil.showServerCommsError(ctx);
+//                            }
+//                        });
 
                     }
                 })
@@ -451,22 +512,62 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                             return;
                         }
                         tournamentListener.setBusy();
-                        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+                        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
                             @Override
-                            public void onResponseReceived(ResponseDTO r) {
-                                tournamentListener.setNotBusy();
-                                if (!ErrorUtil.checkServerError(ctx, r)) {
-                                    return;
-                                }
-                                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_removed));
+                            public void onMessage(final ResponseDTO response) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tournamentListener.setNotBusy();
+                                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                                            return;
+                                        }
+                                        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_removed));
+                                    }
+                                });
                             }
 
                             @Override
-                            public void onVolleyError(VolleyError error) {
-                                tournamentListener.setNotBusy();
-                                ErrorUtil.showServerCommsError(ctx);
+                            public void onClose() {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(final String message) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        ToastUtil.errorToast(ctx, message);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onSessionIDreceived(String sessionID) {
+                                SharedUtil.setSessionID(ctx, sessionID);
                             }
                         });
+//                        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//                            @Override
+//                            public void onResponseReceived(ResponseDTO r) {
+//                                tournamentListener.setNotBusy();
+//                                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                                    return;
+//                                }
+//                                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_removed));
+//                            }
+//
+//                            @Override
+//                            public void onVolleyError(VolleyError error) {
+//                                tournamentListener.setNotBusy();
+//                                ErrorUtil.showServerCommsError(ctx);
+//                            }
+//                        });
 
                     }
                 })

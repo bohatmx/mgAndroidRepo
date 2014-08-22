@@ -5,8 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+
 import com.boha.malengagolf.library.data.AppUserDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -14,6 +13,7 @@ import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 
 /**
  * Created by aubreyM on 2014/05/22.
@@ -37,10 +37,12 @@ public class GroupListActivty extends FragmentActivity {
         w.setAppUserID(appUser.getAppUserID());
 
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, getApplicationContext(),
-                new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onResponseReceived(ResponseDTO response) {
+                    public void run() {
                         setRefreshActionButtonState(false);
                         if (!ErrorUtil.checkServerError(getApplicationContext(), response)) {
                             return;
@@ -49,14 +51,54 @@ public class GroupListActivty extends FragmentActivity {
                         SharedUtil.saveAppUser(ctx,appUser);
                         groupListFragment.setGolfGroups(response.getGolfGroups());
                     }
+                });
+            }
 
+            @Override
+            public void onClose() {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onVolleyError(VolleyError error) {
-                        setRefreshActionButtonState(false);
-                        ErrorUtil.showServerCommsError(ctx);
+                    public void run() {
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
                     }
-                }
-        );
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
+            }
+        });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, getApplicationContext(),
+//                new BaseVolley.BohaVolleyListener() {
+//                    @Override
+//                    public void onResponseReceived(ResponseDTO response) {
+//                        setRefreshActionButtonState(false);
+//                        if (!ErrorUtil.checkServerError(getApplicationContext(), response)) {
+//                            return;
+//                        }
+//                        appUser.setGolfGroupList(response.getGolfGroups());
+//                        SharedUtil.saveAppUser(ctx,appUser);
+//                        groupListFragment.setGolfGroups(response.getGolfGroups());
+//                    }
+//
+//                    @Override
+//                    public void onVolleyError(VolleyError error) {
+//                        setRefreshActionButtonState(false);
+//                        ErrorUtil.showServerCommsError(ctx);
+//                    }
+//                }
+//        );
     }
 
     @Override

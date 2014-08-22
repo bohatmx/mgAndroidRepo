@@ -82,25 +82,31 @@ public class TournamentPlayerListFragment extends Fragment {
         listener.setBusy();
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onMessage(ResponseDTO r) {
-                listener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
-                leaderBoardList = r.getLeaderBoardList();
-                setList();
-                checkScoringCompletion();
-                CacheUtil.cacheData(ctx,r,CacheUtil.CACHE_TOURN_PLAYERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+            public void onMessage(final ResponseDTO r) {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
+                    public void run() {
+                        listener.setNotBusy();
+                        if (!ErrorUtil.checkServerError(ctx, r)) {
+                            return;
+                        }
+                        leaderBoardList = r.getLeaderBoardList();
+                        setList();
+                        checkScoringCompletion();
+                        CacheUtil.cacheData(ctx,r,CacheUtil.CACHE_TOURN_PLAYERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onDataCached() {
+                            @Override
+                            public void onDataCached() {
 
+                            }
+                        });
                     }
                 });
+
             }
 
             @Override
@@ -110,8 +116,14 @@ public class TournamentPlayerListFragment extends Fragment {
 
             @Override
             public void onError(String message) {
-                listener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.setNotBusy();
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
+
             }
 
             @Override

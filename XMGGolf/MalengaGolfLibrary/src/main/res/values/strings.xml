@@ -45,7 +45,7 @@
     <string name="error_server_comms">Problem communicating with the server. Please try again or contact mgGolf support</string>
     <string name="error_duplicate">Attempting to put duplicate data in database, ignored</string>
     <string name="welcome_aboard">Welcome Aboard! Thanks for signing up!</string>
-    <string name="app_name">mgGolf Scorer</string>
+    <string name="app_name">mgGolf</string>
     <string name="pages">Page</string>
     <string name="firstname">First Name</string>
     <string name="golfgroup_number">Golf Group Number</string>
@@ -189,9 +189,10 @@
     <string name="select_tourn_type">Please select Tournament format</string>
 
     <string name="enter_pin">Enter PIN</string>
+    <string name="select_acct">Please select account</string>
     <string name="enter_group_id">Enter Golf Group Number</string>
     <string name="lb_viewer">Leaderboard Viewer</string>
-
+    <string name="socket_closed">Communications socket closed. Please refresh</string>
     <string name="close_tourn">Close Tournament?</string>
     <string name="tourn_closed">Tournament is closed for edits</string>
     <string name="round_score">Round Score</string>

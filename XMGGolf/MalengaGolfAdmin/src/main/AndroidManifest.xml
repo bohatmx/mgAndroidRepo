@@ -297,10 +297,5 @@ to track payment status, should be protected by "signature" permission
             android:theme="@android:style/Theme.Dialog" />
     </application>
 
-    <permission
-        android:name="com.example.gcm.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-
-    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
 
 </manifest>

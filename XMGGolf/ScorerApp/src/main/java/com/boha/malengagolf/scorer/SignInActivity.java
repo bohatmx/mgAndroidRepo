@@ -283,8 +283,20 @@ public class SignInActivity extends FragmentActivity implements
         AccountManager am = AccountManager.get(getApplicationContext());
         Account[] accts = am
                 .getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        if (accts.length == 0) {
+            //TODO - send user to create acct
+            ToastUtil.errorToast(ctx, "No Google account found. Please create one and try again");
+            finish();
+            return;
+        }
+        if (accts.length == 1) {
+            email = accts[0].name;
+            spinnerEmail.setVisibility(View.GONE);
+            return;
+        }
         final ArrayList<String> tarList = new ArrayList<String>();
         if (accts != null) {
+            tarList.add(ctx.getResources().getString(R.string.select_acct));
             for (int i = 0; i < accts.length; i++) {
                 tarList.add(accts[i].name);
             }
@@ -299,8 +311,12 @@ public class SignInActivity extends FragmentActivity implements
 
                         @Override
                         public void onItemSelected(AdapterView<?> arg0,
-                                                   View arg1, int arg2, long arg3) {
-                            email = tarList.get(arg2);
+                                                   View arg1, int index, long arg3) {
+                            if (index ==  0) {
+                                email = null;
+                                return;
+                            }
+                            email = tarList.get(index);
                             Log.d("Reg", "###### Email account selected is "
                                     + email);
                         }

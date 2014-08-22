@@ -11,17 +11,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import com.android.volley.VolleyError;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.boha.malengagolf.admin.R;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.ClubCourseDTO;
 import com.boha.malengagolf.library.data.ClubDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,22 +87,62 @@ public class ClubScorecardFragment extends Fragment {
             return;
         }
         bar.setVisibility(View.VISIBLE);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                bar.setVisibility(View.GONE);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                clubScorecardListener.onScorecardUpdated(clubCourse);
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bar.setVisibility(View.GONE);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        clubScorecardListener.onScorecardUpdated(clubCourse);
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                bar.setVisibility(View.GONE);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx, sessionID);
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                bar.setVisibility(View.GONE);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                clubScorecardListener.onScorecardUpdated(clubCourse);
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                bar.setVisibility(View.GONE);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
 
     }
 

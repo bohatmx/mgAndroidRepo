@@ -10,14 +10,26 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.android.volley.VolleyError;
+
 import com.android.volley.toolbox.ImageLoader;
-import com.boha.malengagolf.library.*;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
+import com.boha.malengagolf.library.GolfCourseMapActivity;
+import com.boha.malengagolf.library.MGApp;
+import com.boha.malengagolf.library.MGGalleryActivity;
+import com.boha.malengagolf.library.PictureActivity;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.GolfGroupTournamentListFragment;
 import com.boha.malengagolf.library.fragments.SplashFragment;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.MGPageFragment;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+
 import org.acra.ACRA;
 
 import java.util.ArrayList;
@@ -139,6 +151,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
                         buildPages();
                     }
                 }
+                getTournaments();
             }
 
             @Override
@@ -148,7 +161,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
         });
 
 
-        getTournaments();
+
 
         return true;
     }
@@ -162,40 +175,94 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
             return;
         }
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                tournamentList = response.getTournaments();
-                for (TournamentDTO t: tournamentList) {
-                    t.setSortType(TournamentDTO.SORT_BY_NEWEST_TOURNAMENT_ENTERED);
-                }
-                Collections.sort(tournamentList);
-                if (response.getTournaments() != null) {
-                    buildPages();
-                }
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        tournamentList = response.getTournaments();
+                        for (TournamentDTO t: tournamentList) {
+                            t.setSortType(TournamentDTO.SORT_BY_NEWEST_TOURNAMENT_ENTERED);
+                        }
+                        Collections.sort(tournamentList);
+                        if (response.getTournaments() != null) {
+                            buildPages();
+                        }
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onDataCached() {
+                            @Override
+                            public void onDataCached() {
 
+                            }
+                        });
                     }
                 });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                tournamentList = response.getTournaments();
+//                for (TournamentDTO t: tournamentList) {
+//                    t.setSortType(TournamentDTO.SORT_BY_NEWEST_TOURNAMENT_ENTERED);
+//                }
+//                Collections.sort(tournamentList);
+//                if (response.getTournaments() != null) {
+//                    buildPages();
+//                }
+//                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     public void setRefreshActionButtonState(final boolean refreshing) {

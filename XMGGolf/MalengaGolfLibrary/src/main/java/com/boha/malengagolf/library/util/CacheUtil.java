@@ -275,7 +275,8 @@ public class CacheUtil {
                 }
 
             } catch (IOException e) {
-                Log.e(LOG, "Failed to retrieve cache", e);
+                Log.e(LOG, "Failed to retrieve cache: " + e.getMessage());
+                return null;
             }
             return response;
         }
@@ -283,7 +284,10 @@ public class CacheUtil {
         protected void onPostExecute(ResponseDTO v) {
             if (v != null) {
                 Log.w(LOG, "$$$$$$$$$$$$ cached data retrieved");
+            } else {
+                Log.w(LOG, "No existing cache file was found ....must be virgin signin");
             }
+
             listener.onFileDataDeserialized(v);
         }
     }

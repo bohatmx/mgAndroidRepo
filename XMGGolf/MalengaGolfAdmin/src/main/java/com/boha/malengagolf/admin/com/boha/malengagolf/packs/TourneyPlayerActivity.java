@@ -119,6 +119,61 @@ public class TourneyPlayerActivity extends Activity {
             return;
         }
         setRefreshActionButtonState(true);
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+
+                        leaderBoardList = response.getLeaderBoardList();
+                        txtCount.setText("" + leaderBoardList.size());
+                        setList();
+                        listView.setSelection(leaderBoardList.size() - 1);
+                        CacheUtil.cacheData(ctx,response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
+
+                            }
+
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
+            }
+        });
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
             public void onResponseReceived(ResponseDTO response) {
@@ -668,24 +723,67 @@ public class TourneyPlayerActivity extends Activity {
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                closedForRegistration = true;
-                Log.i(LOG, "closedForRegistration flag updated");
-                btnAddPlayer.setVisibility(View.GONE);
-                playerSpinner.setVisibility(View.GONE);
-                checkAll.setVisibility(View.GONE);
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        closedForRegistration = true;
+                        Log.i(LOG, "closedForRegistration flag updated");
+                        btnAddPlayer.setVisibility(View.GONE);
+                        playerSpinner.setVisibility(View.GONE);
+                        checkAll.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                closedForRegistration = true;
+//                Log.i(LOG, "closedForRegistration flag updated");
+//                btnAddPlayer.setVisibility(View.GONE);
+//                playerSpinner.setVisibility(View.GONE);
+//                checkAll.setVisibility(View.GONE);
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     boolean closedForRegistration;
@@ -698,6 +796,47 @@ public class TourneyPlayerActivity extends Activity {
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        Log.i(LOG, "closedForScoring flag updated");
+                        btnAddPlayer.setVisibility(View.GONE);
+                        playerSpinner.setVisibility(View.GONE);
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.errorToast(ctx, message);
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
+            }
+        });
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
             public void onResponseReceived(ResponseDTO response) {

@@ -95,12 +95,17 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
                 response = (ResponseDTO) bundle.getSerializable("response");
                 type = bundle.getInt("type", 0);
                 tournamentList = response.getTournaments();
+                player = (PlayerDTO)bundle.getSerializable("player");
+                scorer = (ScorerDTO)bundle.getSerializable("scorer");
+                administrator = (AdministratorDTO)bundle.getSerializable("administrator");
+                appUser = (AppUserDTO)bundle.getSerializable("appUser");
                 setList();
             }
         }
 
         return view;
     }
+
 
     @Override
     public void onSaveInstanceState(Bundle b) {
@@ -284,7 +289,7 @@ public class GolfGroupTournamentListFragment extends Fragment implements MGPageF
     ListView listView;
     TextView txtHeader, txtCount;
     GolfGroupDTO golfGroup;
-    AdministratorDTO administratorDTO;
+    AdministratorDTO administrator;
     static final String LOG = "TournamentListFragment";
     TournamentListener TournamentListener;
     TournamentAdapter adapter;

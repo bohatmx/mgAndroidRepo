@@ -9,18 +9,21 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.android.volley.VolleyError;
+
 import com.boha.malengagolf.EventReporter.fragments.AndroidCrashListFragment;
 import com.boha.malengagolf.EventReporter.fragments.ServerLogFragment;
 import com.boha.malengagolf.EventReporter.fragments.SeverEventListFragment;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.ErrorStoreAndroidDTO;
 import com.boha.malengagolf.library.data.ErrorStoreDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.MGPageFragment;
+import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,23 +48,65 @@ public class EventActivity extends FragmentActivity {
             return;
         }
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx,r)) {
-                    return;
-                }
-                response = r;
-                buildPages();
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx,r)) {
+                            return;
+                        }
+                        response = r;
+                        buildPages();
+                    }
+                });
+
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.socket_closed));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+                    }
+                });
+            }
+
+            @Override
+            public void onSessionIDreceived(String sessionID) {
+                SharedUtil.setSessionID(ctx,sessionID);
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx,r)) {
+//                    return;
+//                }
+//                response = r;
+//                buildPages();
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
     private void buildPages() {
         pageFragmentList = new ArrayList<MGPageFragment>();

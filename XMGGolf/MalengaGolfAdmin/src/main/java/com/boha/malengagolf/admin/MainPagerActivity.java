@@ -364,10 +364,13 @@ public class MainPagerActivity extends FragmentActivity
                                                 public void onFileDataDeserialized(ResponseDTO r) {
                                                     if (r != null) {
                                                         response.setScorers(r.getScorers());
+                                                        setSplashFrament();
+                                                        isUsingCachedData = true;
+                                                        buildPages();
+                                                    } else {
+                                                        getGolfGroupData();
                                                     }
-                                                    setSplashFrament();
-                                                    isUsingCachedData = true;
-                                                    buildPages();
+
 
 
                                                 }
@@ -385,6 +388,8 @@ public class MainPagerActivity extends FragmentActivity
 
                                     }
                                 });
+                            } else {
+                                getGolfGroupData();
                             }
                         }
 
@@ -393,12 +398,14 @@ public class MainPagerActivity extends FragmentActivity
 
                         }
                     });
+                } else {
+                    getGolfGroupData();
                 }
+
             }
 
             @Override
             public void onDataCached() {
-
             }
         });
 
