@@ -24,11 +24,13 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.adapters.LeaderboardOneRoundAdapter;
+import com.boha.malengagolf.library.data.ClubCourseDTO;
 import com.boha.malengagolf.library.data.LeaderBoardCarrierDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.CompleteRounds;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
@@ -40,9 +42,12 @@ import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by aubreyM on 2014/04/09.
@@ -284,6 +289,30 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     static final Locale loc = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMMM yyyy HH:mm", loc);
 
+    public void updateSingleScore(LeaderBoardDTO lb) {
+        List<LeaderBoardDTO> bList = new ArrayList<LeaderBoardDTO>();
+        boolean needsUpdate = false;
+        for (LeaderBoardDTO dto: leaderBoardList) {
+            if (dto.getLeaderBoardID() == lb.getLeaderBoardID()) {
+                bList.add(lb);
+                needsUpdate = true;
+            } else {
+                bList.add(dto);
+            }
+        }
+        if (needsUpdate) {
+            leaderBoardList = bList;
+            if (tournament.getTournamentType() == TournamentDTO.STROKE_PLAY_INDIVIDUAL) {
+                calculateLeaderboard(leaderBoardList);
+                setList();
+            }
+            if (tournament.getTournamentType() == TournamentDTO.STABLEFORD_INDIVIDUAL) {
+                //calculateLeaderboard(leaderBoardList);
+                setList();
+            }
+
+        }
+    }
     public void setList() {
 
         Log.i(LOG, "------------------ setList............. ");
@@ -302,6 +331,9 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         leaderBoardList = goodList;
         if (!leaderBoardList.isEmpty()) {
             long time = leaderBoardList.get(0).getTimeStamp();
+            if (time == 0) {
+                time = new Date().getTime();
+            }
             txtTimeStamp.setText(sdf.format(new Date(time)));
         }
         setLeaderBoardLive();
@@ -628,5 +660,259 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     public LeaderBoardCarrierDTO getLeaderBoardCarrier() {
         return leaderBoardCarrier;
     }
+    private void calculateLeaderboard(List<LeaderBoardDTO> list) {
 
+        for (LeaderBoardDTO lb : list) {
+            setParStatus(lb);
+            lb.setWinnerFlag(0);
+            lb.setSortType(0);
+        }
+        Collections.sort(list);
+        //set positions
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int pos = 1;
+        for (LeaderBoardDTO board : list) {
+            if (map.containsKey(board.getParStatus())) {
+                continue;
+            }
+            map.put(board.getParStatus(), pos);
+            pos++;
+        }
+
+        for (LeaderBoardDTO b : list) {
+            if (map.containsKey(b.getParStatus())) {
+                b.setPosition(map.get(b.getParStatus()));
+            }
+        }
+
+        //check for tied
+        HashMap<Integer, Integer> map2 = new HashMap<>();
+        HashMap<Integer, Integer> tied = new HashMap<>();
+
+        for (LeaderBoardDTO d : list) {
+            if (d.getTotalScore() == 0) {
+                continue;
+            }
+            if (map2.containsKey(d.getParStatus())) {
+                tied.put(d.getParStatus(), d.getParStatus());
+            } else {
+                map2.put(d.getParStatus(), d.getParStatus());
+            }
+
+        }
+        for (Map.Entry pairs : tied.entrySet()) {
+            for (LeaderBoardDTO d : list) {
+                int a = (Integer) pairs.getKey();
+                if (d.getParStatus() == a) {
+                    d.setTied(true);
+                }
+            }
+        }
+        setPositions(list);
+    }
+    private void setParStatus(LeaderBoardDTO lb) {
+        int parStatus = 0;
+        int cnt = 0;
+        for (TourneyScoreByRoundDTO r : lb.getTourneyScoreByRoundList()) {
+            setCurrentRoundStatus(lb, r);
+            ClubCourseDTO cc = r.getClubCourse();
+            if (r.getScore1() > 0) {
+                parStatus += cc.getParHole1() - r.getScore1();
+                lb.setLastHole(1);
+                cnt++;
+            }
+            if (r.getScore2() > 0) {
+                parStatus += cc.getParHole2() - r.getScore2();
+                lb.setLastHole(2);
+                cnt++;
+            }
+            if (r.getScore3() > 0) {
+                parStatus += cc.getParHole3() - r.getScore3();
+                lb.setLastHole(3);
+                cnt++;
+            }
+            if (r.getScore4() > 0) {
+                parStatus += cc.getParHole4() - r.getScore4();
+                lb.setLastHole(4);
+                cnt++;
+            }
+            if (r.getScore5() > 0) {
+                parStatus += cc.getParHole5() - r.getScore5();
+                lb.setLastHole(5);
+                cnt++;
+            }
+            if (r.getScore6() > 0) {
+                parStatus += cc.getParHole6() - r.getScore6();
+                lb.setLastHole(6);
+                cnt++;
+            }
+            if (r.getScore7() > 0) {
+                parStatus += cc.getParHole7() - r.getScore7();
+                lb.setLastHole(7);
+                cnt++;
+            }
+            if (r.getScore8() > 0) {
+                parStatus += cc.getParHole8() - r.getScore8();
+                lb.setLastHole(8);
+                cnt++;
+            }
+            if (r.getScore9() > 0) {
+                parStatus += cc.getParHole9() - r.getScore9();
+                lb.setLastHole(9);
+                cnt++;
+            }
+            if (r.getScore10() > 0) {
+                parStatus += cc.getParHole10() - r.getScore10();
+                lb.setLastHole(10);
+                cnt++;
+            }
+            if (r.getScore11() > 0) {
+                parStatus += cc.getParHole11() - r.getScore11();
+                lb.setLastHole(11);
+                cnt++;
+            }
+            if (r.getScore12() > 0) {
+                parStatus += cc.getParHole12() - r.getScore12();
+                lb.setLastHole(12);
+                cnt++;
+            }
+            if (r.getScore13() > 0) {
+                parStatus += cc.getParHole13() - r.getScore13();
+                lb.setLastHole(13);
+                cnt++;
+            }
+            if (r.getScore14() > 0) {
+                parStatus += cc.getParHole14() - r.getScore14();
+                lb.setLastHole(14);
+                cnt++;
+            }
+            if (r.getScore15() > 0) {
+                parStatus += cc.getParHole15() - r.getScore15();
+                lb.setLastHole(15);
+                cnt++;
+            }
+            if (r.getScore16() > 0) {
+                parStatus += cc.getParHole16() - r.getScore16();
+                lb.setLastHole(16);
+                cnt++;
+            }
+            if (r.getScore17() > 0) {
+                parStatus += cc.getParHole17() - r.getScore17();
+                lb.setLastHole(17);
+                cnt++;
+            }
+            if (r.getScore18() > 0) {
+                parStatus += cc.getParHole18() - r.getScore18();
+                lb.setLastHole(18);
+                cnt++;
+            }
+            if (cnt == 0) {
+                lb.setParStatus(LeaderBoardDTO.NO_PAR_STATUS);
+            } else {
+                lb.setParStatus(parStatus);
+            }
+
+        }
+    }
+    private void setCurrentRoundStatus(LeaderBoardDTO lb, TourneyScoreByRoundDTO r) {
+
+        int cnt = 0;
+        ClubCourseDTO cc = r.getClubCourse();
+        if (cc == null) throw new UnsupportedOperationException("club course is null");
+        int parStatus = 0;
+        if (r.getScore1() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole1() - r.getScore1();
+        }
+        if (r.getScore2() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole2() - r.getScore2();
+        }
+        if (r.getScore3() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole3() - r.getScore3();
+        }
+        if (r.getScore4() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole4() - r.getScore4();
+        }
+        if (r.getScore5() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole5() - r.getScore5();
+        }
+        if (r.getScore6() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole6() - r.getScore6();
+        }
+        if (r.getScore7() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole7() - r.getScore7();
+        }
+        if (r.getScore8() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole8() - r.getScore8();
+        }
+        if (r.getScore9() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole9() - r.getScore9();
+        }
+        if (r.getScore10() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole10() - r.getScore10();
+        }
+        if (r.getScore11() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole11() - r.getScore11();
+        }
+        if (r.getScore12() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole12() - r.getScore12();
+        }
+        if (r.getScore13() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole13() - r.getScore13();
+        }
+        if (r.getScore14() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole14() - r.getScore14();
+        }
+        if (r.getScore15() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole15() - r.getScore15();
+        }
+        if (r.getScore16() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole16() - r.getScore16();
+        }
+        if (r.getScore17() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole17() - r.getScore17();
+        }
+        if (r.getScore18() == 0) {
+            cnt++;
+        } else {
+            parStatus += cc.getParHole18() - r.getScore18();
+        }
+        if (cnt < 18) {
+            lb.setCurrentRoundStatus(parStatus);
+        }
+
+    }
 }

@@ -224,10 +224,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
+
         });
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //            @Override

@@ -169,10 +169,7 @@ public class TourneyPlayerActivity extends Activity {
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
+
         });
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
@@ -266,10 +263,7 @@ public class TourneyPlayerActivity extends Activity {
 
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
+
         });
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //            @Override
@@ -761,11 +755,7 @@ public class TourneyPlayerActivity extends Activity {
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
-        });
+                   });
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //            @Override
 //            public void onResponseReceived(ResponseDTO response) {
@@ -832,10 +822,6 @@ public class TourneyPlayerActivity extends Activity {
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
         });
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
@@ -940,10 +926,7 @@ public class TourneyPlayerActivity extends Activity {
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(final String sessionID) {
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
+
         });
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //            @Override

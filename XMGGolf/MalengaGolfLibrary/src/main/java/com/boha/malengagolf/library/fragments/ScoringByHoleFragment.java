@@ -426,11 +426,12 @@ public class ScoringByHoleFragment extends Fragment {
         LeaderBoardDTO lb = new LeaderBoardDTO();
         lb.setTournamentID(tournament.getTournamentID());
         lb.setLeaderBoardID(leaderBoard.getLeaderBoardID());
+
         lb.setTourneyScoreByRoundList(new ArrayList<TourneyScoreByRoundDTO>());
         for (TourneyScoreByRoundDTO tsbr: leaderBoard.getTourneyScoreByRoundList()) {
             TourneyScoreByRoundDTO cc = new TourneyScoreByRoundDTO();
             cc = tsbr;
-            cc.setClubCourse(null);
+            //cc.setClubCourse(tsbr.getClubCourse());
             lb.getTourneyScoreByRoundList().add(cc);
         }
         w.setLeaderBoard(lb);
@@ -461,11 +462,7 @@ public class ScoringByHoleFragment extends Fragment {
                 scoringByHoleListener.onError(message);
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                mSessionID = sessionID;
-                SharedUtil.setSessionID(ctx,sessionID);
-            }
+
         });
 
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {

@@ -156,10 +156,7 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                mSessionID = sessionID;
-            }
+
         });
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //            @Override

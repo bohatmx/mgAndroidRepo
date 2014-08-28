@@ -126,10 +126,7 @@ public class TournamentPlayerListFragment extends Fragment {
 
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                SharedUtil.setSessionID(ctx, sessionID);
-            }
+
         });
 //        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //            @Override
@@ -166,10 +163,12 @@ public class TournamentPlayerListFragment extends Fragment {
     }
 
     public void refresh(List<LeaderBoardDTO> list) {
+        Log.w(LOG,"##### refresh list");
         leaderBoardList = list;
         setList();
     }
     private void setList() {
+        Log.w(LOG,"##### set list");
         txtCount.setText("" + leaderBoardList.size());
         boolean useAgeGroups = false;
         if (tournament.getUseAgeGroups() == 1) useAgeGroups = true;

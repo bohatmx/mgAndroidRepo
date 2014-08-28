@@ -463,10 +463,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                                 });
                             }
 
-                            @Override
-                            public void onSessionIDreceived(String sessionID) {
-                                SharedUtil.setSessionID(ctx, sessionID);
-                            }
+
                         });
 //                        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //                            @Override
@@ -547,10 +544,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                                 });
                             }
 
-                            @Override
-                            public void onSessionIDreceived(String sessionID) {
-                                SharedUtil.setSessionID(ctx, sessionID);
-                            }
+
                         });
 //                        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
 //                            @Override

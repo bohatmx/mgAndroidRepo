@@ -168,16 +168,28 @@ public class LeaderBoardPager extends FragmentActivity
         setRefreshActionButtonState(true);
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onMessage(ResponseDTO r) {
-                response = r;
+            public void onMessage(final ResponseDTO r) {
+
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(LOG, "### onMessage received ... about to build pages");
+                        Log.i(LOG, "### onMessage received ... about to build pages or update 1 score");
                         setRefreshActionButtonState(false);
-                        setSplashFrament();
-                        buildPages();
+                        if (r.getLeaderBoard() != null) {
+                            for (LeaderBoardPage lf: leaderBoardPages) {
+                                if (lf instanceof LeaderboardFragment) {
+                                    LeaderboardFragment fragment = (LeaderboardFragment)lf;
+                                    Log.i(LOG, "### onMessage received ... update single score");
+                                    fragment.updateSingleScore(r.getLeaderBoard());
+                                }
+
+                            }
+                        } else {
+                            setSplashFrament();
+                            response = r;
+                            buildPages();
+                        }
                     }
                 });
 
@@ -234,10 +246,7 @@ public class LeaderBoardPager extends FragmentActivity
                 });
             }
 
-            @Override
-            public void onSessionIDreceived(String sessionID) {
-                mSessionID = sessionID;
-            }
+
         });
 
 

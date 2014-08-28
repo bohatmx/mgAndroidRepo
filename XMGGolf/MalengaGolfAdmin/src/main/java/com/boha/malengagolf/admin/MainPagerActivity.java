@@ -267,10 +267,7 @@ public class MainPagerActivity extends FragmentActivity
 
                 }
 
-                @Override
-                public void onSessionIDreceived(String sessionID) {
-                    SharedUtil.setSessionID(ctx,sessionID);
-                }
+
             });
 
         } else {
