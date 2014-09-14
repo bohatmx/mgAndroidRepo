@@ -13,12 +13,14 @@ import java.io.Serializable;
  */
 public class RequestDTO implements Serializable {
 
-    private int beaconID, branchID, companyID, requestType;
+    private int beaconID, branchID, companyID, requestType,visitorID;
     private CompanyDTO company;
     private BranchDTO branch;
     private BeaconDTO beacon;
     private BeaconDataItemDTO beaconDataItem;
     private String macAddress, fileName;
+    private VisitorDTO visitor;
+    private VisitorTrackDTO visitorTrack;
 
     public static final int REGISTER_COMPANY = 1;
     public static final int REGISTER_BRANCH = 2;
@@ -27,11 +29,21 @@ public class RequestDTO implements Serializable {
     public static final int UPDATE_DATA_ITEM = 5;
     public static final int UPDATE_BEACON = 6;
 
+    public static final int REGISTER_VISITOR = 7;
+    public static final int REGISTER_VISIT = 8;
+
+
     public static final int GET_BRANCH_BEACONS = 11;
     public static final int GET_BEACONS_BY_MAC_ADDRESS = 12;
     public static final int GET_COMPANY_BEACONS = 33;
     public static final int GET_BEACON_IMAGE_FILES = 14;
     public static final int GET_COMPANIES = 15;
+
+
+    public static final int GET_VISITOR_LIST = 16;
+    public static final int GET_VISITOR_TRACKS = 17;
+    public static final int GET_VISITOR_TRACKS_SORTED_BY_BEACONS = 18;
+
     public static final int GET_ERROR_REPORTS = 73;
     //
     public static final int DELETE_ALL_BEACON_IMAGES = 20;
@@ -40,6 +52,30 @@ public class RequestDTO implements Serializable {
     public static final int DELETE_ALL_BEACONS = 23;
     //
 
+
+    public int getVisitorID() {
+        return visitorID;
+    }
+
+    public void setVisitorID(int visitorID) {
+        this.visitorID = visitorID;
+    }
+
+    public VisitorDTO getVisitor() {
+        return visitor;
+    }
+
+    public void setVisitor(VisitorDTO visitor) {
+        this.visitor = visitor;
+    }
+
+    public VisitorTrackDTO getVisitorTrack() {
+        return visitorTrack;
+    }
+
+    public void setVisitorTrack(VisitorTrackDTO visitorTrack) {
+        this.visitorTrack = visitorTrack;
+    }
 
     public String getFileName() {
         return fileName;

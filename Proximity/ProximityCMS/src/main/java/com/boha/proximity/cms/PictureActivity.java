@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,8 @@ public class PictureActivity extends ActionBarActivity {
         btnTakePic = (Button) findViewById(R.id.BAA_btnTakePicture);
         btnPick = (Button) findViewById(R.id.BAA_btnPick);
         image = (ImageView) findViewById(R.id.BAA_image);
+        progressBar = (ProgressBar)findViewById(R.id.BAA_progress);
+        progressBar.setVisibility(View.GONE);
 
         btnTakePic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,15 +292,24 @@ public class PictureActivity extends ActionBarActivity {
         }
     }
 
-    public static Bitmap getBitmapFromCameraData(Intent data, Context context) {
-        Uri selectedImage = data.getData();
-        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-        cursor.moveToFirst();
-        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String picturePath = cursor.getString(columnIndex);
-        cursor.close();
-        return BitmapFactory.decodeFile(picturePath);
+    public  Bitmap getBitmapFromCameraData(Intent data, Context context) {
+        Bitmap bm = null;
+        try {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = context.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            bm = BitmapFactory.decodeFile(picturePath);
+        } catch (Exception e) {
+            Log.e(LOG,"### ERROR at getBitmapFromCameraData",e);
+            Toast toast = Toast.makeText(context, "Unable to get image from the camera. Please try again",Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+        return bm;
     }
 
     List<String> uploadedFileNames = new ArrayList<String>();
@@ -316,10 +328,12 @@ public class PictureActivity extends ActionBarActivity {
 
             final long start = System.currentTimeMillis();
             setRefreshActionButtonState(true);
+            progressBar.setVisibility(View.VISIBLE);
             ImageUpload.upload(dto, files, ctx,
                     new ImageUpload.ImageUploadListener() {
                         @Override
                         public void onUploadError() {
+                            progressBar.setVisibility(View.GONE);
                             setRefreshActionButtonState(false);
                             Log.e(LOG,
                                     "%%%%%%%%% --- Error uploading - onUploadError");
@@ -329,6 +343,7 @@ public class PictureActivity extends ActionBarActivity {
                         @Override
                         public void onImageUploaded(ResponseDTO response) {
                             setRefreshActionButtonState(false);
+                            progressBar.setVisibility(View.GONE);
                             long end = System.currentTimeMillis();
                             Log.e(LOG, "#### image upload, elapsed seconds: " + (end-start)/1000);
                             if (response.getStatusCode() == 0) {
@@ -448,5 +463,6 @@ public class PictureActivity extends ActionBarActivity {
     private BeaconDTO beacon;
     Button btnTakePic, btnSave, btnPick;
     TextView beaconName;
+    ProgressBar progressBar;
     static final int CAPTURE_IMAGE = 11331, IMAGE_PICKER_SELECT = 11221;
 }

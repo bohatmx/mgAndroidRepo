@@ -1,5 +1,7 @@
 package com.boha.beacon.beaconsapp;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -86,7 +88,7 @@ public class PromotionFragment extends Fragment implements PageFragment{
         Picasso.with(ctx).load(sb.toString()).into(image, new Callback() {
             @Override
             public void onSuccess() {
-
+               Log.i(LOG,"Picasso downloaded image OK");
             }
 
             @Override
@@ -94,6 +96,13 @@ public class PromotionFragment extends Fragment implements PageFragment{
                 image.setImageDrawable(getRandomImage());
             }
         });
+    }
+    public void animateImage() {
+        final ObjectAnimator an = ObjectAnimator.ofFloat(image, View.SCALE_X, 0);
+        an.setRepeatCount(1);
+        an.setDuration(200);
+        an.setRepeatMode(ValueAnimator.REVERSE);
+        an.start();
     }
     private Drawable getRandomImage() {
 

@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/ProximityCMS/ProximityCMS.iml" filepath="$PROJECT_DIR$/ProximityCMS/ProximityCMS.iml" />
       <module fileurl="file://$PROJECT_DIR$/ProximityLib/ProximityLib.iml" filepath="$PROJECT_DIR$/ProximityLib/ProximityLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/ProximityReporter/ProximityReporter.iml" filepath="$PROJECT_DIR$/ProximityReporter/ProximityReporter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VisitorTrack/VisitorTrack.iml" filepath="$PROJECT_DIR$/VisitorTrack/VisitorTrack.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/slidingfragment/slidingfragment.iml" filepath="$PROJECT_DIR$/slidingfragment/slidingfragment.iml" />
     </modules>

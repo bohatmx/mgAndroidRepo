@@ -1,9 +1,11 @@
 package com.boha.proximity.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/07/30.
  */
-public class ErrorStoreDTO {
+public class ErrorStoreDTO implements Serializable{
     private Integer errorStoreID;
     private int statusCode;
     private String message, origin;

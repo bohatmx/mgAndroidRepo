@@ -25,6 +25,7 @@
     <autoscroll-to-editor value="false" />
     <autoscroll-from-editor value="true" />
     <show-object-properties value="true" />
+    <loaded-nodes />
   </component>
   <component name="DBNavigator.Project.MethodExecutionManager">
     <method-browser />
@@ -131,6 +132,10 @@
         <visible value="true" />
         <editable value="false" />
       </tracking-columns>
+      <sorting>
+        <nulls-first value="true" />
+        <max-sorting-columns value="4" />
+      </sorting>
     </dataset-grid-settings>
     <dataset-editor-settings>
       <text-editor-popup>
@@ -349,13 +354,15 @@
         <statement-postfix value="/" />
         <lookup-ddl-files value="true" />
         <create-ddl-files value="false" />
+        <use-qualified-names value="false" />
+        <make-scripts-rerunnable value="true" />
       </general>
     </ddl-file-settings>
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" assert-keyword="true" jdk-15="true" project-jdk-name="JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="masterDetails">

@@ -130,6 +130,12 @@
         <item name="android:textSize">16sp</item>
         <item name="android:padding">5dp</item>
     </style>
+    <style name="Title2TextStyleRed" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/absa_red</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:padding">5dp</item>
+    </style>
 
     <style name="Title2TextStyleGreen" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/green</item>
@@ -345,6 +351,30 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">12sp</item>
         <item name="android:background">@drawable/xred_box</item>
+    </style>
+    <style name="RedOval" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xred_oval</item>
+    </style>
+    <style name="GreenOval" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xgreen_oval</item>
+    </style>
+    <style name="BlackOval" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblack_oval</item>
+    </style>
+    <style name="BlueOval" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/xblue_oval</item>
     </style>
 
     <style name="GreenCountBox" parent="@android:style/TextAppearance.Medium">

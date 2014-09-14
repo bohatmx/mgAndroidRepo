@@ -1,9 +1,11 @@
 package com.boha.proximity.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/07/30.
  */
-public class ErrorStoreAndroidDTO {
+public class ErrorStoreAndroidDTO implements Serializable{
     private int errorStoreAndroidID, golfGroupID;
     private String companyName, logCat, stackTrace, androidVersion,
             brand, appVersionCode, appVersionName, packageName, phoneModel;

@@ -30,7 +30,43 @@ public class ResponseDTO implements Serializable {
     private List<ErrorStoreAndroidDTO> errorStoreAndroidList;
     private List<ErrorStoreDTO> errorStoreList;
     private String log;
+    private List<VisitorTrackDTO> visitorTrackListSortedByBeacon;
 
+    private List<VisitorDTO> visitorList;
+    private List<VisitorTrackDTO> visitorTrackList;
+    private VisitorDTO visitor;
+
+    public List<VisitorTrackDTO> getVisitorTrackListSortedByBeacon() {
+        return visitorTrackListSortedByBeacon;
+    }
+
+    public void setVisitorTrackListSortedByBeacon(List<VisitorTrackDTO> visitorTrackListSortedByBeacon) {
+        this.visitorTrackListSortedByBeacon = visitorTrackListSortedByBeacon;
+    }
+
+    public List<VisitorDTO> getVisitorList() {
+        return visitorList;
+    }
+
+    public void setVisitorList(List<VisitorDTO> visitorList) {
+        this.visitorList = visitorList;
+    }
+
+    public List<VisitorTrackDTO> getVisitorTrackList() {
+        return visitorTrackList;
+    }
+
+    public void setVisitorTrackList(List<VisitorTrackDTO> visitorTrackList) {
+        this.visitorTrackList = visitorTrackList;
+    }
+
+    public VisitorDTO getVisitor() {
+        return visitor;
+    }
+
+    public void setVisitor(VisitorDTO visitor) {
+        this.visitor = visitor;
+    }
 
     public String getLog() {
         return log;

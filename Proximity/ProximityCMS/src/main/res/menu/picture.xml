@@ -6,5 +6,5 @@
         android:title="Beacon Content"
         android:icon="@drawable/ic_action_slideshow"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 </menu>

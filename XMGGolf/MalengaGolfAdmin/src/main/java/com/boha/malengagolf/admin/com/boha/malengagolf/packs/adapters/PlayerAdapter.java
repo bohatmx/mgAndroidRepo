@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -120,6 +121,9 @@ public class PlayerAdapter extends ArrayAdapter<PlayerDTO> {
 //                .load(p.getImageURL(ctx))
 //                .error(R.drawable.boy)
 //                .into(item.imagex);
+
+ //       ImageLoader.getInstance().clearDiskCache();
+ //       ImageLoader.getInstance().clearMemoryCache();
 
         ImageLoader.getInstance().displayImage(p.getImageURL(ctx), item.imagex, options);
 

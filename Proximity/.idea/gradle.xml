@@ -13,12 +13,14 @@
             <option value="$PROJECT_DIR$/ProximityCMS" />
             <option value="$PROJECT_DIR$/ProximityLib" />
             <option value="$PROJECT_DIR$/ProximityReporter" />
+            <option value="$PROJECT_DIR$/VisitorTrack" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/slidingfragment" />
           </set>
         </option>
       </GradleProjectSettings>
     </option>
+    <option name="offlineWork" value="true" />
   </component>
 </project>
 
