@@ -1,11 +1,12 @@
 package com.boha.proximity.data;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by aubreyM on 2014/07/30.
  */
-public class ErrorStoreAndroidDTO implements Serializable{
+public class ErrorStoreAndroidDTO implements Parcelable{
     private int errorStoreAndroidID, golfGroupID;
     private String companyName, logCat, stackTrace, androidVersion,
             brand, appVersionCode, appVersionName, packageName, phoneModel;
@@ -106,4 +107,53 @@ public class ErrorStoreAndroidDTO implements Serializable{
     public void setErrorDate(long errorDate) {
         this.errorDate = errorDate;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.errorStoreAndroidID);
+        dest.writeInt(this.golfGroupID);
+        dest.writeString(this.companyName);
+        dest.writeString(this.logCat);
+        dest.writeString(this.stackTrace);
+        dest.writeString(this.androidVersion);
+        dest.writeString(this.brand);
+        dest.writeString(this.appVersionCode);
+        dest.writeString(this.appVersionName);
+        dest.writeString(this.packageName);
+        dest.writeString(this.phoneModel);
+        dest.writeLong(this.errorDate);
+    }
+
+    public ErrorStoreAndroidDTO() {
+    }
+
+    private ErrorStoreAndroidDTO(Parcel in) {
+        this.errorStoreAndroidID = in.readInt();
+        this.golfGroupID = in.readInt();
+        this.companyName = in.readString();
+        this.logCat = in.readString();
+        this.stackTrace = in.readString();
+        this.androidVersion = in.readString();
+        this.brand = in.readString();
+        this.appVersionCode = in.readString();
+        this.appVersionName = in.readString();
+        this.packageName = in.readString();
+        this.phoneModel = in.readString();
+        this.errorDate = in.readLong();
+    }
+
+    public static final Creator<ErrorStoreAndroidDTO> CREATOR = new Creator<ErrorStoreAndroidDTO>() {
+        public ErrorStoreAndroidDTO createFromParcel(Parcel source) {
+            return new ErrorStoreAndroidDTO(source);
+        }
+
+        public ErrorStoreAndroidDTO[] newArray(int size) {
+            return new ErrorStoreAndroidDTO[size];
+        }
+    };
 }

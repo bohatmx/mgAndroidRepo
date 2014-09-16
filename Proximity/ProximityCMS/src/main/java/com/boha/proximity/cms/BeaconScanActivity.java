@@ -22,7 +22,8 @@ import com.estimote.sdk.Region;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BeaconScanActivity extends FragmentActivity implements BeaconScanFragment.BeaconScanListener {
+public class BeaconScanActivity extends FragmentActivity
+        implements BeaconScanFragment.BeaconScanListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

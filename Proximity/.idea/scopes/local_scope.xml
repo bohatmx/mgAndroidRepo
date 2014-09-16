@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="local scope" pattern="lib:*..*||src:*..*||src[app]:*..*||src[Proximity]:*..*||src[ProximityApp]:*..*||src[ProximityBackEnd]:*..*||src[ProximityCMS]:*..*||src[ProximityLib]:*..*||src[ProximityReporter]:*..*||src[slidingfragment]:*..*||src[VisitorTrack]:*..*||test:*..*" />
+</component>

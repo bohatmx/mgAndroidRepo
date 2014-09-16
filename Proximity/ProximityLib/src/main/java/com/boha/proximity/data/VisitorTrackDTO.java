@@ -1,11 +1,12 @@
 package com.boha.proximity.data;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by aubreyM on 2014/09/09.
  */
-public class VisitorTrackDTO implements Serializable{
+public class VisitorTrackDTO implements Parcelable{
     private int visitorTrackID, visitorID, beaconID;
     private String beaconName;
     private long dateTracked;
@@ -74,4 +75,45 @@ public class VisitorTrackDTO implements Serializable{
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.visitorTrackID);
+        dest.writeInt(this.visitorID);
+        dest.writeInt(this.beaconID);
+        dest.writeString(this.beaconName);
+        dest.writeLong(this.dateTracked);
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+        dest.writeString(this.email);
+    }
+
+    public VisitorTrackDTO() {
+    }
+
+    private VisitorTrackDTO(Parcel in) {
+        this.visitorTrackID = in.readInt();
+        this.visitorID = in.readInt();
+        this.beaconID = in.readInt();
+        this.beaconName = in.readString();
+        this.dateTracked = in.readLong();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.email = in.readString();
+    }
+
+    public static final Creator<VisitorTrackDTO> CREATOR = new Creator<VisitorTrackDTO>() {
+        public VisitorTrackDTO createFromParcel(Parcel source) {
+            return new VisitorTrackDTO(source);
+        }
+
+        public VisitorTrackDTO[] newArray(int size) {
+            return new VisitorTrackDTO[size];
+        }
+    };
 }

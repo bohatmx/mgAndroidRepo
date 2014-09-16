@@ -1,25 +1,32 @@
 package com.boha.beacon.beaconsapp;
 
 import android.app.IntentService;
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.RemoteException;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.VolleyError;
+import com.boha.proximity.data.BeaconDTO;
+import com.boha.proximity.data.RequestDTO;
+import com.boha.proximity.data.ResponseDTO;
+import com.boha.proximity.library.Statics;
+import com.boha.proximity.volley.BaseVolley;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Region;
+
+import java.util.List;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
  * a service on a separate handler thread.
- * <p>
+ * <p/>
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
 public class BeaconMonitorService extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_FOO = "com.boha.beacon.beaconsapp.action.FOO";
-    private static final String ACTION_BAZ = "com.boha.beacon.beaconsapp.action.BAZ";
-
-    // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "com.boha.beacon.beaconsapp.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "com.boha.beacon.beaconsapp.extra.PARAM2";
 
     /**
      * Starts this service to perform action Foo with the given parameters. If
@@ -28,64 +35,131 @@ public class BeaconMonitorService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
+    public static void startBeaconMonitor(Context context, BeaconManager bm,
+                                          int delay, int period) {
+        Log.e(LOG, "########################## startBeaconMonitor");
+        ctx = context;
+        beaconManager = bm;
         Intent intent = new Intent(context, BeaconMonitorService.class);
-        intent.setAction(ACTION_FOO);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
-
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, BeaconMonitorService.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
+        intent.putExtra(STRING_DELAY, delay);
+        intent.putExtra(STRING_PERIOD, period);
         context.startService(intent);
     }
 
     public BeaconMonitorService() {
         super("BeaconMonitorService");
+        Log.d(LOG, "######### BeaconMonitorService constructor");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_FOO.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionFoo(param1, param2);
-            } else if (ACTION_BAZ.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionBaz(param1, param2);
-            }
+        Log.i(LOG, "######### onHandleIntent");
+        beaconManager.setBackgroundScanPeriod(PERIOD, DELAY);
+        try {
+            beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+                @Override
+                public void onEnteredRegion(Region region, List<Beacon> beacons) {
+                    Log.w(LOG, "###### onEnteredRegion region: "
+                            + region.getIdentifier() + " beacons: " + beacons.size());
+                    //if (beacons.size() > 0)
+                    //getBeaconsFromServer(beacons.get(0).getMacAddress());
+                    //TODO - notify someone -
+                }
+
+                @Override
+                public void onExitedRegion(Region region) {
+                    Log.e(LOG, "###### onExitedRegion region: " + region.getIdentifier());
+                }
+            });
+            beaconManager.startMonitoring(ALL_ESTIMOTE_BEACONS_REGION);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
+
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionFoo(String param1, String param2) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
+    private static void findStoreBeacons() {
+
+        beaconManager.setRangingListener(new BeaconManager.RangingListener() {
+            @Override
+            public void onBeaconsDiscovered(Region region, List<Beacon> beacons) {
+                beaconList = beacons;
+                for (Beacon b : beacons) {
+                    //log(b);
+                }
+                if (!beacons.isEmpty()) {
+                    if (!serverBeaconsLoaded) {
+                        try {
+                            beaconManager.stopRanging(ALL_ESTIMOTE_BEACONS_REGION);
+                            getBeaconsFromServer(beacons.get(0).getMacAddress());
+                            Log.e(LOG, "***** RANGING STOPPED...maybe..at least I asked!");
+                            return;
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        for (BeaconDTO b : response.getBeaconList()) {
+                            if (b.getMacAddress().equalsIgnoreCase(beacons.get(0).getMacAddress())) {
+                                //buildPages(b);
+                                break;
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        });
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    private static void getBeaconsFromServer(String macAddress) {
+        RequestDTO w = new RequestDTO();
+        w.setRequestType(RequestDTO.GET_BEACONS_BY_MAC_ADDRESS);
+        w.setMacAddress(macAddress);
+
+        if (!BaseVolley.checkNetworkOnDevice(ctx)) return;
+        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+            @Override
+            public void onResponseReceived(ResponseDTO r) {
+                if (r.getStatusCode() > 0) {
+                    Toast.makeText(ctx, r.getMessage(), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                serverBeaconsLoaded = true;
+                response = r;
+                findStoreBeacons();
+
+                CacheUtil.cacheData(ctx, response, CacheUtil.SERVER_BEACON_LIST, new CacheUtil.CacheUtilListener() {
+                    @Override
+                    public void onFileDataDeserialized(ResponseDTO response) {
+
+                    }
+
+                    @Override
+                    public void onDataCached() {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onVolleyError(VolleyError error) {
+                //TODO - use cached beacons?
+                Toast.makeText(ctx, "Communications Error, please try again", Toast.LENGTH_LONG).show();
+            }
+        });
     }
+
+    private static final Region ALL_ESTIMOTE_BEACONS_REGION =
+            new Region("rid", null, null, null);
+    static boolean serverBeaconsLoaded;
+    static List<Beacon> beaconList;
+    static ResponseDTO response;
+    static final String LOG = BeaconMonitorService.class.getSimpleName(),
+            STRING_DELAY = "delay", STRING_PERIOD = "period";
+    static Context ctx;
+    static final long DELAY = 1000, PERIOD = 10000;
+    static BeaconManager beaconManager;
 }

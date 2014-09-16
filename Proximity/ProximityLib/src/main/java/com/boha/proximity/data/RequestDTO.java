@@ -5,13 +5,14 @@
  */
 package com.boha.proximity.data;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  *
  * @author aubreyM
  */
-public class RequestDTO implements Serializable {
+public class RequestDTO implements Parcelable {
 
     private int beaconID, branchID, companyID, requestType,visitorID;
     private CompanyDTO company;
@@ -158,4 +159,54 @@ public class RequestDTO implements Serializable {
         this.beaconDataItem = beaconDataItem;
     }
 
+    public RequestDTO() {
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.beaconID);
+        dest.writeInt(this.branchID);
+        dest.writeInt(this.companyID);
+        dest.writeInt(this.requestType);
+        dest.writeInt(this.visitorID);
+        dest.writeParcelable(this.company, 0);
+        dest.writeParcelable(this.branch, 0);
+        dest.writeParcelable(this.beacon, 0);
+        dest.writeParcelable(this.beaconDataItem, 0);
+        dest.writeString(this.macAddress);
+        dest.writeString(this.fileName);
+        dest.writeParcelable(this.visitor, 0);
+        dest.writeParcelable(this.visitorTrack, 0);
+    }
+
+    private RequestDTO(Parcel in) {
+        this.beaconID = in.readInt();
+        this.branchID = in.readInt();
+        this.companyID = in.readInt();
+        this.requestType = in.readInt();
+        this.visitorID = in.readInt();
+        this.company = in.readParcelable(CompanyDTO.class.getClassLoader());
+        this.branch = in.readParcelable(BranchDTO.class.getClassLoader());
+        this.beacon = in.readParcelable(BeaconDTO.class.getClassLoader());
+        this.beaconDataItem = in.readParcelable(BeaconDataItemDTO.class.getClassLoader());
+        this.macAddress = in.readString();
+        this.fileName = in.readString();
+        this.visitor = in.readParcelable(VisitorDTO.class.getClassLoader());
+        this.visitorTrack = in.readParcelable(VisitorTrackDTO.class.getClassLoader());
+    }
+
+    public static final Creator<RequestDTO> CREATOR = new Creator<RequestDTO>() {
+        public RequestDTO createFromParcel(Parcel source) {
+            return new RequestDTO(source);
+        }
+
+        public RequestDTO[] newArray(int size) {
+            return new RequestDTO[size];
+        }
+    };
 }

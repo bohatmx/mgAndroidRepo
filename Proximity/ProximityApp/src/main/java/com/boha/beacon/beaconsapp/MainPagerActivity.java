@@ -49,6 +49,7 @@ public class MainPagerActivity extends FragmentActivity {
         ProximityApplication app = (ProximityApplication) getApplication();
         beaconManager = app.getBeaconManager();
         imageLoader = app.getImageLoader();
+        BeaconMonitorService.startBeaconMonitor(ctx,beaconManager,1000,20000);
 
         if (savedInstanceState != null) {
             getCachedBeaconList();
