@@ -63,7 +63,7 @@ public class PromotionFragment extends Fragment implements PageFragment{
         Bundle b = getArguments();
         if (b != null) {
             fileName = b.getString("fileName");
-            beacon = (BeaconDTO)b.getSerializable("beacon");
+            beacon = b.getParcelable("beacon");
         }
         setDrawables();
         setFields();

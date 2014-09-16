@@ -78,7 +78,7 @@ public class MainPagerActivity extends FragmentActivity
 
         visitorListFragment = new VisitorListFragment();
         Bundle b = new Bundle();
-        b.putSerializable("response",resp);
+        b.putParcelable("response",resp);
         visitorListFragment.setArguments(b);
         pageList.add(visitorListFragment);
 
@@ -89,7 +89,7 @@ public class MainPagerActivity extends FragmentActivity
         for (BeaconDTO v: resp.getBeaconList()) {
             BeaconTrackListFragment d = new BeaconTrackListFragment();
             Bundle bx = new Bundle();
-            bx.putSerializable("beacon", v);
+            bx.puputParcelablebeacon", v);
             bx.putSerializable("response",resp);
             d.setArguments(bx);
             pageList.add(d);

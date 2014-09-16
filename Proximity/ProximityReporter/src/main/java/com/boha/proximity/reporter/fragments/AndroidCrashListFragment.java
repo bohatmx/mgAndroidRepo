@@ -84,7 +84,7 @@ public class AndroidCrashListFragment extends Fragment implements MGPageFragment
 
     @Override
     public void onSaveInstanceState(Bundle b) {
-        b.putSerializable("response", response);
+        b.putParcelable("response", response);
         super.onSaveInstanceState(b);
     }
 

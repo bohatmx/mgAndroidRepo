@@ -71,21 +71,21 @@ public class EventActivity extends FragmentActivity {
         ResponseDTO r1 = new ResponseDTO();
         Bundle data1 = new Bundle();
         r1.setErrorStoreAndroidList(response.getErrorStoreAndroidList());
-        data1.putSerializable("response", r1);
+        data1.putParcelable("response", r1);
         androidCrashListFragment.setArguments(data1);
 
         severEventListFragment = new SeverEventListFragment();
         ResponseDTO r2 = new ResponseDTO();
         Bundle data2 = new Bundle();
         r2.setErrorStoreList(response.getErrorStoreList());
-        data2.putSerializable("response", r2);
+        data2.putParcelable("response", r2);
         severEventListFragment.setArguments(data2);
 
         serverLogFragment = new ServerLogFragment();
         ResponseDTO r3 = new ResponseDTO();
         Bundle data3 = new Bundle();
         r3.setLog(response.getLog());
-        data3.putSerializable("response", r3);
+        data3.putParcelable("response", r3);
         serverLogFragment.setArguments(data3);
 
         pageFragmentList.add(androidCrashListFragment);
