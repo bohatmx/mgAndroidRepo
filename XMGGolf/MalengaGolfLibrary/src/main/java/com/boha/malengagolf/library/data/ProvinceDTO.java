@@ -21,7 +21,7 @@ public class ProvinceDTO implements Serializable {
     private String provinceName, webKey;
     private List<ClubDTO> clubs;
 
-    List<CityDTO> cityList;
+    private List<CityDTO> cityList;
 
     public List<CityDTO> getCityList() {
         return cityList;
@@ -86,4 +86,5 @@ public class ProvinceDTO implements Serializable {
     public void setClubs(List<ClubDTO> clubs) {
         this.clubs = clubs;
     }
+
 }

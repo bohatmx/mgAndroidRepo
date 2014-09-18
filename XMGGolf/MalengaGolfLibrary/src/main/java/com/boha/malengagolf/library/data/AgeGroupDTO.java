@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Aubrey Malabie
  */
 @SuppressWarnings(value = "unused")
-public class AgeGroupDTO implements Serializable{
+public class AgeGroupDTO implements Serializable {
 
     private int ageGroupID, golfGroupID, ageFrom, ageTo;
     private int gender;
@@ -74,4 +74,5 @@ public class AgeGroupDTO implements Serializable{
     public void setNumberOfHolesPerRound(int numberOfHolesPerRound) {
         this.numberOfHolesPerRound = numberOfHolesPerRound;
     }
+
 }

@@ -119,4 +119,6 @@ public class ScorerDTO implements Serializable, PersonInterface {
     public void setGolfGroupID(int golfGroupID) {
         this.golfGroupID = golfGroupID;
     }
+
+
 }

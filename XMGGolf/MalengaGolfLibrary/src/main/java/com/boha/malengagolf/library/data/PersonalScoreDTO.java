@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/04/16.
  */
-public class PersonalScoreDTO {
+public class PersonalScoreDTO implements Serializable {
     private int personalScoreID;
     private int score1;
     private int score2;
@@ -255,4 +257,5 @@ public class PersonalScoreDTO {
     public void setTimeOfDay(int timeOfDay) {
         this.timeOfDay = timeOfDay;
     }
+
 }

@@ -95,4 +95,5 @@ public class VolunteerDTO implements Serializable, PersonInterface {
     public void setPin(String pin) {
         this.pin = pin;
     }
+
 }

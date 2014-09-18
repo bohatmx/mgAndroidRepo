@@ -480,12 +480,13 @@ public class RegistrationActivity extends FragmentActivity implements
                         @Override
                         public void onItemSelected(AdapterView<?> arg0,
                                                    View arg1, int index, long arg3) {
+                            Log.w("RegistrationActivity", "###### Email account index is " + index);
                             if (index ==  0) {
                                 email = null;
                                 return;
                             }
-                            email = tarList.get(index - 1);
-                            Log.d("Reg", "###### Email account selected is "
+                            email = tarList.get(index);
+                            Log.e("RegistrationActivity", "###### Email account selected is "
                                     + email);
                         }
 

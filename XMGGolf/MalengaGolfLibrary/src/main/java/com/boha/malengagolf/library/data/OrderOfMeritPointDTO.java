@@ -9,11 +9,13 @@ package com.boha.malengagolf.library.data;
  * and open the template in the editor.
  */
 
+import java.io.Serializable;
+
 /**
  *
  * @author aubreyM
  */
-public class OrderOfMeritPointDTO {
+public class OrderOfMeritPointDTO implements Serializable {
     private int orderOfMeritPointID;
     private int win;
     private int top5, top3;
@@ -121,6 +123,7 @@ public class OrderOfMeritPointDTO {
     public void setTiedFirst(int tiedFirst) {
         this.tiedFirst = tiedFirst;
     }
+
 
 }
 

@@ -6,7 +6,7 @@ import java.util.List;
 /**
   * Created by aubreyM on 2014/05/25.
   */
- public class AppUserDTO implements Serializable{
+ public class AppUserDTO implements Serializable {
     private int appUserID;
     private String email;
     private long dateRegistered;
@@ -43,4 +43,6 @@ import java.util.List;
     public void setGolfGroupList(List<GolfGroupDTO> golfGroupList) {
         this.golfGroupList = golfGroupList;
     }
+
+
 }

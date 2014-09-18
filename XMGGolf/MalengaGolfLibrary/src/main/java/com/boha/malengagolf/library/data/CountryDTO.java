@@ -66,4 +66,5 @@ public class CountryDTO implements Serializable {
     public void setProvinces(List<ProvinceDTO> provinces) {
         this.provinces = provinces;
     }
+
 }

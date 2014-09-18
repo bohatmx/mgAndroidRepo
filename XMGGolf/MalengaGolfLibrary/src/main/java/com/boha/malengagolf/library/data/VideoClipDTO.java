@@ -149,4 +149,6 @@ public class VideoClipDTO implements Serializable, Comparable<VideoClipDTO> {
     }
 
     public static  final int SORT_BY_DATE_DESC = 1, SORT_BY_DATE_ASC = 2, SORT_BY_TOURNAMENT = 3;
+
+
 }

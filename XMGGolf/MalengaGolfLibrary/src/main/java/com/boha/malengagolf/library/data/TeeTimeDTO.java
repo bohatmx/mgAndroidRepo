@@ -33,4 +33,6 @@ public class TeeTimeDTO implements Serializable {
     public void setLeaderBoardID(int leaderBoardID) {
         this.leaderBoardID = leaderBoardID;
     }
+
+
 }

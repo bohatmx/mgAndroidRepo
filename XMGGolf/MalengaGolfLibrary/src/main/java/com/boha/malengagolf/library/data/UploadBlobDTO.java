@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/07/23.
  */
-public class UploadBlobDTO {
+public class UploadBlobDTO implements Serializable {
     private String servingUrl, blobKey;
 
 
@@ -22,4 +24,6 @@ public class UploadBlobDTO {
     public void setBlobKey(String blobKey) {
         this.blobKey = blobKey;
     }
+
+
 }

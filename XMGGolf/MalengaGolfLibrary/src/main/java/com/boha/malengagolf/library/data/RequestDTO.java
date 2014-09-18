@@ -529,4 +529,5 @@ public class RequestDTO implements Serializable {
     public void setZippedResponse(boolean zippedResponse) {
         this.zippedResponse = zippedResponse;
     }
+
 }

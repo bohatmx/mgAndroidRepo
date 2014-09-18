@@ -8,11 +8,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Aubrey Malabie
  */
-public class TournamentDTO implements Comparable<TournamentDTO> , Serializable {
-    private int tournamentID,tournamentType;
+public class TournamentDTO implements Serializable, Comparable<TournamentDTO> {
+    private int tournamentID, tournamentType;
     private long closingDate;
     private long endDate;
     private int golfRounds, numberOfRegisteredPlayers;
@@ -30,7 +29,7 @@ public class TournamentDTO implements Comparable<TournamentDTO> , Serializable {
     private List<TournamentCourseDTO> tournamentCourses;
     public static final int SORT_BY_DATE_DESC = 1,
             SORT_BY_DATE_ASC = 2,
-    SORT_BY_NEWEST_TOURNAMENT_ENTERED = 3;
+            SORT_BY_NEWEST_TOURNAMENT_ENTERED = 3;
     public static final int STROKE_PLAY_INDIVIDUAL = 1;
     public static final int STABLEFORD_INDIVIDUAL = 2;
     public static final int BETTER_BALL_STROKEPLAY = 3;
@@ -236,7 +235,7 @@ public class TournamentDTO implements Comparable<TournamentDTO> , Serializable {
                 break;
         }
 
-        
+
         return 0;
     }
 
@@ -265,10 +264,13 @@ public class TournamentDTO implements Comparable<TournamentDTO> , Serializable {
     }
 
     public List<VolunteerDTO> getVolunteers() {
-		return volunteers;
-	}
+        return volunteers;
+    }
 
-	public void setVolunteers(List<VolunteerDTO> volunteers) {
-		this.volunteers = volunteers;
-	}
+    public void setVolunteers(List<VolunteerDTO> volunteers) {
+        this.volunteers = volunteers;
+    }
+
+    public TournamentDTO() {
+    }
 }

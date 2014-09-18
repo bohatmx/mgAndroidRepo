@@ -1,11 +1,12 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by aubreyM on 2014/04/16.
  */
-public class PersonalPlayerDTO {
+public class PersonalPlayerDTO implements Serializable {
     private String firstName, lastName, email, cell, pin;
     private int personalPlayerID;
     private List<PersonalScoreDTO> personalScoreList;
@@ -116,4 +117,6 @@ public class PersonalPlayerDTO {
     public void setClubName(String clubName) {
         this.clubName = clubName;
     }
+
+
 }

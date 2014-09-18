@@ -5,6 +5,7 @@
 package com.boha.malengagolf.library.data;
 
 import android.content.Context;
+
 import com.boha.malengagolf.library.util.PersonInterface;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
@@ -235,4 +236,6 @@ public class PlayerDTO implements Serializable, PersonInterface, Comparable<Play
     }
 
     public static final int SORT_BY_AGE = 1, SORT_BY_NAME = 2;
+
+
 }

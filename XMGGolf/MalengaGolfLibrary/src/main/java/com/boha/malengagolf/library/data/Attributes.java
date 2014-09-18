@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/06/12.
  */
-public class Attributes {
+public class Attributes implements Serializable {
     private String email, pin, gcmRegistrationID;
     private int golfGroupID;
     private int winnerFlag, leaderBoardID, appUserID;
@@ -189,4 +191,5 @@ public class Attributes {
     public void setClubCourseID(int clubCourseID) {
         this.clubCourseID = clubCourseID;
     }
+
 }

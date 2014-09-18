@@ -1,11 +1,12 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by aubreyM on 2014/06/13.
  */
-public class TeamDTO {
+public class TeamDTO implements Serializable {
     private int teamID;
     private String teamName;
     private long dateRegistered;
@@ -60,4 +61,6 @@ public class TeamDTO {
     public void setTeamMemberList(List<TeamMemberDTO> teamMemberList) {
         this.teamMemberList = teamMemberList;
     }
+
+
 }

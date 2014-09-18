@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author aubreyM
  */
 @SuppressWarnings(value = "unused")
-public class ClubCourseDTO implements Serializable{
+public class ClubCourseDTO implements Serializable {
     private int clubCourseID;
     private String courseName, clubName;
     private int holes;
@@ -228,4 +228,5 @@ public class ClubCourseDTO implements Serializable{
     public void setClubID(int clubID) {
         this.clubID = clubID;
     }
+
 }

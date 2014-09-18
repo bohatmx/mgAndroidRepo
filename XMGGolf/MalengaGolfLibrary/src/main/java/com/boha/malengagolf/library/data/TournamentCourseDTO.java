@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by aubreyM on 2014/04/17.
  */
-public class TournamentCourseDTO implements Serializable{
+public class TournamentCourseDTO implements Serializable {
     private int tournamentCourseID;
     private int round;
     private int tournamentID;
@@ -42,4 +42,5 @@ public class TournamentCourseDTO implements Serializable{
     public void setClubCourse(ClubCourseDTO clubCourse) {
         this.clubCourse = clubCourse;
     }
+
 }

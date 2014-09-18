@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/05/15.
  */
-public class GcmDeviceDTO {
+public class GcmDeviceDTO implements Serializable {
     private int gcmDeviceID;
     private String manufacturer, gcmRegistrationID, androidVersion;
     private String model;
@@ -119,4 +121,5 @@ public class GcmDeviceDTO {
     public void setGolfGroupID(int golfGroupID) {
         this.golfGroupID = golfGroupID;
     }
+
 }

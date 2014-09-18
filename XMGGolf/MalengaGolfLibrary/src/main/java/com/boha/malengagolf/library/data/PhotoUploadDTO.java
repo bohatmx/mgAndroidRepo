@@ -1,12 +1,13 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
  * Created by aubreyM on 2014/04/20.
  */
-public class PhotoUploadDTO {
+public class PhotoUploadDTO implements Serializable {
 
     public interface PhotoUploadedListener {
         public void onPhotoUploaded();
@@ -89,4 +90,6 @@ public class PhotoUploadDTO {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+
 }

@@ -35,4 +35,5 @@ public class GolfGroupParentDTO implements Serializable {
     public void setGolfGroupID(int golfGroupID) {
         this.golfGroupID = golfGroupID;
     }
+
 }

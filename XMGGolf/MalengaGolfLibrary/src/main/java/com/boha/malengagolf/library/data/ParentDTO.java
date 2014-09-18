@@ -106,4 +106,6 @@ public class ParentDTO implements Serializable, PersonInterface {
     public void setPlayers(List<PlayerDTO> players) {
         this.players = players;
     }
+
+
 }

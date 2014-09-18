@@ -18,4 +18,5 @@ public class VideoClipContainer implements Serializable {
     public void setVideoClips(List<VideoClipDTO> videoClips) {
         this.videoClips = videoClips;
     }
+
 }

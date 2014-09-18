@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/05/17.
  */
-public class ErrorStoreAndroidDTO {
+public class ErrorStoreAndroidDTO implements Serializable {
     private int errorStoreAndroidID, golfGroupID;
     private String golfGroupName, logCat, stackTrace, androidVersion,
             brand, appVersionCode, appVersionName, packageName, phoneModel;
@@ -104,4 +106,5 @@ public class ErrorStoreAndroidDTO {
     public void setErrorDate(long errorDate) {
         this.errorDate = errorDate;
     }
+
 }

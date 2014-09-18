@@ -40,4 +40,6 @@ public class LeaderBoardCarrierDTO implements Serializable, Comparable<LeaderBoa
         if (ageGroup == null || carrierDTO.getAgeGroup() == null) return 1;
         return ageGroup.getGroupName().compareTo(carrierDTO.ageGroup.getGroupName());
     }
+
+
 }

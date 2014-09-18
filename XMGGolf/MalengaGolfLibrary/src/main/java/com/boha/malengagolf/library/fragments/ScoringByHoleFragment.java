@@ -80,7 +80,7 @@ public class ScoringByHoleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
-        Log.e(LOG, "onCreateView ...");
+        Log.e(LOG, "---------------------------> onCreateView ...");
         ctx = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater

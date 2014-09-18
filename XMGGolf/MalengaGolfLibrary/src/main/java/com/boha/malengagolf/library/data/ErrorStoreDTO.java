@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/05/17.
  */
-public class ErrorStoreDTO {
+public class ErrorStoreDTO implements Serializable {
     private Integer errorStoreID;
     private int statusCode;
     private String message, origin;
@@ -48,4 +50,5 @@ public class ErrorStoreDTO {
     public void setDateOccured(long dateOccured) {
         this.dateOccured = dateOccured;
     }
+
 }

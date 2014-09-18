@@ -84,4 +84,5 @@ public class GolfGroupDTO implements Serializable {
     public void setGolfGroupName(String golfGroupName) {
         this.golfGroupName = golfGroupName;
     }
+
 }

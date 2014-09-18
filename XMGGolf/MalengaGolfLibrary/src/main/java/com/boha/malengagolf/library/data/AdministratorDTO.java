@@ -148,4 +148,5 @@ public class AdministratorDTO implements Serializable, PersonInterface {
         this.pin = pin;
     }
 
+
 }

@@ -1,9 +1,11 @@
 package com.boha.malengagolf.library.data;
 
+import java.io.Serializable;
+
 /**
  * Created by aubreyM on 2014/06/13.
  */
-public class TourneyScoreByRoundTeamDTO {
+public class TourneyScoreByRoundTeamDTO implements Serializable {
     private int tourneyScoreByRoundTeamID;
     private ClubCourseDTO clubCourse;
     private int golfRound, tee;
@@ -432,4 +434,6 @@ public class TourneyScoreByRoundTeamDTO {
     public void setTournamentID(int tournamentID) {
         this.tournamentID = tournamentID;
     }
+
+
 }

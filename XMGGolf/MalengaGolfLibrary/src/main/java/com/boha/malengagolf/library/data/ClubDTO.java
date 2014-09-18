@@ -117,4 +117,5 @@ public class ClubDTO implements Serializable, Comparable<ClubDTO>{
     public int compareTo(ClubDTO clubDTO) {
         return clubName.compareTo(clubDTO.clubName);
     }
+
 }

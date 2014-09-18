@@ -392,4 +392,5 @@ public class TourneyScoreByRoundDTO implements Serializable {
     public void setTotalScore(int totalScore) {
         this.totalScore = totalScore;
     }
+
 }

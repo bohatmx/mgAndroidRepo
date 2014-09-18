@@ -8,10 +8,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Aubrey Malabie
  */
-public class ResponseDTO implements Serializable{
+public class ResponseDTO implements Serializable {
     private int statusCode, totalPages, totalClubs;
     private String message, sessionID;
     private LeaderBoardDTO leaderBoard;
@@ -281,7 +280,6 @@ public class ResponseDTO implements Serializable{
     }
 
 
-
     public List<CountryDTO> getCountries() {
         return countries;
     }
@@ -365,4 +363,8 @@ public class ResponseDTO implements Serializable{
     public void setVideoClips(List<VideoClipDTO> videoClips) {
         this.videoClips = videoClips;
     }
+
+    public ResponseDTO() {
+    }
+
 }
