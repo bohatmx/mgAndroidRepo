@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +94,7 @@ public class TournamentFragment extends Fragment {
                              Bundle saved) {
         Log.e(LOG, "onCreateView.........");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.tourn_edit, container, false);
@@ -680,7 +682,7 @@ public class TournamentFragment extends Fragment {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,req,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO r) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         tournamentListener.setNotBusy();
@@ -707,7 +709,7 @@ public class TournamentFragment extends Fragment {
 
             @Override
             public void onClose() {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
@@ -717,7 +719,7 @@ public class TournamentFragment extends Fragment {
 
             @Override
             public void onError(final String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ToastUtil.errorToast(ctx, message);
@@ -818,7 +820,7 @@ public class TournamentFragment extends Fragment {
         // show it
         alertDialog.show();
     }
-
+    FragmentActivity act;
     private void closeTournament() {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.CLOSE_TOURNAMENT);
@@ -831,7 +833,7 @@ public class TournamentFragment extends Fragment {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         tournamentListener.setNotBusy();
@@ -846,7 +848,7 @@ public class TournamentFragment extends Fragment {
 
             @Override
             public void onClose() {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
@@ -856,7 +858,7 @@ public class TournamentFragment extends Fragment {
 
             @Override
             public void onError(final String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ToastUtil.errorToast(ctx, message);

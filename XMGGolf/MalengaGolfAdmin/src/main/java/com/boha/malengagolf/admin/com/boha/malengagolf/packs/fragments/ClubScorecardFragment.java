@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,6 @@ import com.boha.malengagolf.library.data.ClubDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.util.ErrorUtil;
-import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
@@ -67,11 +67,13 @@ public class ClubScorecardFragment extends Fragment {
         super.onAttach(a);
     }
 
+    FragmentActivity act;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
         Log.e(LOG, "onCreateView.........");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.dialog_club_scorecard_edit, container, false);
@@ -90,7 +92,7 @@ public class ClubScorecardFragment extends Fragment {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         bar.setVisibility(View.GONE);
@@ -114,7 +116,7 @@ public class ClubScorecardFragment extends Fragment {
 
             @Override
             public void onError(final String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         ToastUtil.errorToast(ctx, message);

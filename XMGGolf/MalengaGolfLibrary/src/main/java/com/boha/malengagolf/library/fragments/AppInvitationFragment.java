@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,6 +67,7 @@ public class AppInvitationFragment extends Fragment {
                              Bundle saved) {
         Log.i(LOG, "onCreateView");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_invite, container, false);
@@ -135,6 +137,7 @@ public class AppInvitationFragment extends Fragment {
         sendInvitation();
     }
 
+    FragmentActivity act;
     public static final int ADMIN = 1, SCORER = 2, PLAYER = 3, APP_USER = 4;
 
     private void sendInvitation() {
@@ -149,7 +152,7 @@ public class AppInvitationFragment extends Fragment {
             WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
                 @Override
                 public void onMessage(final ResponseDTO response) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    act.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             appInvitationListener.setNotBusy();
@@ -174,7 +177,7 @@ public class AppInvitationFragment extends Fragment {
 
                 @Override
                 public void onError(final String message) {
-                    getActivity().runOnUiThread(new Runnable() {
+                    act.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             appInvitationListener.setNotBusy();

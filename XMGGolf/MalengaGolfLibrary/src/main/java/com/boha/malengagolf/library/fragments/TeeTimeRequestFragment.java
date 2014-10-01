@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,6 +80,7 @@ public class TeeTimeRequestFragment extends Fragment implements
                              Bundle saved) {
         Log.i(LOG, "onCreateView");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_tee, container, false);
@@ -251,7 +253,7 @@ public class TeeTimeRequestFragment extends Fragment implements
     public void setLeaderBoardFromScoringFragment(LeaderBoardDTO leaderBoardFromScoringFragment) {
         this.leaderBoardFromScoringFragment = leaderBoardFromScoringFragment;
     }
-
+    FragmentActivity act;
     @Override
     public void onTeeTimeRequested(TourneyScoreByRoundDTO score, int index, int tee) {
         tourneyScoreByRound = score;
@@ -301,7 +303,7 @@ public class TeeTimeRequestFragment extends Fragment implements
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         teeTimeFragmentListener.setNotBusy();
@@ -323,7 +325,7 @@ public class TeeTimeRequestFragment extends Fragment implements
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         teeTimeFragmentListener.setNotBusy();

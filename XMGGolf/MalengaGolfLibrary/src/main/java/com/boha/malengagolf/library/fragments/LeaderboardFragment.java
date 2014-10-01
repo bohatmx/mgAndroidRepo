@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -71,6 +72,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
     LeaderboardListener leaderboardListener;
     LeaderBoardCarrierDTO leaderBoardCarrier;
+    FragmentActivity act;
 
     @Override
     public void onAttach(Activity a) {
@@ -93,6 +95,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
                              Bundle saved) {
         Log.i(LOG, "onCreateView...................................");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_leaderboard, container, false);
@@ -231,7 +234,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         leaderboardListener.setNotBusy();
@@ -250,7 +253,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+               act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         leaderboardListener.setNotBusy();
@@ -315,7 +318,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         leaderboardListener.setNotBusy();
@@ -337,7 +340,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         leaderboardListener.setNotBusy();
@@ -737,7 +740,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         leaderboardListener.setNotBusy();
@@ -757,7 +760,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         leaderboardListener.setNotBusy();

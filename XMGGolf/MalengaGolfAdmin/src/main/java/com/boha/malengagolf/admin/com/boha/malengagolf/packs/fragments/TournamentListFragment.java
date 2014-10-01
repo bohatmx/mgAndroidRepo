@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -66,6 +67,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
     }
 
     TournamentListener tournamentListener;
+    FragmentActivity act;
 
     @Override
     public void onAttach(Activity a) {
@@ -92,6 +94,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_list, container, false);
@@ -460,7 +463,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
                             @Override
                             public void onMessage(final ResponseDTO response) {
-                                getActivity().runOnUiThread(new Runnable() {
+                                act.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         tournamentListener.setNotBusy();
@@ -474,7 +477,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
 
                             @Override
                             public void onClose() {
-                                getActivity().runOnUiThread(new Runnable() {
+                                act.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
@@ -484,7 +487,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
 
                             @Override
                             public void onError(final String message) {
-                                getActivity().runOnUiThread(new Runnable() {
+                                act.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         ToastUtil.errorToast(ctx, message);
@@ -542,7 +545,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
                             @Override
                             public void onMessage(final ResponseDTO response) {
-                                getActivity().runOnUiThread(new Runnable() {
+                                act.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         tournamentListener.setNotBusy();
@@ -556,7 +559,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
 
                             @Override
                             public void onClose() {
-                                getActivity().runOnUiThread(new Runnable() {
+                                act.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.socket_closed));
@@ -566,7 +569,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
 
                             @Override
                             public void onError(final String message) {
-                                getActivity().runOnUiThread(new Runnable() {
+                                act.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         ToastUtil.errorToast(ctx, message);

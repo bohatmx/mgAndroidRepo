@@ -201,6 +201,7 @@ public class ScorerListFragment extends Fragment implements PageFragment {
         if (actionCode == PersonEditDialog.ACTION_ADD) {
             personEditDialog.setPerson(new ScorerDTO());
         }
+        personEditDialog.setActivity(getActivity());
         personEditDialog.setDiagListener(new PersonEditDialog.DialogListener() {
             @Override
             public void onRecordAdded(PersonInterface person) {

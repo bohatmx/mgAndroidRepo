@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,12 +49,13 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
         super.onAttach(a);
     }
 
-
+    FragmentActivity act;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
         Log.i(LOG, "onCreateView");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_player_history, container, false);
@@ -78,7 +80,7 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, z, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (!ErrorUtil.checkServerError(ctx, response)) {
@@ -100,7 +102,7 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 

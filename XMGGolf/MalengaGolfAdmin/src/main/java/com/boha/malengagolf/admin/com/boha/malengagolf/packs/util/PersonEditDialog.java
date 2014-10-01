@@ -1,5 +1,6 @@
 package com.boha.malengagolf.admin.com.boha.malengagolf.packs.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -185,6 +186,7 @@ public class PersonEditDialog extends DialogFragment {
     long birthDate;
     DatePickerDialog dpBirthDate;
     CheckBox chkInvite;
+    Activity act;
     private void updateActor() {
         Log.e(LOG, "updateActor --- personType: " + personType);
         if (eFirstName.getText().toString().isEmpty()) {
@@ -248,7 +250,7 @@ public class PersonEditDialog extends DialogFragment {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,req,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
@@ -285,7 +287,7 @@ public class PersonEditDialog extends DialogFragment {
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
@@ -431,7 +433,7 @@ public class PersonEditDialog extends DialogFragment {
         WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,req,new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
@@ -468,7 +470,7 @@ public class PersonEditDialog extends DialogFragment {
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressBar.setVisibility(View.GONE);
@@ -606,6 +608,12 @@ public class PersonEditDialog extends DialogFragment {
 
     public void setCtx(Context ctx) {
         this.ctx = ctx;
+    }
+
+
+
+    public void setActivity(Activity act) {
+        this.act = act;
     }
 
     public DialogListener getDiagListener() {

@@ -174,6 +174,7 @@ public class PlayerListFragment extends Fragment implements PageFragment {
         if (actionCode == PersonEditDialog.ACTION_UPDATE) {
             personEditDialog.setPerson(player);
         }
+        personEditDialog.setActivity(getActivity());
         personEditDialog.setDiagListener(new PersonEditDialog.DialogListener() {
             @Override
             public void onRecordAdded(PersonInterface person) {

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,12 +49,14 @@ public class StaggeredTournamentGridFragment extends Fragment implements MGPageF
         super.onAttach(a);
     }
 
+    FragmentActivity act;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
         Log.e(LOG, "@@@@@@@@@@@@@@@@@@@@@@@@@@.......onCreateView.........");
         ctx = getActivity();
+        act = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_tourn_pictures, container, false);
@@ -78,7 +81,7 @@ public class StaggeredTournamentGridFragment extends Fragment implements MGPageF
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO r) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         listener.setNotBusy();
@@ -97,7 +100,7 @@ public class StaggeredTournamentGridFragment extends Fragment implements MGPageF
 
             @Override
             public void onError(String message) {
-                getActivity().runOnUiThread(new Runnable() {
+                act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         listener.setNotBusy();
@@ -139,16 +142,8 @@ public class StaggeredTournamentGridFragment extends Fragment implements MGPageF
                 imageURLs.add(sb.toString());
             }
         } else {
-            Log.e(LOG,"fileNames is NULL");
+            Log.e(LOG, "fileNames is NULL");
         }
-//        //TODO remove links after testing ...#############################################
-//        String[] links = DataSet.url;
-//        for (int i=0;i < 1; i++) {
-//            for (String link : links) {
-//                imageURLs.add(link);
-//            }
-//        }
-
         Log.e(LOG,"**********number of image items: " + imageURLs.size());
 
         setList();
