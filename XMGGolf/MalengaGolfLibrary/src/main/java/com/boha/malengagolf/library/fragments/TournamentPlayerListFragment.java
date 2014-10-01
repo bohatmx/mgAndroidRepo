@@ -325,11 +325,13 @@ public class TournamentPlayerListFragment extends Fragment {
             }
 
             @Override
-            public void onError(String message) {
+            public void onError(final String message) {
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        ErrorUtil.showServerCommsError(ctx);
+
+                        ToastUtil.errorToast(ctx, message);
+                        //ErrorUtil.showServerCommsError(ctx);
                     }
                 });
             }
