@@ -376,6 +376,15 @@ public class LeaderBoardDTO implements Comparable<LeaderBoardDTO>, Serializable 
                     return -1;
                 }
                 break;
+            case SORT_POINTS:
+                if (this.totalPoints < t.totalPoints) {
+                    return 1;
+                }
+                if (this.totalPoints > t.totalPoints) {
+                    return -1;
+                }
+
+                break;
             case SORT_AGE_GROUP:
                 StringBuilder sba = new StringBuilder(), sbb = new StringBuilder();
                 if (ageGroup != null) {
@@ -431,8 +440,9 @@ public class LeaderBoardDTO implements Comparable<LeaderBoardDTO>, Serializable 
     public static final int NO_PAR_STATUS = 9999,
             WINNER_BY_PLAYOFF = 2,
             WINNER_BY_COUNT_OUT = 1;
+
     public static final int SORT_AGE_GROUP = 1,
-            SORT_TEE_TIME = 2,
+            SORT_TEE_TIME = 2, SORT_POINTS = 6,
             SORT_TEE_HOLES = 3, SORT_PLAYER_NAME = 4, SORT_PLAYER_AGE = 5;
 
 }

@@ -262,6 +262,7 @@ public class SharedUtil {
 		Editor ed = sp.edit();
 		ed.putString(Constants.GOLF_GROUP_JSON, x);
 		ed.commit();
+        Log.e("SharedUtil", "%%%%% GolfGroup: " + dto.getGolfGroupName() + " saved in SharedPreferences");
 	}
 
 	public static GolfGroupDTO getGolfGroup(Context ctx) {

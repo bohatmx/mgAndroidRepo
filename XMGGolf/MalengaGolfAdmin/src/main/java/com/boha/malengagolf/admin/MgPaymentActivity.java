@@ -195,9 +195,9 @@ public class MgPaymentActivity extends Activity {
     static final String FORTUMO_IN_APPLICATION_SECRET = "d8b68a20637f938ce329554c00af15c6";
     static final String FORTUMO_SECRET = "bef8ec81c92092e73e1b22ef8e36edd4";
     static final String LOG = "MgPaymentActivity", SKU_PREMIUM = "mgGolf",
-            TEST_PRODUCT_PURCHASED = "android.test.purchased",
-            TEST_PURCHASE_CANCELLED = "android.test.canceled", TEST_PURCHASE_REFUNDED = "android.test.refunded",
-            TEST_PURCHASE_UNAVAILABLE = "android.test.refunded";
+            TEST_PRODUCT_PURCHASED = "android.unpack.purchased",
+            TEST_PURCHASE_CANCELLED = "android.unpack.canceled", TEST_PURCHASE_REFUNDED = "android.unpack.refunded",
+            TEST_PURCHASE_UNAVAILABLE = "android.unpack.refunded";
     static final String LICENSE_KEY1 = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr97MkWHcXt8AruRG8aCBxoJBoAmkuPkKNVzBvcd/";
     static final String LICENSE_KEY3 = "R23rP1Ccr53E8RaO2RaIX1L7zvOytEedDYMuNCd6YBlUT2C9Id4/zN4e6ZJCLZ47vcNwPogzSFsGyDN5qAZmQQvy+ctWX2Ni767b5BhxAjjs4Hp3Wt9qt2NlhMOiDf1/";
     static final String LICENSE_KEY5 = "kaN/rH0mEq8vyN9yrZfm+1J08o4VD4X5HK30z8NkCTgA+awxmPwxoBB6P6mAvGORBGUWtAVyICW8c2O4CpXVaiRPgsdJ7xf+PM0LZRbxMNmkUAlgXgoLTAFLoHs3mDFhL35";

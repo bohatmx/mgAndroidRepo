@@ -155,6 +155,7 @@ public class PlayerListFragment extends Fragment implements PageFragment {
                         startActivity(x);
                     }
                 });
+        if (playerList == null) return;
         listView.setAdapter(personAdapter);
         registerForContextMenu(listView);
         listView.setSelection(selectedIndex);

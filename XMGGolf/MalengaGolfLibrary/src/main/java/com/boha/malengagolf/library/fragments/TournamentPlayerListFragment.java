@@ -1,5 +1,6 @@
 package com.boha.malengagolf.library.fragments;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -13,13 +14,24 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.adapters.TourneyPlayerAdapter;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.CompleteRounds;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 
 import java.util.List;
 
@@ -60,7 +72,7 @@ public class TournamentPlayerListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
-        Log.e(LOG, "onCreateView ...");
+        Log.e(LOG, "---------- onCreateView ...");
         ctx = getActivity();
         inflater = getActivity().getLayoutInflater();
         view = inflater
@@ -88,6 +100,10 @@ public class TournamentPlayerListFragment extends Fragment {
                     public void run() {
                         listener.setNotBusy();
                         if (!ErrorUtil.checkServerError(ctx, r)) {
+                            return;
+                        }
+                        if (r.getLeaderBoard() != null) {
+                            Log.e(LOG, "#### scoring update coming in, ignored!");
                             return;
                         }
                         leaderBoardList = r.getLeaderBoardList();
@@ -164,8 +180,9 @@ public class TournamentPlayerListFragment extends Fragment {
 
     public void refresh(List<LeaderBoardDTO> list) {
         Log.w(LOG,"##### refresh list");
-        leaderBoardList = list;
-        setList();
+       // leaderBoardList = list;
+       // setList();
+        getTournamentPlayers();
     }
     private void setList() {
         Log.w(LOG,"##### set list");
@@ -188,7 +205,11 @@ public class TournamentPlayerListFragment extends Fragment {
             @Override
             public void onScoringRequested(LeaderBoardDTO l) {
                 leaderBoard = l;
-                startScoring();
+                if (leaderBoard.isScoringComplete()) {
+                    ToastUtil.toast(ctx,ctx.getResources().getString(R.string.scoring_closed));
+                } else {
+                    startScoring();
+                }
             }
         });
         listView.setAdapter(adapter);
@@ -203,6 +224,9 @@ public class TournamentPlayerListFragment extends Fragment {
             }
         });
         listView.setSelection(selectedIndex);
+        final ObjectAnimator an = ObjectAnimator.ofFloat(txtCount, View.ROTATION, 0.0f, 360f);
+        an.setDuration(500);
+        an.start();
     }
 
     int selectedIndex;
@@ -278,20 +302,49 @@ public class TournamentPlayerListFragment extends Fragment {
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                Log.i(LOG, "closedForScoring flag updated");
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        Log.i(LOG, "closedForScoring flag updated");
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                Log.i(LOG, "closedForScoring flag updated");
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void setFields() {

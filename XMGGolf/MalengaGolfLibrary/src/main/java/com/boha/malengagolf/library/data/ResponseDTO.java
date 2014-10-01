@@ -11,7 +11,7 @@ import java.util.List;
  * @author Aubrey Malabie
  */
 public class ResponseDTO implements Serializable {
-    private int statusCode, totalPages, totalClubs;
+    private Integer statusCode, totalPages, totalClubs;
     private String message, sessionID;
     private LeaderBoardDTO leaderBoard;
     private AppUserDTO appUser;
@@ -110,19 +110,19 @@ public class ResponseDTO implements Serializable {
         this.log = log;
     }
 
-    public int getTotalClubs() {
+    public Integer getTotalClubs() {
         return totalClubs;
     }
 
-    public void setTotalClubs(int totalClubs) {
+    public void setTotalClubs(Integer totalClubs) {
         this.totalClubs = totalClubs;
     }
 
-    public int getTotalPages() {
+    public Integer getTotalPages() {
         return totalPages;
     }
 
-    public void setTotalPages(int totalPages) {
+    public void setTotalPages(Integer totalPages) {
         this.totalPages = totalPages;
     }
 
@@ -182,11 +182,11 @@ public class ResponseDTO implements Serializable {
         this.tourneyPlayers = tourneyPlayers;
     }
 
-    public int getStatusCode() {
+    public Integer getStatusCode() {
         return statusCode;
     }
 
-    public void setStatusCode(int statusCode) {
+    public void setStatusCode(Integer statusCode) {
         this.statusCode = statusCode;
     }
 

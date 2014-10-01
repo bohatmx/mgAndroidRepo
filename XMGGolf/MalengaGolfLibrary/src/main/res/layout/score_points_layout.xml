@@ -191,7 +191,7 @@
             <TextView
                     android:id="@+id/LS_POINTStotal"
                     android:text="@string/zero"
-                    style="@style/LeaderBoardNumberMedium"
+                    style="@style/LeaderBoardNumberLarge"
                     android:layout_below="@id/LS_POINTStotLabel"
                     android:textStyle="bold"
                     android:textColor="@color/blue"

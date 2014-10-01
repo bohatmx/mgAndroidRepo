@@ -133,11 +133,19 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             @Override
             public void manageTournamentPlayersScores(TournamentDTO t) {
                 tournament = t;
+                if (tournament.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.scoring_closed));
+                    return;
+                }
                 tournamentListener.onManagePlayersRequest(t, response.getPlayers());
             }
 
             @Override
             public void editTournament(TournamentDTO t) {
+                if (tournament.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tourn_closed));
+                    return;
+                }
                 tournament = t;
                 tournamentListener.onManageTournamentRequest(t);
             }
@@ -146,7 +154,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             public void viewLeaderBoard(TournamentDTO t) {
                 Log.d(LOG, "################# viewLeaderBoard tournamentType: " + t.getTournamentType());
                 tournament = t;
-                SharedUtil.setScrollIndex(ctx,0);
+                SharedUtil.setScrollIndex(ctx, 0);
                 Intent x1 = new Intent(ctx, LeaderBoardPager.class);
                 x1.putExtra("tournament", t);
                 x1.putExtra("golfGroup", golfGroup);
@@ -157,6 +165,10 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             @Override
             public void takePictures(TournamentDTO t) {
                 tournament = t;
+                if (tournament.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tourn_closed));
+                    return;
+                }
                 Intent intentt = new Intent(ctx, PictureActivity.class);
                 intentt.putExtra("tournament", t);
                 startActivity(intentt);
@@ -174,6 +186,10 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             @Override
             public void manageTournamentTees(TournamentDTO t) {
                 tournament = t;
+                if (tournament.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tourn_closed));
+                    return;
+                }
                 Intent intentt = new Intent(ctx, TeeTimeActivity.class);
                 intentt.putExtra("tournament", t);
                 startActivity(intentt);
@@ -195,6 +211,10 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             @Override
             public void sendPlayerTextMessage(TournamentDTO t) {
                 tournament = t;
+                if (tournament.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tourn_closed));
+                    return;
+                }
                 underConstruction();
 
             }
@@ -202,12 +222,16 @@ public class TournamentListFragment extends Fragment implements PageFragment {
             @Override
             public void sendPlayerEmail(TournamentDTO t) {
                 tournament = t;
-                CacheUtil.getCachedData(ctx,CacheUtil.CACHE_LEADER_BOARD,tournament.getTournamentID(),new CacheUtil.CacheUtilListener() {
+                if (tournament.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tourn_closed));
+                    return;
+                }
+                CacheUtil.getCachedData(ctx, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
                         if (response.getLeaderBoardList() == null) return;
                         List<PlayerDTO> pList = new ArrayList<PlayerDTO>();
-                        for (LeaderBoardDTO b: response.getLeaderBoardList()) {
+                        for (LeaderBoardDTO b : response.getLeaderBoardList()) {
                             pList.add(b.getPlayer());
                         }
                         response.setPlayers(pList);
@@ -223,9 +247,14 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                     }
                 });
             }
-//0824431972 kalidas Dr.
+
+            //0824431972 kalidas Dr.
             @Override
             public void removeTournament(TournamentDTO t) {
+                if (t.getClosedForScoringFlag() > 0) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tourn_closed));
+                    return;
+                }
                 if (t.getExampleFlag() > 0) {
                     showDeleteSampleTournament();
                 } else {
@@ -413,7 +442,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         int index = 0;
-                        for (TournamentDTO dto: response.getTournaments()) {
+                        for (TournamentDTO dto : response.getTournaments()) {
                             if (dto.getTournamentID() == t.getTournamentID()) {
                                 break;
                             }
@@ -492,6 +521,7 @@ public class TournamentListFragment extends Fragment implements PageFragment {
                 })
                 .show();
     }
+
     private void showDeleteSampleTournament() {
         AlertDialog.Builder diag = new AlertDialog.Builder(ctx);
         diag.setTitle(ctx.getResources().getString(R.string.delete_sample_tournament))
@@ -576,13 +606,14 @@ public class TournamentListFragment extends Fragment implements PageFragment {
 
     private String getSampleTournaments() {
         StringBuilder sb = new StringBuilder();
-        for (TournamentDTO t: tournamentList) {
+        for (TournamentDTO t : tournamentList) {
             if (t.getExampleFlag() > 0) {
                 sb.append(t.getTourneyName()).append("\n");
             }
         }
         return sb.toString();
     }
+
     int selectedTourneyIndex;
     FragmentManager fragmentManager;
     ListView listView;

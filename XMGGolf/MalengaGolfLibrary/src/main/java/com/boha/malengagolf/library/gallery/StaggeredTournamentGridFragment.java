@@ -11,9 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import com.android.volley.VolleyError;
+
 import com.boha.malengagolf.library.R;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -23,6 +22,7 @@ import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.MGPageFragment;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,22 +75,53 @@ public class StaggeredTournamentGridFragment extends Fragment implements MGPageF
         w.setTournamentID(tournament.getTournamentID());
         w.setGolfGroupID(golfGroup.getGolfGroupID());
         listener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_PHOTO, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                listener.setNotBusy();
-                if (ErrorUtil.checkServerError(ctx, r)) {
-                    fileNames = r.getImageFileNames();
-                    createURLs();
-                }
+            public void onMessage(final ResponseDTO r) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.setNotBusy();
+                        if (ErrorUtil.checkServerError(ctx, r)) {
+                            fileNames = r.getImageFileNames();
+                            createURLs();
+                        }
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                listener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.setNotBusy();
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_PHOTO, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                listener.setNotBusy();
+//                if (ErrorUtil.checkServerError(ctx, r)) {
+//                    fileNames = r.getImageFileNames();
+//                    createURLs();
+//                }
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                listener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
     private void createURLs() {
         Log.e(LOG, "createURLs ##########");

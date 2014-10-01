@@ -209,7 +209,7 @@
             <TextView
                     android:id="@+id/LS_parStatus"
                     android:text="@string/zero"
-                    style="@style/LeaderBoardNumberMedium"
+                    style="@style/LeaderBoardNumberLarge"
                     android:layout_below="@id/LS_parLabel"
                     android:textColor="@color/absa_red"
                     android:textStyle="bold"

@@ -11,14 +11,30 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.*;
-import com.android.volley.VolleyError;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.AppInvitationActivity;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.ParentDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.ScorerDTO;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.PersonInterface;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.Util;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 
 import java.util.Calendar;
@@ -229,40 +245,90 @@ public class PersonEditDialog extends DialogFragment {
             return;
         }
         progressBar.setVisibility(View.VISIBLE);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, req, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,req,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                progressBar.setVisibility(View.GONE);
-                if (response.getStatusCode() > 0) {
-                    ToastUtil.errorToast(ctx, response.getMessage());
-                    return;
-                }
-                switch (personType) {
-                    case PLAYER:
-                        diagListener.onRecordUpdated();
-                        break;
-                    case PARENT:
-                        diagListener.onRecordUpdated();
-                        break;
-                    case SCORER:
-                        diagListener.onRecordUpdated();
-                        break;
-                    case ADMIN:
-                        diagListener.onRecordUpdated();
-                        break;
-                }
-                if (chkInvite.isChecked()) {
-                    startInvitation();
-                }
-                dismiss();
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        if (response.getStatusCode() > 0) {
+                            ToastUtil.errorToast(ctx, response.getMessage());
+                            return;
+                        }
+                        switch (personType) {
+                            case PLAYER:
+                                diagListener.onRecordUpdated();
+                                break;
+                            case PARENT:
+                                diagListener.onRecordUpdated();
+                                break;
+                            case SCORER:
+                                diagListener.onRecordUpdated();
+                                break;
+                            case ADMIN:
+                                diagListener.onRecordUpdated();
+                                break;
+                        }
+                        if (chkInvite.isChecked()) {
+                            startInvitation();
+                        }
+                        dismiss();
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                progressBar.setVisibility(View.GONE);
-                ToastUtil.errorToast(ctx,ctx.getResources().getString(R.string.error_server_comms));
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        ToastUtil.errorToast(ctx,ctx.getResources().getString(R.string.error_server_comms));
+                    }
+                });
+
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, req, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response.getStatusCode() > 0) {
+//                    ToastUtil.errorToast(ctx, response.getMessage());
+//                    return;
+//                }
+//                switch (personType) {
+//                    case PLAYER:
+//                        diagListener.onRecordUpdated();
+//                        break;
+//                    case PARENT:
+//                        diagListener.onRecordUpdated();
+//                        break;
+//                    case SCORER:
+//                        diagListener.onRecordUpdated();
+//                        break;
+//                    case ADMIN:
+//                        diagListener.onRecordUpdated();
+//                        break;
+//                }
+//                if (chkInvite.isChecked()) {
+//                    startInvitation();
+//                }
+//                dismiss();
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                progressBar.setVisibility(View.GONE);
+//                ToastUtil.errorToast(ctx,ctx.getResources().getString(R.string.error_server_comms));
+//            }
+//        });
 
     }
     private void startInvitation() {
@@ -362,40 +428,90 @@ public class PersonEditDialog extends DialogFragment {
             return;
         }
         progressBar.setVisibility(View.VISIBLE);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, req, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,req,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                progressBar.setVisibility(View.GONE);
-                if (response.getStatusCode() > 0) {
-                    ToastUtil.errorToast(ctx, response.getMessage());
-                    return;
-                }
-                switch (personType) {
-                    case PLAYER:
-                        diagListener.onRecordAdded(response.getPlayers().get(0));
-                        break;
-                    case PARENT:
-                        diagListener.onRecordAdded(response.getParents().get(0));
-                        break;
-                    case SCORER:
-                        diagListener.onRecordAdded(response.getScorers().get(0));
-                        break;
-                    case ADMIN:
-                        diagListener.onRecordAdded(response.getAdministrator());
-                        break;
-                }
-                if (chkInvite.isChecked()) {
-                    startInvitation();
-                }
-                dismiss();
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        if (response.getStatusCode() > 0) {
+                            ToastUtil.errorToast(ctx, response.getMessage());
+                            return;
+                        }
+                        switch (personType) {
+                            case PLAYER:
+                                diagListener.onRecordAdded(response.getPlayers().get(0));
+                                break;
+                            case PARENT:
+                                diagListener.onRecordAdded(response.getParents().get(0));
+                                break;
+                            case SCORER:
+                                diagListener.onRecordAdded(response.getScorers().get(0));
+                                break;
+                            case ADMIN:
+                                diagListener.onRecordAdded(response.getAdministrator());
+                                break;
+                        }
+                        if (chkInvite.isChecked()) {
+                            startInvitation();
+                        }
+                        dismiss();
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                progressBar.setVisibility(View.GONE);
-                ToastUtil.errorToast(ctx,ctx.getResources().getString(R.string.error_server_comms));
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setVisibility(View.GONE);
+                        ToastUtil.errorToast(ctx,ctx.getResources().getString(R.string.error_server_comms));
+                    }
+                });
+
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, req, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                progressBar.setVisibility(View.GONE);
+//                if (response.getStatusCode() > 0) {
+//                    ToastUtil.errorToast(ctx, response.getMessage());
+//                    return;
+//                }
+//                switch (personType) {
+//                    case PLAYER:
+//                        diagListener.onRecordAdded(response.getPlayers().get(0));
+//                        break;
+//                    case PARENT:
+//                        diagListener.onRecordAdded(response.getParents().get(0));
+//                        break;
+//                    case SCORER:
+//                        diagListener.onRecordAdded(response.getScorers().get(0));
+//                        break;
+//                    case ADMIN:
+//                        diagListener.onRecordAdded(response.getAdministrator());
+//                        break;
+//                }
+//                if (chkInvite.isChecked()) {
+//                    startInvitation();
+//                }
+//                dismiss();
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                progressBar.setVisibility(View.GONE);
+//                ToastUtil.errorToast(ctx,ctx.getResources().getString(R.string.error_server_comms));
+//            }
+//        });
     }
 
     private void animate(View v) {

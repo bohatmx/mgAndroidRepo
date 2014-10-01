@@ -1,7 +1,6 @@
 package com.boha.malengagolf.library.util;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import com.boha.malengagolf.library.data.RequestDTO;
@@ -12,11 +11,6 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,7 +41,8 @@ public class WebSocketUtil {
             Log.e(LOG, "@@@@@@@@ webSocket session disconnected");
         }
     }
-    public static void sendRequest(Context c, final String suffix, RequestDTO req, WebSocketListener listener)  {
+
+    public static void sendRequest(Context c, final String suffix, RequestDTO req, WebSocketListener listener) {
         start = System.currentTimeMillis();
         webSocketListener = listener;
         request = req;
@@ -73,25 +68,25 @@ public class WebSocketUtil {
             }
         } catch (WebsocketNotConnectedException e) {
             try {
-                Log.e(LOG,"WebsocketNotConnectedException. Problems with web socket", e);
+                Log.e(LOG, "WebsocketNotConnectedException. Problems with web socket", e);
                 connectWebSocket(suffix, req);
             } catch (URISyntaxException e1) {
-                Log.e(LOG,"Problems with web socket", e);
+                Log.e(LOG, "Problems with web socket", e);
                 webSocketListener.onError("Problem starting server socket communications\n" + e1.getMessage());
             }
         } catch (URISyntaxException e) {
-            Log.e(LOG,"Problems with web socket", e);
+            Log.e(LOG, "Problems with web socket", e);
             webSocketListener.onError("Problem starting server socket communications");
         }
     }
 
     private static void connectWebSocket(String socketSuffix, final RequestDTO request) throws URISyntaxException {
         URI uri = new URI(Statics.WEBSOCKET_URL + socketSuffix);
-
+        Log.e(LOG, "************ connectWebSocket, uri: " + uri.toString());
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                Log.w(LOG, "########## WEBSOCKET Opened: " + serverHandshake.getHttpStatusMessage() + " elapsed ms: " + (end-start));
+                Log.w(LOG, "########## WEBSOCKET Opened: " + serverHandshake.getHttpStatusMessage() + " elapsed ms: " + (end - start));
                 String json = gson.toJson(request);
                 mWebSocketClient.send(json);
                 Log.d(LOG, "########### web socket request sent after onOpen\n" + json);
@@ -101,7 +96,7 @@ public class WebSocketUtil {
             public void onMessage(String response) {
                 end = System.currentTimeMillis();
                 TimerUtil.killTimer();
-                Log.i(LOG, "########## onMessage, length: " + response.length()  + " elapsed: " + getElapsed()
+                Log.i(LOG, "########## onMessage, length: " + response.length() + " elapsed: " + getElapsed()
                         + "\nString: " + response);
                 try {
                     ResponseDTO r = gson.fromJson(response, ResponseDTO.class);
@@ -109,8 +104,9 @@ public class WebSocketUtil {
                         if (r.getSessionID() != null) {
                             SharedUtil.setSessionID(ctx, r.getSessionID());
                             String json = gson.toJson(request);
+                            Log.w(LOG, "########### websocket about to send message sfter getting sessionid\n" + json);
                             mWebSocketClient.send(json);
-                            Log.d(LOG, "########### websocket message sent\n" + json);
+                            Log.w(LOG, "########### websocket message sent\n" + json);
                         } else {
                             webSocketListener.onMessage(r);
                         }
@@ -126,45 +122,16 @@ public class WebSocketUtil {
 
             @Override
             public void onMessage(ByteBuffer bb) {
-                end = System.currentTimeMillis();
                 TimerUtil.killTimer();
-                Log.i(LOG, "########## onMessage, ByteBuffer capacity: " + bb.capacity());
-                File dir = Environment.getExternalStorageDirectory();
-                File zip = new File(dir, "data.zip");
-                File unZip = new File(dir, "data.json");
-                BufferedOutputStream stream = null;
-                String content = null;
+                Log.i(LOG, "########## onMessage (retried)... got ByteBuffer, capacity: " + bb.capacity());
                 try {
-                    FileOutputStream fos = new FileOutputStream(zip);
-                    stream = new BufferedOutputStream(fos);
-                } catch (FileNotFoundException e) {
-                    Log.e(LOG, "Failed to get output file", e);
-                    webSocketListener.onError("Failed to get output file for saving server response");
-                    return;
+                    ZipUtil.unpack(bb, webSocketListener);
+                } catch (ZipUtil.ZipException e) {
+                    onError(e);
                 }
-                try {
-                    stream.write(bb.array());
-                    stream.flush();
-                    stream.close();
-                    //Log.d(LOG, "###### zip file: " + zip.getAbsolutePath() + " length: " + zip.length());
-                    content = ZipUtil.unpack(zip, unZip);
-                    //Log.d(LOG, "################ unpacked length: " + unZip.length());
-                    if (content != null) {
-                        Log.e(LOG, "############# onMessage, unpacked length: " + content.length() + " elapsed: " + getElapsed()
-                                + "\n" + content);
-                        ResponseDTO response = gson.fromJson(content, ResponseDTO.class);
-                        if (response.getStatusCode() == 0) {
-                            webSocketListener.onMessage(response);
-                        } else {
-                            webSocketListener.onError(response.getMessage());
-                        }
-                    } else {
-                        webSocketListener.onError("Content from server failed. Response is null");
-                    }
-                } catch (IOException e) {
-                    Log.e(LOG, "onMessage Failed", e);
-                    webSocketListener.onError("Failed to unpack server response");
-                }
+                end = System.currentTimeMillis();
+
+
             }
 
 
@@ -176,7 +143,7 @@ public class WebSocketUtil {
 
             @Override
             public void onError(final Exception e) {
-                Log.e(LOG, "----------> onError ", e);
+                Log.e(LOG, "----------> onError connectWebSocket", e);
                 webSocketListener.onError("Server communications failed. Please try again");
 
 
@@ -189,7 +156,7 @@ public class WebSocketUtil {
 
     private static void connectWebSocket(String socketSuffix) throws URISyntaxException {
         URI uri = new URI(Statics.WEBSOCKET_URL + socketSuffix);
-
+        Log.e(LOG, "----------- connectWebSocket, uri: " + uri.toString());
         mWebSocketClient = new WebSocketClient(uri) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
@@ -203,15 +170,13 @@ public class WebSocketUtil {
             public void onMessage(String response) {
                 TimerUtil.killTimer();
                 end = System.currentTimeMillis();
-                Log.i(LOG, "########## onMessage, length: " + response.length()  + " elapsed: " + getElapsed()
+                Log.i(LOG, "########## onMessage, length: " + response.length() + " elapsed: " + getElapsed()
                         + "\n" + response);
                 try {
                     ResponseDTO r = gson.fromJson(response, ResponseDTO.class);
                     if (r.getStatusCode() == 0) {
                         if (r.getSessionID() != null) {
-                            SharedUtil.setSessionID(ctx, r.getSessionID());
-                        } else {
-                            webSocketListener.onMessage(r);
+                            SharedUtil.setSessionID(ctx,r.getSessionID());
                         }
                     } else {
                         webSocketListener.onError(r.getMessage());
@@ -225,44 +190,13 @@ public class WebSocketUtil {
 
             @Override
             public void onMessage(ByteBuffer bb) {
+                Log.i(LOG, "########## onMessage ... got ByteBuffer, capacity: " + bb.capacity());
+
                 TimerUtil.killTimer();
-                end = System.currentTimeMillis();
-                Log.i(LOG, "########## onMessage ByteBuffer capacity: " + bb.capacity());
-                File dir = Environment.getExternalStorageDirectory();
-                File zip = new File(dir, "data.zip");
-                File unZip = new File(dir, "data.json");
-                BufferedOutputStream stream = null;
-                String content = null;
                 try {
-                    FileOutputStream fos = new FileOutputStream(zip);
-                    stream = new BufferedOutputStream(fos);
-                } catch (FileNotFoundException e) {
-                    Log.e(LOG, "Failed to get output file", e);
-                    webSocketListener.onError("Failed to get output file for saving server response");
-                    return;
-                }
-                try {
-                    stream.write(bb.array());
-                    stream.flush();
-                    stream.close();
-                    //Log.d(LOG, "###### zip file: " + zip.getAbsolutePath() + " length: " + zip.length());
-                    content = ZipUtil.unpack(zip, unZip);
-                    //Log.d(LOG, "################ unpacked length: " + unZip.length());
-                    if (content != null) {
-                        Log.e(LOG, "############# onMessage, unpacked length: " + content.length() + " elapsed: " + getElapsed()
-                                + "\n" + content);
-                        ResponseDTO response = gson.fromJson(content, ResponseDTO.class);
-                        if (response.getStatusCode() == 0) {
-                            webSocketListener.onMessage(response);
-                        } else {
-                            webSocketListener.onError(response.getMessage());
-                        }
-                    } else {
-                        webSocketListener.onError("Content from server failed. Response is null");
-                    }
-                } catch (IOException e) {
-                    Log.e(LOG, "onMessage Failed", e);
-                    webSocketListener.onError("Failed to unpack server response");
+                    ZipUtil.unpack(bb, webSocketListener);
+                } catch (ZipUtil.ZipException e) {
+                    onError(e);
                 }
             }
 
@@ -275,7 +209,7 @@ public class WebSocketUtil {
 
             @Override
             public void onError(final Exception e) {
-                Log.e(LOG, "onError ", e);
+                Log.e(LOG, "---------> onError connectWebSocket", e);
                 webSocketListener.onError("Server communications failed. Please try again");
 
 
@@ -286,9 +220,11 @@ public class WebSocketUtil {
         mWebSocketClient.connect();
     }
 
+
     static WebSocketClient mWebSocketClient;
-    static final String LOG = WebSocketUtil.class.getName();
+    static final String LOG = WebSocketUtil.class.getSimpleName();
     static final Gson gson = new Gson();
+
     public static String getElapsed() {
         BigDecimal m = new BigDecimal(end - start).divide(new BigDecimal(1000));
 

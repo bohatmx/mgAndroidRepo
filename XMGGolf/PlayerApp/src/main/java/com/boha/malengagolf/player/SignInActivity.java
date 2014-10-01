@@ -11,21 +11,30 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
-import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.boha.malengagolf.library.data.GcmDeviceDTO;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.GCMUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 
 import java.util.ArrayList;
-
-import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.BohaVolleyListener;
 
 public class SignInActivity extends FragmentActivity implements
 
@@ -134,67 +143,143 @@ public class SignInActivity extends FragmentActivity implements
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, 360, new BohaVolleyListener() {
+        WebSocketUtil.sendRequest(getApplicationContext(),Statics.ADMIN_ENDPOINT,r,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-
-                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_GOLFGROUPS, new CacheUtil.CacheUtilListener() {
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
 
-                    }
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_GOLFGROUPS, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
 
-                    @Override
-                    public void onDataCached() {
+                            }
 
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
+
+                        switch (type) {
+                            case ADMIN:
+                                SharedUtil.saveAdministration(ctx, response.getAdministrator());
+                                break;
+                            case SCORER:
+                                SharedUtil.saveScorer(ctx, response.getScorers().get(0));
+                                break;
+                            case PLAYER:
+                                SharedUtil.savePlayer(ctx, response.getPlayers().get(0));
+                                break;
+                            case LEADERBOARD:
+                                break;
+                        }
+
+                        Log.i(LOG, "## Player Shared preferences saved. groups cached");
+                        Intent intent = new Intent(ctx, GroupListActivty.class);
+                        intent.putExtra("response", response);
+                        startActivity(intent);
+
+                        if (response.getTournaments() != null && !response.getTournaments().isEmpty())
+                            CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
+                                @Override
+                                public void onFileDataDeserialized(ResponseDTO response) {
+
+                                }
+
+                                @Override
+                                public void onDataCached() {
+
+                                }
+                            });
+
+                        finish();
                     }
                 });
-
-                switch (type) {
-                    case ADMIN:
-                        SharedUtil.saveAdministration(ctx, response.getAdministrator());
-                        break;
-                    case SCORER:
-                        SharedUtil.saveScorer(ctx, response.getScorers().get(0));
-                        break;
-                    case PLAYER:
-                        SharedUtil.savePlayer(ctx, response.getPlayers().get(0));
-                        break;
-                    case LEADERBOARD:
-                        break;
-                }
-
-                Log.i(LOG, "## Player Shared preferences saved. groups cached");
-                Intent intent = new Intent(ctx, GroupListActivty.class);
-                intent.putExtra("response", response);
-                startActivity(intent);
-
-                if (response.getTournaments() != null && !response.getTournaments().isEmpty())
-                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
-
-                        }
-
-                        @Override
-                        public void onDataCached() {
-
-                        }
-                    });
-
-                finish();
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ToastUtil.errorToast(ctx, ctx.getResources().getString(com.boha.malengagolf.library.R.string.error_server_comms));
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(com.boha.malengagolf.library.R.string.error_server_comms));
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, 360, new BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//
+//                CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_GOLFGROUPS, new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//
+//                switch (type) {
+//                    case ADMIN:
+//                        SharedUtil.saveAdministration(ctx, response.getAdministrator());
+//                        break;
+//                    case SCORER:
+//                        SharedUtil.saveScorer(ctx, response.getScorers().get(0));
+//                        break;
+//                    case PLAYER:
+//                        SharedUtil.savePlayer(ctx, response.getPlayers().get(0));
+//                        break;
+//                    case LEADERBOARD:
+//                        break;
+//                }
+//
+//                Log.i(LOG, "## Player Shared preferences saved. groups cached");
+//                Intent intent = new Intent(ctx, GroupListActivty.class);
+//                intent.putExtra("response", response);
+//                startActivity(intent);
+//
+//                if (response.getTournaments() != null && !response.getTournaments().isEmpty())
+//                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_TOURNAMENTS, new CacheUtil.CacheUtilListener() {
+//                        @Override
+//                        public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                        }
+//
+//                        @Override
+//                        public void onDataCached() {
+//
+//                        }
+//                    });
+//
+//                finish();
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ToastUtil.errorToast(ctx, ctx.getResources().getString(com.boha.malengagolf.library.R.string.error_server_comms));
+//            }
+//        });
 
     }
 

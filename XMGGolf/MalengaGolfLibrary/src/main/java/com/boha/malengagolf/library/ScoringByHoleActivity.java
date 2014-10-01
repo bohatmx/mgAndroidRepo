@@ -9,7 +9,12 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.boha.malengagolf.library.data.*;
+
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.ScoringByHoleFragment;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.ToastUtil;
@@ -31,7 +36,8 @@ public class ScoringByHoleActivity extends FragmentActivity
         tournament = (TournamentDTO) getIntent().getSerializableExtra("tournament");
         leaderBoard = (LeaderBoardDTO) getIntent().getSerializableExtra("leaderBoard");
         leaderBoard.setTournamentID(tournament.getTournamentID());
-        if (leaderBoard == null) throw new UnsupportedOperationException("Leaderboard is null. Why da fuck?");
+        if (leaderBoard == null)
+            throw new UnsupportedOperationException("Leaderboard is null. Why da fuck?");
         golfGroup = SharedUtil.getGolfGroup(ctx);
         administrator = SharedUtil.getAdministrator(ctx);
 
@@ -47,19 +53,16 @@ public class ScoringByHoleActivity extends FragmentActivity
     @Override
     public void onBackPressed() {
         if (carrier == null) {
-            Log.i(LOG, "onBackPressed, carrier is NULL");
+            Log.e(LOG, "onBackPressed, carrier is NULL ...");
+            setResult(Activity.RESULT_CANCELED);
         } else {
-            Log.i(LOG, "onBackPressed, carrier is LOADED");
-        }
-
-        if (carrier != null) {
+            Log.w(LOG, "## onBackPressed, carrier is LOADED, leaderBoardList size: " + carrier.getLeaderBoardList().size());
             Intent intent = new Intent();
             intent.putExtra("response", carrier);
             setResult(Activity.RESULT_OK, intent);
-            finish();
-            return;
         }
-
+        //
+        Log.i(LOG, "onBackPressed - about to finish()");
         finish();
     }
 
@@ -90,7 +93,7 @@ public class ScoringByHoleActivity extends FragmentActivity
 
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.menu_back);
+            final MenuItem refreshItem = mMenu.findItem(R.id.menu_camera);
             if (refreshItem != null) {
                 if (refreshing) {
                     refreshItem.setActionView(R.layout.action_bar_progess);
@@ -105,19 +108,15 @@ public class ScoringByHoleActivity extends FragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
 
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.take_pic))) {
+        if (item.getItemId() == R.id.menu_camera) {
             Intent z = new Intent(ctx, PictureActivity.class);
             z.putExtra("golfGroup", golfGroup);
             z.putExtra("tournament", tournament);
             startActivity(z);
             return true;
         }
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.back))) {
-            onBackPressed();
-            return true;
-        }
 
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.help_me))) {
+        if (item.getItemId() == R.id.menu_help) {
             ToastUtil.toast(ctx, "Under Construction");
             return true;
         }
@@ -143,22 +142,40 @@ public class ScoringByHoleActivity extends FragmentActivity
 
     @Override
     public void setBusy() {
-        setRefreshActionButtonState(true);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRefreshActionButtonState(true);
+            }
+        });
     }
 
     @Override
     public void setNotBusy() {
-        setRefreshActionButtonState(false);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                setRefreshActionButtonState(false);
+            }
+        });
+
     }
 
     ResponseDTO carrier;
 
     @Override
-    public void scoringSubmitted(List<LeaderBoardDTO> tps) {
-        Log.i(LOG, "scoringSubmitted, tps list: " + tps.size());
+    public void scoringSubmitted(List<LeaderBoardDTO> lbList) {
+        if (lbList == null) {
+            Log.e(LOG, "*** scoringSubmitted leaderBoardList is null");
+            onBackPressed();
+            return;
+        } else {
+            Log.w(LOG, "*** scoringSubmitted leaderBoardList is OK, size: " + lbList.size());
+        }
         carrier = new ResponseDTO();
-        carrier.setLeaderBoardList(tps);
+        carrier.setLeaderBoardList(lbList);
         onBackPressed();
+
     }
 
     @Override
@@ -166,8 +183,8 @@ public class ScoringByHoleActivity extends FragmentActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-                ToastUtil.errorToast(ctx,message);
+                setRefreshActionButtonState(false);
+                ToastUtil.errorToast(ctx, message);
             }
         });
 

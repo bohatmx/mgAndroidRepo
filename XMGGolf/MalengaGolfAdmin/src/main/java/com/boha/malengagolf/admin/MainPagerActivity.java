@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.admin.com.boha.malengagolf.packs.TourneyPlayerActivity;
@@ -31,6 +32,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationRequest;
+
 import org.acra.ACRA;
 
 import java.util.ArrayList;
@@ -76,6 +78,7 @@ public class MainPagerActivity extends FragmentActivity
 
         mLocationClient = new LocationClient(getApplicationContext(), this,
                 this);
+        setTitle(golfGroup.getGolfGroupName());
     }
 
     @Override
@@ -143,32 +146,78 @@ public class MainPagerActivity extends FragmentActivity
         } else {
             w.setRadiusType(KILOMETRES);
         }
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
-                Log.e(LOG, "Have found " + r.getClubs().size() + " clubs nearby");
-                response.setClubs(r.getClubs());
-                CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_NEAREST_CLUBS, new CacheUtil.CacheUtilListener() {
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, r)) {
+                            return;
+                        }
+                        Log.e(LOG, "Have found " + r.getClubs().size() + " clubs nearby");
+                        response.setClubs(r.getClubs());
+                        CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_NEAREST_CLUBS, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
 
+                            }
+
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
                     }
+                });
+            }
 
+            @Override
+            public void onClose() {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onDataCached() {
+                    public void run() {
 
                     }
                 });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                ErrorUtil.showServerCommsError(ctx);
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                Log.e(LOG, "Have found " + r.getClubs().size() + " clubs nearby");
+//                response.setClubs(r.getClubs());
+//                CacheUtil.cacheData(ctx, r, CacheUtil.CACHE_NEAREST_CLUBS, new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void setSplashFrament() {
@@ -336,6 +385,7 @@ public class MainPagerActivity extends FragmentActivity
     }
 
     boolean isUsingCachedData, useWebSocket = true;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_pager_menu, menu);
@@ -367,7 +417,6 @@ public class MainPagerActivity extends FragmentActivity
                                                     } else {
                                                         getGolfGroupData();
                                                     }
-
 
 
                                                 }
@@ -424,6 +473,7 @@ public class MainPagerActivity extends FragmentActivity
     }
 
     static final int REQUEST_IMPORT_PLAYERS = 3733;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -746,15 +796,15 @@ public class MainPagerActivity extends FragmentActivity
                     break;
                 case TOURNAMENT:
                     title = ctx.getResources().getString(R.string.tournaments)
-                            + " (" + response.getTournaments().size() + ")";
+                    ;
                     break;
                 case PLAYERS:
                     title = ctx.getResources().getString(R.string.players)
-                            + " (" + response.getPlayers().size() + ")";
+                    ;
                     break;
                 case SCORERS:
                     title = ctx.getResources().getString(R.string.scorers)
-                            + " (" + response.getScorers().size() + ")";
+                    ;
                     break;
 //                case PARENTS:
 //                    title = ctx.getResources().getString(R.string.parents)
@@ -762,7 +812,7 @@ public class MainPagerActivity extends FragmentActivity
 //                    break;
                 case ADMINS:
                     title = ctx.getResources().getString(R.string.admins)
-                            + " (" + response.getAdministrators().size() + ")";
+                            ;
                     break;
 
 

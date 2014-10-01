@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.boha.malengagolf.admin.leaderboard.R;
-import com.boha.malengagolf.library.LeaderboardFragment;
+import com.boha.malengagolf.library.fragments.LeaderboardFragment;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardCarrierDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;

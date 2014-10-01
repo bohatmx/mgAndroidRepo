@@ -14,6 +14,8 @@ public class ResponseDTO {
     private UploadBlobDTO uploadBlob;
     private UploadUrlDTO uploadUrl;
     private int statusCode, totalPages, totalClubs;
+
+    private boolean leaderBoardUpdateRecord;
     private String message, gcmRegistrationID;
     private LeaderBoardDTO leaderBoard;
     private PersonalPlayerDTO personalPlayer;
@@ -52,7 +54,15 @@ public class ResponseDTO {
     public void setLog(String log) {
         this.log = log;
     }
-    
+
+    public boolean isLeaderBoardUpdateRecord() {
+        return leaderBoardUpdateRecord;
+    }
+
+    public void setLeaderBoardUpdateRecord(boolean leaderBoardUpdateRecord) {
+        this.leaderBoardUpdateRecord = leaderBoardUpdateRecord;
+    }
+
     //
     public static final int LOGIN_EXCEPTION = 101;
     public static final int DATA_EXCEPTION = 102;

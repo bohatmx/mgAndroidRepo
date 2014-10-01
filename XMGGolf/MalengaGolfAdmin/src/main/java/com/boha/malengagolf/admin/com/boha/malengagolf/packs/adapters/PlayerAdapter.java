@@ -54,7 +54,7 @@ public class PlayerAdapter extends ArrayAdapter<PlayerDTO> {
 
     static class ViewHolderItem {
         TextView txtName, txtNum;
-        TextView txtEmail, txtCell, txtBirthdate, txtCountLabel, txtCount;
+        TextView txtEmail, txtCell, txtBirthdate, txtCountLabel, txtCountRed, txtCountBlack, txtCountGreen;
         ImageView imagex;
         ImageView imgHistory, imgCamera, imgInvite, imgMessage, imgEdit;
     }
@@ -73,8 +73,12 @@ public class PlayerAdapter extends ArrayAdapter<PlayerDTO> {
                     .findViewById(R.id.PSN_txtCell);
             item.txtCountLabel = (TextView) convertView
                     .findViewById(R.id.PSN_txtCounterLabel);
-            item.txtCount = (TextView) convertView
-                    .findViewById(R.id.PSN_txtCounter);
+            item.txtCountGreen = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterGreen);
+            item.txtCountBlack = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterBlack);
+            item.txtCountRed = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterRed);
             item.txtBirthdate = (TextView) convertView
                     .findViewById(R.id.PSN_txtBirthdate);
             item.imgCamera = (ImageView) convertView
@@ -99,6 +103,7 @@ public class PlayerAdapter extends ArrayAdapter<PlayerDTO> {
         }
 
 
+
         final PlayerDTO p = mList.get(position);
         if (position < 9) {
             item.txtNum.setText("0" + (position + 1));
@@ -108,7 +113,10 @@ public class PlayerAdapter extends ArrayAdapter<PlayerDTO> {
         item.txtName.setText(p.getFullName());
         item.txtEmail.setText(p.getEmail());
         item.txtCell.setText(p.getCellphone());
-        item.txtCount.setText("" + p.getNumberOfTournaments());
+        item.txtCountRed.setVisibility(View.GONE);
+        item.txtCountBlack.setVisibility(View.GONE);
+
+        item.txtCountGreen.setText("" + p.getNumberOfTournaments());
         item.txtCountLabel.setText(ctx.getResources().getString(R.string.number_tourn));
         if (p.getDateOfBirth() > 0) {
             item.txtBirthdate.setText(sdf.format(new Date(p.getDateOfBirth())));

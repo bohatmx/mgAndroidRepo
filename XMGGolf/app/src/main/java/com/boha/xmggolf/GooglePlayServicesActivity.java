@@ -8,13 +8,11 @@ import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.gms.cast.Cast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.wallet.Wallet;
 
 public class GooglePlayServicesActivity extends Activity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -65,10 +63,8 @@ public class GooglePlayServicesActivity extends Activity implements
         super.onStart();
         if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addApi(Cast.API)
                     .addApi(Drive.API)
                     .addApi(Plus.API)
-                    .addApi(Wallet.API)
                     .addScope(Drive.SCOPE_FILE)
                     .addScope(Plus.SCOPE_PLUS_LOGIN)
                     // Optionally, add additional APIs and scopes if required.

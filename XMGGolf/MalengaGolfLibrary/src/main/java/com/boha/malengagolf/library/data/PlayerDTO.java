@@ -19,20 +19,20 @@ import java.util.List;
  */
 public class PlayerDTO implements Serializable, PersonInterface, Comparable<PlayerDTO> {
 
-    private int playerID;
+    private Integer playerID;
     private String cellphone;
     private long dateOfBirth;
     private long dateRegistered;
     private String email;
     private String firstName;
-    private int gender, age, sortType;
+    private Integer gender, age, sortType;
     private String lastName;
     private String middleName;
     private String pin, imageURL;
-    private int yearJoined, parentID;
+    private Integer yearJoined, parentID;
     private ParentDTO parent;
     private boolean selected;
-    private int numberOfTournaments;
+    private Integer numberOfTournaments;
     private List<LeaderBoardDTO> scores;
     private GcmDeviceDTO gcmDevice;
     private boolean forceImageRefresh;
@@ -77,28 +77,28 @@ public class PlayerDTO implements Serializable, PersonInterface, Comparable<Play
         this.gcmDevice = gcmDevice;
     }
 
-    public int getSortType() {
+    public Integer getSortType() {
         return sortType;
     }
 
-    public void setSortType(int sortType) {
+    public void setSortType(Integer sortType) {
         this.sortType = sortType;
     }
 
-    public int getAge() {
+    public Integer getAge() {
 
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
-    public int getNumberOfTournaments() {
+    public Integer getNumberOfTournaments() {
         return numberOfTournaments;
     }
 
-    public void setNumberOfTournaments(int numberOfTournaments) {
+    public void setNumberOfTournaments(Integer numberOfTournaments) {
         this.numberOfTournaments = numberOfTournaments;
     }
 
@@ -122,11 +122,11 @@ public class PlayerDTO implements Serializable, PersonInterface, Comparable<Play
         this.scores = scores;
     }
 
-    public int getPlayerID() {
+    public Integer getPlayerID() {
         return playerID;
     }
 
-    public void setPlayerID(int playerID) {
+    public void setPlayerID(Integer playerID) {
         this.playerID = playerID;
     }
 
@@ -170,11 +170,11 @@ public class PlayerDTO implements Serializable, PersonInterface, Comparable<Play
         this.firstName = firstName;
     }
 
-    public int getGender() {
+    public Integer getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 
@@ -202,26 +202,26 @@ public class PlayerDTO implements Serializable, PersonInterface, Comparable<Play
         this.pin = pin;
     }
 
-    public int getYearJoined() {
+    public Integer getYearJoined() {
         return yearJoined;
     }
 
-    public void setYearJoined(int yearJoined) {
+    public void setYearJoined(Integer yearJoined) {
         this.yearJoined = yearJoined;
     }
 
-	public int getParentID() {
+	public Integer getParentID() {
 		return parentID;
 	}
 
-	public void setParentID(int parentID) {
+	public void setParentID(Integer parentID) {
 		this.parentID = parentID;
 	}
 
     @Override
     public int compareTo(PlayerDTO p) {
 
-        switch (sortType) {
+        switch (sortType.intValue()) {
             case SORT_BY_AGE:
                 if (getAge() == p.getAge()) return 0;
                 if (getAge() < p.getAge()) return -1;

@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.android.volley.VolleyError;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -30,6 +31,32 @@ public class GroupListActivty extends FragmentActivity {
         w.setPlayerID(SharedUtil.getPlayer(getApplicationContext()).getPlayerID());
 
         setRefreshActionButtonState(true);
+        WebSocketUtil.sendRequest(getApplicationContext(),Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
+            }
+        });
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, getApplicationContext(),
                 new BaseVolley.BohaVolleyListener() {
                     @Override

@@ -7,8 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -16,6 +15,8 @@ import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.TeeTimeRequestFragment;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.List;
 
@@ -60,23 +61,56 @@ public class TeeTimeActivity extends FragmentActivity
             return;
         }
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx,r)) {
-                    return;
-                }
-                response = r;
-                teeTimeRequestFragment.setLeaderBoardList(tournament,response.getLeaderBoardList());
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx,r)) {
+                            return;
+                        }
+                        response = r;
+                        teeTimeRequestFragment.setLeaderBoardList(tournament,response.getLeaderBoardList());
+
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx,r)) {
+//                    return;
+//                }
+//                response = r;
+//                teeTimeRequestFragment.setLeaderBoardList(tournament,response.getLeaderBoardList());
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
 
     }
 

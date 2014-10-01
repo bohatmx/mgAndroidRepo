@@ -66,6 +66,7 @@ public class ScoreCardFragment extends Fragment  {
         txtRounds = (TextView) view.findViewById(R.id.PSC_count);
         txtAverage = (TextView) view.findViewById(R.id.PSC_averageStrokes);
         imageView = (NetworkImageView)view.findViewById(R.id.PSC_image);
+        Statics.setRobotoFontLight(ctx, txtPlayerName);
     }
 
     public void setList() {

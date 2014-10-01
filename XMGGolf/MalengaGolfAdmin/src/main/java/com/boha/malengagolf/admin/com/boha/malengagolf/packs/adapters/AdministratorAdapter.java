@@ -46,7 +46,7 @@ public class AdministratorAdapter extends ArrayAdapter<AdministratorDTO> {
 
     static class ViewHolderItem {
         TextView txtName, txtNumber;
-        TextView txtEmail, txtCell;
+        TextView txtEmail, txtCell, txtCountRed, txtCountBlack, txtCountGreen;
         ImageView imagex;
         ImageView imgHistory, imgCamera, imgInvite, imgMessage, imgEdit;
     }
@@ -65,6 +65,13 @@ public class AdministratorAdapter extends ArrayAdapter<AdministratorDTO> {
                     .findViewById(R.id.PSN_txtEmail);
             v.txtCell = (TextView) convertView
                     .findViewById(R.id.PSN_txtCell);
+
+            v.txtCountGreen = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterGreen);
+            v.txtCountBlack = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterBlack);
+            v.txtCountRed = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterRed);
 
             v.imagex = (ImageView) convertView
                     .findViewById(R.id.PSN_imagex);
@@ -96,6 +103,9 @@ public class AdministratorAdapter extends ArrayAdapter<AdministratorDTO> {
         }
 
         v.txtCell.setText(p.getCellphone());
+        v.txtCountRed.setVisibility(View.GONE);
+        v.txtCountBlack.setVisibility(View.VISIBLE);
+        v.txtCountGreen.setVisibility(View.GONE);
 
 //        Picasso.with(ctx)
 //                .load(sb.toString())

@@ -27,6 +27,7 @@ import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.MGPageFragment;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
@@ -51,7 +52,7 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
         mPager = (ViewPager) findViewById(R.id.pager);
         MGApp app = (MGApp) getApplication();
         imageLoader = app.getImageLoader();
-        setTitle(ctx.getResources().getString(R.string.app_name));
+        setTitle(golfGroup.getGolfGroupName());
 
     }
 
@@ -131,7 +132,8 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String title = ctx.getResources().getString(R.string.tournaments);
+            String title = ctx.getResources().getString(R.string.tournaments)
+                    + " (" + tournamentList.size() + ")";
 
             return title;
         }
@@ -294,6 +296,9 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
             case R.id.menu_clubs:
                 Intent x = new Intent(ctx, GolfCourseMapActivity.class);
                 startActivity(x);
+                return true;
+            case R.id.menu_help:
+                ToastUtil.toast(ctx,ctx.getResources().getString(R.string.under_cons));
                 return true;
 
 

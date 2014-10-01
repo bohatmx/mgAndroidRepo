@@ -7,7 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+
+import com.boha.malengagolf.library.LeaderBoardPager;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.util.GCMUtil;
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -30,11 +34,9 @@ public class GcmIntentService extends GCMBaseIntentService {
 
 	@Override
 	protected void onMessage(Context arg0, Intent intent) {
-		Log.w(TAG, "onMessage ..seeker:..gcm message here... " + intent.getExtras().toString());
+		Log.w(TAG, "onMessage ..:..gcm message here... " + intent.getExtras().toString());
 		Bundle extras = intent.getExtras();
 		GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-		// The getMessageType() intent parameter must be the intent you received
-		// in your BroadcastReceiver.
 		String messageType = gcm.getMessageType(intent);
 		Log.d(TAG, "GCM messageType = " + messageType);
 		if (!extras.isEmpty()) { 
@@ -72,27 +74,32 @@ public class GcmIntentService extends GCMBaseIntentService {
 		mNotificationManager = (NotificationManager) this
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		String message = msgIntent.getExtras().getString("message");
-//		HelpRequestDTO dto;
-//		try {
-//			dto = gson.fromJson(message, HelpRequestDTO.class);
-//		} catch (Exception e) {
-//			Log.e(TAG, "gcm message cannot be parsed. might be null ... why?");
-//			return;
-//		}
+		LeaderBoardDTO dto;
+		try {
+			dto = gson.fromJson(message, LeaderBoardDTO.class);
+		} catch (Exception e) {
+			Log.e(TAG, "gcm message: " + message);
+			return;
+		}
 
-		Intent wpaIntent = new Intent(this, NotificationActivity.class);
-		//wpaIntent.putExtra("helpRequest", dto);
+		Intent resultIntent = new Intent(this, LeaderBoardPager.class);
+		resultIntent.putExtra("leaderBoard", dto);
 		
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				wpaIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-				this).setSmallIcon(android.R.drawable.ic_menu_send)
-				.setContentTitle("Title")
-				.setStyle(new NotificationCompat.BigTextStyle().bigText("Who be me?"))
-				.setContentText("Content");
 
-		mBuilder.setContentIntent(contentIntent);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainPagerActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setContentIntent(resultPendingIntent)
+                .addAction(R.drawable.ic_action_refresh, "More", resultPendingIntent)
+                .setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(dto.getTournamentName())
+				.setContentText(dto.getPlayer().getFullName() + " - score updated");
+
 		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
 	}
 	

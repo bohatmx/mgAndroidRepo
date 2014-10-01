@@ -17,11 +17,9 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.TimeSheetActivity;
 import com.boha.malengagolf.library.adapters.TeeTimeAdapter;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -30,6 +28,8 @@ import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.RadialPickerLayout;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -298,25 +298,59 @@ public class TeeTimeRequestFragment extends Fragment implements
             return;
         }
         teeTimeFragmentListener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                teeTimeFragmentListener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                leaderBoardList = response.getLeaderBoardList();
-                setList();
-                listView.setSelection(selectedIndex);
-                teeTimeFragmentListener.onTeeTimesCompleted(leaderBoardList);
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        teeTimeFragmentListener.setNotBusy();
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        leaderBoardList = response.getLeaderBoardList();
+                        setList();
+                        listView.setSelection(selectedIndex);
+                        teeTimeFragmentListener.onTeeTimesCompleted(leaderBoardList);
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                teeTimeFragmentListener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        teeTimeFragmentListener.setNotBusy();
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                teeTimeFragmentListener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                leaderBoardList = response.getLeaderBoardList();
+//                setList();
+//                listView.setSelection(selectedIndex);
+//                teeTimeFragmentListener.onTeeTimesCompleted(leaderBoardList);
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                teeTimeFragmentListener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
 
     }
 

@@ -8,18 +8,42 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import com.android.volley.VolleyError;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.adapters.ImportPlayerAdapter;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.ImportPlayerDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.ImportUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.util.bean.ImportException;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -251,25 +275,57 @@ public class ImportFragment extends Fragment {
             return;
         }
         listener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                listener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                Log.w(LOG, "#####  ########## players imported OK ....pageCnt: " + pageCnt + response.getMessage());
-                pageCnt++;
-                controlImport();
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        listener.setNotBusy();
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        Log.w(LOG, "#####  ########## players imported OK ....pageCnt: " + pageCnt + response.getMessage());
+                        pageCnt++;
+                        controlImport();
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
 
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                listener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                listener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                Log.w(LOG, "#####  ########## players imported OK ....pageCnt: " + pageCnt + response.getMessage());
+//                pageCnt++;
+//                controlImport();
+//
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                listener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void setList() {

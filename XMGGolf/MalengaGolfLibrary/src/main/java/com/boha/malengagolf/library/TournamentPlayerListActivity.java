@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
@@ -49,7 +51,7 @@ public class TournamentPlayerListActivity extends FragmentActivity implements To
     public boolean onOptionsItemSelected(MenuItem item) {
 
 
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.take_pic))) {
+        if (item.getItemId() == R.id.menu_camera) {
             Intent z = new Intent(ctx, PictureActivity.class);
             z.putExtra("golfGroup", golfGroup);
             z.putExtra("tournament", tournament);
@@ -58,12 +60,23 @@ public class TournamentPlayerListActivity extends FragmentActivity implements To
         }
 
 
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.help_me))) {
+        if (item.getItemId() == R.id.menu_help) {
             ToastUtil.toast(ctx, "Under Construction");
             return true;
         }
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.back))) {
-            onBackPressed();
+        if (item.getItemId() == R.id.menu_leaderboard) {
+            Intent intent = new Intent(this, LeaderBoardPager.class);
+            intent.putExtra("tournament", tournament);
+            if (SharedUtil.getAdministrator(ctx) != null)
+                intent.putExtra("administrator", SharedUtil.getAdministrator(ctx));
+            if (SharedUtil.getScorer(ctx) != null)
+                intent.putExtra("scorer", SharedUtil.getScorer(ctx));
+            if (SharedUtil.getPlayer(ctx) != null)
+                intent.putExtra("player", SharedUtil.getPlayer(ctx));
+            if (SharedUtil.getAppUser(ctx) != null)
+                intent.putExtra("appUser", SharedUtil.getAppUser(ctx));
+            startActivity(intent);
+
             return true;
         }
         if (item.getItemId() == android.R.id.home) {
@@ -111,19 +124,24 @@ public class TournamentPlayerListActivity extends FragmentActivity implements To
         w.putExtra("tournament", tournament);
         startActivityForResult(w, REQUEST_SCORING);
     }
+
     static final int REQUEST_SCORING = 933;
+    static final String LOG = TournamentPlayerListActivity.class.getName();
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(LOG, "****** onActivityResult code: " + requestCode + " result: " + resultCode);
         switch (requestCode) {
             case REQUEST_SCORING:
                 if (resultCode == RESULT_OK) {
-                    //refresh
-                    ResponseDTO w = (ResponseDTO)data.getSerializableExtra("response");
+                    Log.w(LOG, "...... about to refresh tournamentPlayerListFragment");
+                    ResponseDTO w = (ResponseDTO) data.getSerializableExtra("response");
                     tournamentPlayerListFragment.refresh(w.getLeaderBoardList());
                 }
                 break;
         }
     }
+
     @Override
     public void onPause() {
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);

@@ -12,18 +12,23 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.android.volley.VolleyError;
+
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.ScoreCardActivity;
 import com.boha.malengagolf.library.adapters.PlayerHistoryAdapter;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.MGPageFragment;
+import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +57,14 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
         inflater = getActivity().getLayoutInflater();
         view = inflater
                 .inflate(R.layout.fragment_player_history, container, false);
-        setFields();
         Bundle b = getArguments();
         if (b != null) {
             player = (PlayerDTO)b.getSerializable("player");
             getPlayerHistory();
         }
 
+
+        setFields();
         return view;
     }
     private void getPlayerHistory() {
@@ -69,24 +75,57 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,z,ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, z, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                leaderBoardList = response.getLeaderBoardList();
-                if (leaderBoardList == null) {
-                    leaderBoardList = new ArrayList<LeaderBoardDTO>();
-                }
-                setList();
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        leaderBoardList = response.getLeaderBoardList();
+                        if (leaderBoardList == null) {
+                            leaderBoardList = new ArrayList<LeaderBoardDTO>();
+                        }
+                        setList();
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,z,ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                leaderBoardList = response.getLeaderBoardList();
+//                if (leaderBoardList == null) {
+//                    leaderBoardList = new ArrayList<LeaderBoardDTO>();
+//                }
+//                setList();
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
     @Override
     public void onSaveInstanceState(Bundle b) {
@@ -97,11 +136,13 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
         listView = (ListView) view.findViewById(R.id.PH_FRAG_list);
         txtPlayerName = (TextView) view.findViewById(R.id.PH_FRAG_playerName);
         txtTourneyCount = (TextView) view.findViewById(R.id.PH_FRAG_count);
+        imageView = (NetworkImageView)view.findViewById(R.id.PH_FRAG_image);
+        Statics.setRobotoFontLight(ctx, txtPlayerName);
     }
 
     public void setList() {
         Log.i(LOG, "setList");
-        txtPlayerName.setText(player.getFullName());
+        setName();
         txtTourneyCount.setText("" + leaderBoardList.size());
         playerHistoryAdapter = new PlayerHistoryAdapter(ctx, R.layout.player_history_item, leaderBoardList);
         listView.setAdapter(playerHistoryAdapter);
@@ -114,6 +155,22 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
                startActivity(xx);
             }
         });
+    }
+    private void setName() {
+        txtPlayerName.setText(player.getFullName());
+        Statics.setRobotoFontBold(ctx,txtPlayerName);
+        //image
+        StringBuilder sb = new StringBuilder();
+        sb.append(Statics.IMAGE_URL).append("golfgroup")
+                .append(SharedUtil.getGolfGroup(ctx).getGolfGroupID()).append("/")
+                .append("player/t")
+                .append(player.getPlayerID())
+                .append(".jpg");
+        //Picasso.with(ctx).load(sb.toString()).placeholder(ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
+        MGApp app = (MGApp)getActivity().getApplication();
+        ImageLoader loader = app.getImageLoader();
+        imageView.setDefaultImageResId(R.drawable.boy);
+        imageView.setImageUrl(sb.toString(), loader);
     }
     LeaderBoardDTO leaderBoard;
     public void setLeaderBoardList(PlayerDTO player, List<LeaderBoardDTO> leaderBoardList) {
@@ -131,6 +188,7 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
     static final String LOG = "PlayersHistoryFragment";
     Context ctx;
     View view;
+    NetworkImageView imageView;
     PlayerDTO player;
     ResponseDTO response;
     List<LeaderBoardDTO> leaderBoardList;

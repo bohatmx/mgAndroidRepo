@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
@@ -15,6 +14,8 @@ import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.fragments.PlayerHistoryFragment;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,26 +45,61 @@ public class PlayerHistoryActivity extends FragmentActivity {
             return;
         }
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,z,ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, z, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                leaderBoardList = response.getLeaderBoardList();
-                if (leaderBoardList == null) {
-                    leaderBoardList = new ArrayList<LeaderBoardDTO>();
-                }
-                playerHistoryFragment.setLeaderBoardList(player, leaderBoardList);
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        leaderBoardList = response.getLeaderBoardList();
+                        if (leaderBoardList == null) {
+                            leaderBoardList = new ArrayList<LeaderBoardDTO>();
+                        }
+                        playerHistoryFragment.setLeaderBoardList(player, leaderBoardList);
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,z,ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                leaderBoardList = response.getLeaderBoardList();
+//                if (leaderBoardList == null) {
+//                    leaderBoardList = new ArrayList<LeaderBoardDTO>();
+//                }
+//                playerHistoryFragment.setLeaderBoardList(player, leaderBoardList);
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

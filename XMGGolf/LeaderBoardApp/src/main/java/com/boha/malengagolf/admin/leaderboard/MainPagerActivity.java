@@ -17,6 +17,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.GolfCourseMapActivity;
 import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.PictureActivity;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
@@ -148,48 +149,85 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
         w.setTournamentID(t.getTournamentID());
         w.setTournamentType(t.getTournamentType());
 
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                if (ErrorUtil.checkServerError(ctx, r)) {
-                    leaderBoardList = r.getLeaderBoardList();
-                    Log.e(LOG, "getTournamentPlayersPictures leaderBoardList: " + leaderBoardList.size());
-                    staggeredTournamentGridFragment = new StaggeredTournamentGridFragment();
-                    Bundle b = new Bundle();
-                    b.putSerializable("tournament", t);
-                    staggeredTournamentGridFragment.setArguments(b);
-                    staggeredTournamentGridFragment.setFileNames(fileNames);
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (ErrorUtil.checkServerError(ctx, r)) {
+                            leaderBoardList = r.getLeaderBoardList();
+                            Log.e(LOG, "getTournamentPlayersPictures leaderBoardList: " + leaderBoardList.size());
+                            staggeredTournamentGridFragment = new StaggeredTournamentGridFragment();
+                            Bundle b = new Bundle();
+                            b.putSerializable("tournament", t);
+                            staggeredTournamentGridFragment.setArguments(b);
+                            staggeredTournamentGridFragment.setFileNames(fileNames);
+                            try {
+                                if (pageFragmentList.size() > 2) {
+                                    pageFragmentList.remove(pageFragmentList.size() - 1);
+                                    pageFragmentList.remove(pageFragmentList.size() - 1);
+                                    mPagerAdapter.notifyDataSetChanged();
+                                }
+                            } catch (Exception e) {
+                            }
+                            pageFragmentList.add(staggeredTournamentGridFragment);
 
 
-//                    tournamentPlayersPicturesFragment = new TournamentPlayersPicturesFragment();
-//                    tournamentPlayersPicturesFragment.setLeaderBoardList(leaderBoardList);
-//                    Bundle b2 = new Bundle();
-//                    b2.putSerializable("tournament", t);
-//                    tournamentPlayersPicturesFragment.setArguments(b2);
-
-                    try {
-                        if (pageFragmentList.size() > 2) {
-                            pageFragmentList.remove(pageFragmentList.size() - 1);
-                            pageFragmentList.remove(pageFragmentList.size() - 1);
                             mPagerAdapter.notifyDataSetChanged();
+                            mPager.setCurrentItem(2);
                         }
-                    } catch (Exception e) {
                     }
-
-                   // pageFragmentList.add(tournamentPlayersPicturesFragment);
-                    pageFragmentList.add(staggeredTournamentGridFragment);
-
-
-                    mPagerAdapter.notifyDataSetChanged();
-                    mPager.setCurrentItem(2);
-                }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
+            public void onClose() {
 
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                if (ErrorUtil.checkServerError(ctx, r)) {
+//                    leaderBoardList = r.getLeaderBoardList();
+//                    Log.e(LOG, "getTournamentPlayersPictures leaderBoardList: " + leaderBoardList.size());
+//                    staggeredTournamentGridFragment = new StaggeredTournamentGridFragment();
+//                    Bundle b = new Bundle();
+//                    b.putSerializable("tournament", t);
+//                    staggeredTournamentGridFragment.setArguments(b);
+//                    staggeredTournamentGridFragment.setFileNames(fileNames);
+//                    try {
+//                        if (pageFragmentList.size() > 2) {
+//                            pageFragmentList.remove(pageFragmentList.size() - 1);
+//                            pageFragmentList.remove(pageFragmentList.size() - 1);
+//                            mPagerAdapter.notifyDataSetChanged();
+//                        }
+//                    } catch (Exception e) {
+//                    }
+//                    pageFragmentList.add(staggeredTournamentGridFragment);
+//
+//
+//                    mPagerAdapter.notifyDataSetChanged();
+//                    mPager.setCurrentItem(2);
+//                }
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//
+//            }
+//        });
     }
 
     StaggeredTournamentGridFragment staggeredTournamentGridFragment;

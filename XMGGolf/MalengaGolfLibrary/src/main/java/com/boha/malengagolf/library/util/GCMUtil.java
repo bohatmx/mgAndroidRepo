@@ -12,8 +12,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import com.android.volley.VolleyError;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.google.android.gms.common.ConnectionResult;
@@ -56,19 +55,37 @@ public class GCMUtil {
                 RequestDTO w = new RequestDTO();
                 w.setRequestType(RequestDTO.SEND_GCM_REGISTRATION);
                 w.setGcmRegistrationID(registrationID);
-                BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx,new BaseVolley.BohaVolleyListener() {
+                WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
                     @Override
-                    public void onResponseReceived(ResponseDTO response) {
+                    public void onMessage(ResponseDTO response) {
                         if (response.getStatusCode() == 0) {
                             Log.w(LOG, "############ Device registered on server GCM regime");
                         }
                     }
 
                     @Override
-                    public void onVolleyError(VolleyError error) {
-                        Log.e(LOG, "############ Device failed to register on server GCM regime");
+                    public void onClose() {
+
+                    }
+
+                    @Override
+                    public void onError(String message) {
+                        Log.e(LOG, "############ Device failed to register on server GCM regime\n" + message);
                     }
                 });
+//                BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx,new BaseVolley.BohaVolleyListener() {
+//                    @Override
+//                    public void onResponseReceived(ResponseDTO response) {
+//                        if (response.getStatusCode() == 0) {
+//                            Log.w(LOG, "############ Device registered on server GCM regime");
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onVolleyError(VolleyError error) {
+//                        Log.e(LOG, "############ Device failed to register on server GCM regime");
+//                    }
+//                });
                 Log.i(LOG, msg);
 
             } catch (IOException e) {

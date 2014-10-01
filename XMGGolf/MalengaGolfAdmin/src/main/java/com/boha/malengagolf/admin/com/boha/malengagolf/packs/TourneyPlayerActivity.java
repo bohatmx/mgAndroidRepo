@@ -1,5 +1,6 @@
 package com.boha.malengagolf.admin.com.boha.malengagolf.packs;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,9 +9,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
-import com.android.volley.VolleyError;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.MGApp;
@@ -18,9 +31,21 @@ import com.boha.malengagolf.library.PictureActivity;
 import com.boha.malengagolf.library.ScoringByHoleActivity;
 import com.boha.malengagolf.library.TeeTimeActivity;
 import com.boha.malengagolf.library.adapters.TourneyPlayerAdapter;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.LeaderBoardDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.CompleteRounds;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 import com.boha.malengagolf.library.volley.toolbox.BohaVolley;
 
 import java.util.ArrayList;
@@ -81,7 +106,9 @@ public class TourneyPlayerActivity extends Activity {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.ADD_TOURNAMENT_PLAYER);
         LeaderBoardDTO tps = new LeaderBoardDTO();
-        tps.setPlayer(player);
+        PlayerDTO p = new PlayerDTO();
+        p.setPlayerID(player.getPlayerID());
+        tps.setPlayer(p);
         tps.setTournamentID(tournament.getTournamentID());
 
         w.setLeaderBoard(tps);
@@ -131,20 +158,22 @@ public class TourneyPlayerActivity extends Activity {
                         }
 
                         leaderBoardList = response.getLeaderBoardList();
-                        txtCount.setText("" + leaderBoardList.size());
-                        setList();
-                        listView.setSelection(leaderBoardList.size() - 1);
-                        CacheUtil.cacheData(ctx,response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                            @Override
-                            public void onFileDataDeserialized(ResponseDTO response) {
+                        if (leaderBoardList != null) {
+                            txtCount.setText("" + leaderBoardList.size());
+                            setList();
+                            listView.setSelection(leaderBoardList.size() - 1);
+                            CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                                @Override
+                                public void onFileDataDeserialized(ResponseDTO response) {
 
-                            }
+                                }
 
-                            @Override
-                            public void onDataCached() {
+                                @Override
+                                public void onDataCached() {
 
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -171,38 +200,38 @@ public class TourneyPlayerActivity extends Activity {
 
 
         });
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
-            @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-
-                leaderBoardList = response.getLeaderBoardList();
-                txtCount.setText("" + leaderBoardList.size());
-                setList();
-                listView.setSelection(leaderBoardList.size() - 1);
-                CacheUtil.cacheData(ctx,response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                    @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
-
-                    }
-
-                    @Override
-                    public void onDataCached() {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
-            }
-        });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//
+//                leaderBoardList = response.getLeaderBoardList();
+//                txtCount.setText("" + leaderBoardList.size());
+//                setList();
+//                listView.setSelection(leaderBoardList.size() - 1);
+//                CacheUtil.cacheData(ctx,response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
     private void getTournamentPlayers() {
         RequestDTO w = new RequestDTO();
@@ -459,10 +488,10 @@ public class TourneyPlayerActivity extends Activity {
 
     @Override
     public void onResume() {
-        Log.i(LOG, "onResume ...may want to refresh players, maybe after setting tees");
+        Log.i(LOG, "########### onResume ...may want to refresh list");
         if (hasPaused) {
-            //getTournamentPlayers();
-            //listView.setSelection(selectedIndex);
+            hasPaused = false;
+            getTournamentPlayers();
         }
         super.onResume();
     }
@@ -519,10 +548,17 @@ public class TourneyPlayerActivity extends Activity {
                 addPlayer();
             }
         });
+
+
+
     }
 
     private void setList() {
 
+        if (leaderBoardList == null) {
+            Log.e(LOG,"%%%%%% LeaderBoardList is null, quitting!");
+            leaderBoardList = new ArrayList<LeaderBoardDTO>();
+        }
         MGApp mgApp = (MGApp) getApplication();
         txtCount.setText("" + leaderBoardList.size());
         txtPCount.setText("" + leaderBoardList.size());
@@ -544,6 +580,10 @@ public class TourneyPlayerActivity extends Activity {
             @Override
             public void onScoringRequested(LeaderBoardDTO l) {
                 leaderBoard = l;
+                if (leaderBoard.isScoringComplete()) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.scoring_closed));
+                    return;
+                }
                 int index = 0;
                 for (LeaderBoardDTO dto: leaderBoardList) {
                     if (l.getLeaderBoardID() == dto.getLeaderBoardID()) {
@@ -562,8 +602,16 @@ public class TourneyPlayerActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 leaderBoard = leaderBoardList.get(i);
+                if (leaderBoard.isScoringComplete()) {
+                    ToastUtil.toast(ctx, ctx.getResources().getString(R.string.scoring_closed));
+                    return;
+                }
+                selectedIndex = i;
+                startScoringActivity();
             }
         });
+
+
 
     }
 
@@ -705,7 +753,8 @@ public class TourneyPlayerActivity extends Activity {
         Intent intentx = new Intent(ctx, ScoringByHoleActivity.class);
         intentx.putExtra("tournament", tournament);
         intentx.putExtra("leaderBoard", leaderBoard);
-        if (leaderBoard == null) throw new UnsupportedOperationException("Leaderboard is null. Why da fuck?");
+
+        Log.e(LOG,"****************** starting for activityForResult: ScoringByHoleActivity, req: " + GO_SCORING);
         startActivityForResult(intentx, GO_SCORING);
     }
 
@@ -823,34 +872,37 @@ public class TourneyPlayerActivity extends Activity {
             }
 
         });
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
-            @Override
-            public void onResponseReceived(ResponseDTO response) {
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                Log.i(LOG, "closedForScoring flag updated");
-                btnAddPlayer.setVisibility(View.GONE);
-                playerSpinner.setVisibility(View.GONE);
-            }
 
-            @Override
-            public void onVolleyError(VolleyError error) {
-                ErrorUtil.showServerCommsError(ctx);
-            }
-        });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                Log.i(LOG, "closedForScoring flag updated");
+//                btnAddPlayer.setVisibility(View.GONE);
+//                playerSpinner.setVisibility(View.GONE);
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
-    static final int GO_SCORING = 333, GO_GET_TEETIME = 313;
+    static final int GO_SCORING = 3369, GO_GET_TEETIME = 3135;
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.w(LOG, "onActivityResult request: " + requestCode + " resultCode: " + resultCode);
+        Log.e(LOG, "--------- onActivityResult request: " + requestCode + " resultCode: " + resultCode);
         if (requestCode == GO_SCORING) {
             if (resultCode == Activity.RESULT_OK) {
-                Log.w(LOG, "...getting response object ... to reset list, index: " + selectedIndex);
+                Log.w(LOG, "#############...getting response object ... to reset list, index: " + selectedIndex);
                 ResponseDTO d = (ResponseDTO) data.getSerializableExtra("response");
                 leaderBoardList = d.getLeaderBoardList();
+                Log.i(LOG, "######### onActivityResult, leaderBoardList = " + leaderBoardList.size());
                 setList();
                 listView.setSelection(selectedIndex);
             }

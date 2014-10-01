@@ -1,5 +1,6 @@
 package com.boha.malengagolf.library;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.ScorerDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.LeaderBoardSplashFragment;
+import com.boha.malengagolf.library.fragments.LeaderboardFragment;
 import com.boha.malengagolf.library.util.CacheUtil;
 import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.SharedUtil;
@@ -44,17 +46,32 @@ import java.util.List;
 public class LeaderBoardPager extends FragmentActivity
         implements LeaderboardFragment.LeaderboardListener {
     public void onCreate(Bundle savedInstanceState) {
-        Log.e(LOG, "################ onCreate .......");
+        Log.d(LOG, "################ onCreate .......");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.leaderboard_pager);
         ctx = getApplicationContext();
         mPager = (ViewPager) findViewById(R.id.pager);
-        tournament = (TournamentDTO) getIntent().getSerializableExtra("tournament");
+        LeaderBoardDTO lb = (LeaderBoardDTO)getIntent().getSerializableExtra("leaderBoard");
+        if (lb != null) {
+            Log.e(LOG,"@@@@@@@ LeaderBoard from GCM has come in");
+            tournament = new TournamentDTO();
+            tournament.setTournamentID(lb.getTournamentID());
+            tournament.setTournamentType(lb.getTournamentType());
+            tournament.setGolfRounds(lb.getRounds());
+            tournament.setClubName(lb.getClubName());
+            tournament.setTourneyName(lb.getTournamentName());
+            administrator = SharedUtil.getAdministrator(ctx);
+            scorer = SharedUtil.getScorer(ctx);
+            appUser = SharedUtil.getAppUser(ctx);
+            player = SharedUtil.getPlayer(ctx);
+        } else {
+            tournament = (TournamentDTO) getIntent().getSerializableExtra("tournament");
+            administrator = (AdministratorDTO) getIntent().getSerializableExtra("administrator");
+            scorer = (ScorerDTO) getIntent().getSerializableExtra("scorer");
+            player = (PlayerDTO) getIntent().getSerializableExtra("player");
+            appUser = (AppUserDTO) getIntent().getSerializableExtra("appUser");
 
-        administrator = (AdministratorDTO) getIntent().getSerializableExtra("administrator");
-        scorer = (ScorerDTO) getIntent().getSerializableExtra("scorer");
-        player = (PlayerDTO) getIntent().getSerializableExtra("player");
-        appUser = (AppUserDTO) getIntent().getSerializableExtra("appUser");
+        }
         if (administrator == null && scorer == null && player == null && appUser == null) {
             throw new UnsupportedOperationException("User not found for Leaderboard");
         }
@@ -89,13 +106,19 @@ public class LeaderBoardPager extends FragmentActivity
     private void buildPages() {
         Log.w(LOG, "#########################..................buildPages........");
         carrierList = new ArrayList<LeaderBoardCarrierDTO>();
-        if (response.getLeaderBoardCarriers() == null && response.getLeaderBoardList() == null)
+        if (response.getLeaderBoardCarriers() == null && response.getLeaderBoardList() == null) {
             return;
+        }
         if (response.getLeaderBoardCarriers() == null) {
             response.setLeaderBoardCarriers(new ArrayList<LeaderBoardCarrierDTO>());
             LeaderBoardCarrierDTO carrier = new LeaderBoardCarrierDTO();
             carrier.setLeaderBoardList(response.getLeaderBoardList());
             response.getLeaderBoardCarriers().add(carrier);
+            if (response.getLeaderBoardList().isEmpty()) {
+                ToastUtil.toast(ctx,ctx.getResources().getString(R.string.scoring_not_started));
+                onBackPressed();
+                return;
+            }
         }
         for (LeaderBoardCarrierDTO lc : response.getLeaderBoardCarriers()) {
             if (lc.getLeaderBoardList().isEmpty()) {
@@ -140,6 +163,29 @@ public class LeaderBoardPager extends FragmentActivity
         });
     }
 
+    boolean isActivityFound;
+    public boolean isActivityRunning() {
+
+        ActivityManager activityManager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> services = activityManager.getRunningTasks(Integer.MAX_VALUE);
+        isActivityFound = false;
+        for (int i = 0; i < services.size(); i++) {
+            Log.i(LOG,"#### topActivity: " + services.get(i).topActivity.toString());
+            if (services.get(i).topActivity.toString().equalsIgnoreCase(
+                    "ComponentInfo{com.boha.malengagolf.admin/com.boha.malengagolf.library.LeaderBoardPager}")) {
+                isActivityFound = true;
+            }
+            if (services.get(i).topActivity.toString().equalsIgnoreCase(
+                    "ComponentInfo{com.boha.malengagolf.scorer/com.boha.malengagolf.library.LeaderBoardPager}")) {
+                isActivityFound = true;
+            }
+            if (services.get(i).topActivity.toString().equalsIgnoreCase(
+                    "ComponentInfo{com.boha.malengagolf.player/com.boha.malengagolf.library.LeaderBoardPager}")) {
+                isActivityFound = true;
+            }
+        }
+        return isActivityFound;
+    }
 
     private void refreshLeaderBoard() {
         Log.w(LOG, "################,.......... refreshLeaderBoard ");
@@ -151,15 +197,19 @@ public class LeaderBoardPager extends FragmentActivity
         w.setSessionID(SharedUtil.getSessionID(ctx));
         if (administrator != null) {
             w.setAdministratorID(administrator.getAdministratorID());
+            Log.w(LOG, "################ user is administrator ");
         }
         if (appUser != null) {
             w.setAppUserID(appUser.getAppUserID());
+            Log.w(LOG, "################ user is appUser ");
         }
         if (scorer != null) {
             w.setScorerID(scorer.getScorerID());
+            Log.w(LOG, "################ user is scorer ");
         }
         if (player != null) {
             w.setPlayerID(player.getPlayerID());
+            Log.w(LOG, "################ user is administrator ");
         }
 
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
@@ -169,23 +219,27 @@ public class LeaderBoardPager extends FragmentActivity
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO r) {
-
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(LOG, "### onMessage received ... about to build pages or update 1 score");
+
                         setRefreshActionButtonState(false);
                         if (r.getLeaderBoard() != null) {
-                            for (LeaderBoardPage lf: leaderBoardPages) {
+                            Log.i(LOG, "### onMessage received ... about to update 1 score from server push");
+                            for (LeaderBoardPage lf : leaderBoardPages) {
                                 if (lf instanceof LeaderboardFragment) {
-                                    LeaderboardFragment fragment = (LeaderboardFragment)lf;
-                                    Log.i(LOG, "### onMessage received ... update single score");
+                                    LeaderboardFragment fragment = (LeaderboardFragment) lf;
+                                    r.getLeaderBoard().setTimeStamp(new Date().getTime());
                                     fragment.updateSingleScore(r.getLeaderBoard());
+                                    if (!isActivityRunning()) {
+                                        ToastUtil.toast(ctx, tournament.getTourneyName()
+                                                + "\nLeaderboard update just came in");
+                                    }
                                 }
 
                             }
                         } else {
+                            Log.i(LOG, "### onMessage received ... about to build pages");
                             setSplashFrament();
                             response = r;
                             buildPages();
@@ -193,42 +247,50 @@ public class LeaderBoardPager extends FragmentActivity
                     }
                 });
 
+                response = r;
 
-                if (tournament.getUseAgeGroups() == 0) {
-                    for (LeaderBoardDTO d : response.getLeaderBoardList()) {
-                        d.setTimeStamp(new Date().getTime());
+                if (tournament.getClosedForScoringFlag() == 0) {
+                    if (tournament.getUseAgeGroups() == 0) {
+                        if (response.getLeaderBoard() != null) {
+                            response.getLeaderBoard().setTimeStamp(new Date().getTime());
+                        }
+                        if (response.getLeaderBoardList() != null) {
+                            for (LeaderBoardDTO d : response.getLeaderBoardList()) {
+                                d.setTimeStamp(new Date().getTime());
+                            }
+                        }
+
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
+
+                            }
+
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
+                    } else {
+                        for (LeaderBoardCarrierDTO c : response.getLeaderBoardCarriers()) {
+                            for (LeaderBoardDTO d : c.getLeaderBoardList()) {
+                                d.setTimeStamp(new Date().getTime());
+                            }
+                        }
+                        CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADERBOARD_CARRIERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
+
+                            }
+
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
                     }
 
-                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
-
-                        }
-
-                        @Override
-                        public void onDataCached() {
-
-                        }
-                    });
-                } else {
-                    for (LeaderBoardCarrierDTO c : response.getLeaderBoardCarriers()) {
-                        for (LeaderBoardDTO d : c.getLeaderBoardList()) {
-                            d.setTimeStamp(new Date().getTime());
-                        }
-                    }
-                    CacheUtil.cacheData(ctx, response, CacheUtil.CACHE_LEADERBOARD_CARRIERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                        @Override
-                        public void onFileDataDeserialized(ResponseDTO response) {
-
-                        }
-
-                        @Override
-                        public void onDataCached() {
-
-                        }
-                    });
                 }
-
             }
 
             @Override
@@ -382,46 +444,51 @@ public class LeaderBoardPager extends FragmentActivity
         Log.e(LOG, "################ onCreateOptionsMenu ");
         getMenuInflater().inflate(R.menu.leaderboard_pager, menu);
         mMenu = menu;
-        setSplashFrament();
-        if (tournament.getUseAgeGroups() == 0) {
-            CacheUtil.getCachedData(ctx, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO r) {
-                    if (r != null) {
-                        response = r;
-                        response.setLeaderBoardCarriers(new ArrayList<LeaderBoardCarrierDTO>());
-                        LeaderBoardCarrierDTO carrier = new LeaderBoardCarrierDTO();
-                        carrier.setLeaderBoardList(r.getLeaderBoardList());
-                        response.getLeaderBoardCarriers().add(carrier);
-                        buildPages();
-
-                    }
-                    refreshLeaderBoard();
-
-                }
-
-                @Override
-                public void onDataCached() {
-
-                }
-            });
-        } else {
-            CacheUtil.getCachedData(ctx, CacheUtil.CACHE_LEADERBOARD_CARRIERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
-                @Override
-                public void onFileDataDeserialized(ResponseDTO r) {
-                    response = r;
-                    if (r != null) {
-                        buildPages();
-                    }
-
-                }
-
-                @Override
-                public void onDataCached() {
-
-                }
-            });
+        if (tournament.getClosedForScoringFlag() > 0) {
+            menu.getItem(1).setVisible(false);
+            menu.getItem(0).setVisible(false);
         }
+        setSplashFrament();
+        refreshLeaderBoard();
+//        if (tournament.getUseAgeGroups() == 0) {
+//            CacheUtil.getCachedData(ctx, CacheUtil.CACHE_LEADER_BOARD, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+//                @Override
+//                public void onFileDataDeserialized(ResponseDTO r) {
+//                    if (r != null) {
+//                        response = r;
+//                        response.setLeaderBoardCarriers(new ArrayList<LeaderBoardCarrierDTO>());
+//                        LeaderBoardCarrierDTO carrier = new LeaderBoardCarrierDTO();
+//                        carrier.setLeaderBoardList(r.getLeaderBoardList());
+//                        response.getLeaderBoardCarriers().add(carrier);
+//                        buildPages();
+//
+//                    }
+//                    refreshLeaderBoard();
+//
+//                }
+//
+//                @Override
+//                public void onDataCached() {
+//
+//                }
+//            });
+//        } else {
+//            CacheUtil.getCachedData(ctx, CacheUtil.CACHE_LEADERBOARD_CARRIERS, tournament.getTournamentID(), new CacheUtil.CacheUtilListener() {
+//                @Override
+//                public void onFileDataDeserialized(ResponseDTO r) {
+//                    response = r;
+//                    if (r != null) {
+//                        buildPages();
+//                    }
+//                    refreshLeaderBoard();
+//                }
+//
+//                @Override
+//                public void onDataCached() {
+//
+//                }
+//            });
+//        }
 
 
         return true;

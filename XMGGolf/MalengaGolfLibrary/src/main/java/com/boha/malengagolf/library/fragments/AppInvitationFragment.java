@@ -17,9 +17,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.android.volley.VolleyError;
+
 import com.boha.malengagolf.library.R;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -27,6 +26,7 @@ import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class AppInvitationFragment extends Fragment {
             " must implement AppInvitationListener");
         }
         Log.i(LOG,
-                "onAttach ---- " + this.getClass().getCanonicalName() + " called and hosted by "
+                "onAttach ---- fragment called and hosted by "
                         + a.getLocalClassName()
         );
         super.onAttach(a);
@@ -146,27 +146,64 @@ public class AppInvitationFragment extends Fragment {
             w.setGolfGroupID(golfGroup.getGolfGroupID());
 
             appInvitationListener.setBusy();
-            BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+            WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
                 @Override
-                public void onResponseReceived(ResponseDTO response) {
-                    appInvitationListener.setNotBusy();
-                    if (!ErrorUtil.checkServerError(ctx, response)) {
-                        return;
-                    }
-                    final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
-                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, ctx.getResources().getString(R.string.subject));
-                    shareIntent.putExtra(
-                            Intent.EXTRA_TEXT,
-                            Html.fromHtml(sba.toString())
-                    );
-                    startActivity(Intent.createChooser(shareIntent, "Email:"));
+                public void onMessage(final ResponseDTO response) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            appInvitationListener.setNotBusy();
+                            if (!ErrorUtil.checkServerError(ctx, response)) {
+                                return;
+                            }
+                            final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
+                            shareIntent.putExtra(Intent.EXTRA_SUBJECT, ctx.getResources().getString(R.string.subject));
+                            shareIntent.putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    Html.fromHtml(sba.toString())
+                            );
+                            startActivity(Intent.createChooser(shareIntent, "Email:"));
+                        }
+                    });
                 }
 
                 @Override
-                public void onVolleyError(VolleyError error) {
-                    appInvitationListener.setNotBusy();
+                public void onClose() {
+
+                }
+
+                @Override
+                public void onError(final String message) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            appInvitationListener.setNotBusy();
+                            ToastUtil.errorToast(ctx, message);
+                        }
+                    });
                 }
             });
+//            BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//                @Override
+//                public void onResponseReceived(ResponseDTO response) {
+//                    appInvitationListener.setNotBusy();
+//                    if (!ErrorUtil.checkServerError(ctx, response)) {
+//                        return;
+//                    }
+//                    final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
+//                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, ctx.getResources().getString(R.string.subject));
+//                    shareIntent.putExtra(
+//                            Intent.EXTRA_TEXT,
+//                            Html.fromHtml(sba.toString())
+//                    );
+//                    startActivity(Intent.createChooser(shareIntent, "Email:"));
+//                }
+//
+//                @Override
+//                public void onVolleyError(VolleyError error) {
+//                    appInvitationListener.setNotBusy();
+//                }
+//            });
         } else {
             final Intent shareIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + email));
             shareIntent.putExtra(Intent.EXTRA_SUBJECT, ctx.getResources().getString(R.string.subject));

@@ -1,4 +1,4 @@
-package com.boha.malengagolf.library;
+package com.boha.malengagolf.library.fragments;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -18,11 +18,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.boha.malengagolf.library.LeaderboardAdapter;
+import com.boha.malengagolf.library.R;
+import com.boha.malengagolf.library.ScoreCardActivity;
 import com.boha.malengagolf.library.adapters.LeaderboardOneRoundAdapter;
 import com.boha.malengagolf.library.data.ClubCourseDTO;
 import com.boha.malengagolf.library.data.LeaderBoardCarrierDTO;
@@ -37,6 +41,7 @@ import com.boha.malengagolf.library.util.LeaderBoardPage;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.text.DecimalFormat;
@@ -118,6 +123,18 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         txtAverage = (TextView) view.findViewById(R.id.LB_average);
         txtLive = (TextView) view.findViewById(R.id.LB_live);
         txtComplete = (TextView) view.findViewById(R.id.LB_complete);
+        mSwitch = (Switch)view.findViewById(R.id.LB_switch);
+        mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if (checked) {
+                    hidePics = true;
+                } else {
+                    hidePics = false;
+                }
+                setList();
+            }
+        });
     }
 
     List<LeaderBoardDTO> goodList;
@@ -211,24 +228,54 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             return;
         }
         leaderboardListener.setBusy();
-
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                leaderboardListener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.withdrawn));
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        leaderboardListener.setNotBusy();
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.withdrawn));
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
 
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                leaderboardListener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        leaderboardListener.setNotBusy();
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                leaderboardListener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.withdrawn));
+//
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                leaderboardListener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
 
@@ -265,26 +312,61 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             return;
         }
         leaderboardListener.setBusy();
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                leaderboardListener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        leaderboardListener.setNotBusy();
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
 
-                txtComplete.setText(ctx.getResources().getString(R.string.closed));
-                txtComplete.setBackgroundColor(ctx.getResources().getColor(R.color.black));
+                        txtComplete.setText(ctx.getResources().getString(R.string.closed));
+                        txtComplete.setBackgroundColor(ctx.getResources().getColor(R.color.black));
+
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                leaderboardListener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        leaderboardListener.setNotBusy();
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                leaderboardListener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//
+//                txtComplete.setText(ctx.getResources().getString(R.string.closed));
+//                txtComplete.setBackgroundColor(ctx.getResources().getColor(R.color.black));
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                leaderboardListener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
+    boolean hidePics = false;
     int selectedIndex;
     static final Locale loc = Locale.getDefault();
     static final SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMMM yyyy HH:mm", loc);
@@ -292,6 +374,34 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     public void updateSingleScore(LeaderBoardDTO lb) {
         List<LeaderBoardDTO> bList = new ArrayList<LeaderBoardDTO>();
         boolean needsUpdate = false;
+        int index = 0, holeCount = 0;
+
+        for (TourneyScoreByRoundDTO tsb: lb.getTourneyScoreByRoundList()) {
+            if (tsb.getScoringComplete() > 0) {
+                holeCount = 0;
+                continue;
+            }
+            if (tsb.getScore1() > 0) holeCount++;
+            if (tsb.getScore2() > 0) holeCount++;
+            if (tsb.getScore3() > 0) holeCount++;
+            if (tsb.getScore4() > 0) holeCount++;
+            if (tsb.getScore5() > 0) holeCount++;
+            if (tsb.getScore6() > 0) holeCount++;
+            if (tsb.getScore7() > 0) holeCount++;
+            if (tsb.getScore8() > 0) holeCount++;
+            if (tsb.getScore9() > 0) holeCount++;
+            if (tsb.getScore10() > 0) holeCount++;
+            if (tsb.getScore11() > 0) holeCount++;
+            if (tsb.getScore12() > 0) holeCount++;
+            if (tsb.getScore13() > 0) holeCount++;
+            if (tsb.getScore14() > 0) holeCount++;
+            if (tsb.getScore15() > 0) holeCount++;
+            if (tsb.getScore16() > 0) holeCount++;
+            if (tsb.getScore17() > 0) holeCount++;
+            if (tsb.getScore18() > 0) holeCount++;
+        }
+        lb.setLastHole(holeCount);
+
         for (LeaderBoardDTO dto: leaderBoardList) {
             if (dto.getLeaderBoardID() == lb.getLeaderBoardID()) {
                 bList.add(lb);
@@ -300,6 +410,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
                 bList.add(dto);
             }
         }
+
         if (needsUpdate) {
             leaderBoardList = bList;
             if (tournament.getTournamentType() == TournamentDTO.STROKE_PLAY_INDIVIDUAL) {
@@ -307,15 +418,23 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
                 setList();
             }
             if (tournament.getTournamentType() == TournamentDTO.STABLEFORD_INDIVIDUAL) {
-                //calculateLeaderboard(leaderBoardList);
+                calculateLeaderBoardPoints(leaderBoardList);
                 setList();
             }
 
         }
+        for (LeaderBoardDTO dto: leaderBoardList) {
+            if (dto.getLeaderBoardID() == lb.getLeaderBoardID()) {
+                selectedIndex = index;
+                Log.e(LOG,"&&&&&&&&&& selected index: " + selectedIndex);
+                break;
+            }
+            index++;
+        }
+        listView.setSelection(index);
     }
     public void setList() {
 
-        Log.i(LOG, "------------------ setList............. ");
         goodList = new ArrayList<LeaderBoardDTO>();
         List<LeaderBoardDTO> bList = new ArrayList<LeaderBoardDTO>();
         for (LeaderBoardDTO x : leaderBoardList) {
@@ -334,22 +453,29 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             if (time == 0) {
                 time = new Date().getTime();
             }
-            txtTimeStamp.setText(sdf.format(new Date(time)));
+            if (tournament.getClosedForScoringFlag() == 0) {
+                txtTimeStamp.setText(sdf.format(new Date(time)));
+            } else {
+                txtTimeStamp.setText("Tournament Closed");
+                txtTimeStamp.setTextColor(ctx.getResources().getColor(R.color.black));
+            }
         }
         setLeaderBoardLive();
+
+
 
         if (tournament.getGolfRounds() == 1) {
             leaderboardOneRoundAdapter = new LeaderboardOneRoundAdapter(ctx,
                     R.layout.leaderboard_one_round,
                     leaderBoardList,
                     SharedUtil.getGolfGroup(ctx).getGolfGroupID(),
-                    imageLoader);
+                    imageLoader, hidePics);
             listView.setAdapter(leaderboardOneRoundAdapter);
         } else {
             leaderboardAdapter = new LeaderboardAdapter(ctx,
                     R.layout.leaderboard_item,
                     leaderBoardList,
-                    tournament.getGolfRounds(), tournament.getPar(), imageLoader,
+                    tournament.getGolfRounds(), tournament.getPar(), imageLoader, hidePics,
                     new LeaderboardAdapter.LeaderBoardListener() {
                         @Override
                         public void onScrollToItem(int index) {
@@ -390,26 +516,32 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
             }
         });
-        listView.setSelection(SharedUtil.getScrollIndex(ctx));
-        listView.smoothScrollToPosition(SharedUtil.getScrollIndex(ctx));
-        //TODO - animate timestamp
-        final ObjectAnimator an = ObjectAnimator.ofFloat(txtTimeStamp, View.SCALE_X, 0);
-        an.setRepeatCount(1);
-        an.setDuration(1000);
-        an.setRepeatMode(ValueAnimator.REVERSE);
+        //listView.setSelection(selectedIndex);
+        //listView.smoothScrollToPosition(selectedIndex);
+        if (tournament.getClosedForScoringFlag() == 0) {
+            final ObjectAnimator an = ObjectAnimator.ofFloat(txtTimeStamp, View.SCALE_X, 0);
+            an.setRepeatCount(1);
+            an.setDuration(500);
+            an.setRepeatMode(ValueAnimator.REVERSE);
+            an.start();
 
-        an.start();
+            final ObjectAnimator an2 = ObjectAnimator.ofFloat(txtLive, View.SCALE_Y, 0);
+            an2.setRepeatCount(1);
+            an2.setDuration(500);
+            an2.setRepeatMode(ValueAnimator.REVERSE);
+            an2.setStartDelay(500);
+            an2.start();
+        }
     }
 
     private int scrollIndex;
 
     private void setPositions(List<LeaderBoardDTO> list) {
-        Log.d(LOG, "####------------- setPositions ............");
         int mPosition = 1;
         int running = 1, score = 999;
         switch (tournament.getTournamentType()) {
             case RequestDTO.STABLEFORD_INDIVIDUAL:
-                Log.e(LOG, "####------------- setPositions STABLEFORD_INDIVIDUAL");
+                Log.d(LOG, "####------------- setPositions STABLEFORD_INDIVIDUAL");
                 for (LeaderBoardDTO lb : list) {
                     if (lb.isTied()) {
                         if (score == 999) {
@@ -435,7 +567,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
                 }
                 break;
             case RequestDTO.STROKE_PLAY_INDIVIDUAL:
-                Log.e(LOG, "####------------- setPositions STROKE_PLAY_INDIVIDUAL");
+                Log.d(LOG, "####------------- setPositions STROKE_PLAY_INDIVIDUAL");
                 for (LeaderBoardDTO lb : list) {
                     if (lb.isTied()) {
                         if (score == 999) {
@@ -602,23 +734,55 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
         if (!BaseVolley.checkNetworkOnDevice(ctx)) {
             return;
         }
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                leaderboardListener.setNotBusy();
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
+            public void onMessage(final ResponseDTO response) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        leaderboardListener.setNotBusy();
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
 
-                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.winner_updated));
+                        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.winner_updated));
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                leaderboardListener.setNotBusy();
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        leaderboardListener.setNotBusy();
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                leaderboardListener.setNotBusy();
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//
+//                ToastUtil.toast(ctx, ctx.getResources().getString(R.string.winner_updated));
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                leaderboardListener.setNotBusy();
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void startScorecard() {
@@ -650,6 +814,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     List<LeaderBoardDTO> leaderBoardList;
     LeaderBoardDTO leaderBoard;
     boolean useDialogForScorecard;
+    Switch mSwitch;
 
 
     public void setUseDialogForScorecard(boolean useDialogForScorecard) {
@@ -659,6 +824,52 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
 
     public LeaderBoardCarrierDTO getLeaderBoardCarrier() {
         return leaderBoardCarrier;
+    }
+    private void calculateLeaderBoardPoints(List<LeaderBoardDTO> list) {
+
+        for (LeaderBoardDTO b: list) {
+            b.setSortType(LeaderBoardDTO.SORT_POINTS);
+        }
+        Collections.sort(list);
+        //set positions
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int pos = 1;
+        for (LeaderBoardDTO board : list) {
+            if (map.containsKey(board.getTotalPoints())) {
+                continue;
+            }
+            map.put(board.getTotalPoints(), pos);
+            pos++;
+        }
+
+        for (LeaderBoardDTO b : list) {
+            if (map.containsKey(b.getTotalPoints())) {
+                b.setPosition(map.get(b.getTotalPoints()));
+            }
+        }
+
+        //check for tied
+        HashMap<Integer, Integer> map2 = new HashMap<>();
+        HashMap<Integer, Integer> tied = new HashMap<>();
+
+        for (LeaderBoardDTO d : list) {
+
+            if (map2.containsKey(d.getTotalPoints())) {
+                tied.put(d.getTotalPoints(), d.getTotalPoints());
+            } else {
+                map2.put(d.getTotalPoints(), d.getTotalPoints());
+            }
+
+        }
+        for (Map.Entry pairs : tied.entrySet()) {
+            for (LeaderBoardDTO d : list) {
+                int a = (Integer) pairs.getKey();
+                if (d.getTotalPoints() == a) {
+                    d.setTied(true);
+                }
+            }
+        }
+        setPositions(list);
     }
     private void calculateLeaderboard(List<LeaderBoardDTO> list) {
 

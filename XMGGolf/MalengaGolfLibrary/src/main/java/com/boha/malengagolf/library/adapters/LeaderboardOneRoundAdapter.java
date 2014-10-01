@@ -15,6 +15,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.Statics;
 
 import java.text.SimpleDateFormat;
@@ -29,14 +30,16 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
     private int golfGroupID;
     private ImageLoader imageLoader;
     private Context ctx;
+    private boolean hidePictures;
 
     public LeaderboardOneRoundAdapter(Context context,
                                       int textViewResourceId,
-                                      List<LeaderBoardDTO> list, int golfGroupID, ImageLoader imageLoader) {
+                                      List<LeaderBoardDTO> list, int golfGroupID, ImageLoader imageLoader, boolean hidePictures) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
         ctx = context;
+        this.hidePictures = hidePictures;
         this.golfGroupID = golfGroupID;
         this.imageLoader = imageLoader;
         this.mInflater = (LayoutInflater) context
@@ -53,61 +56,61 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolderItem viewHolderItem;
+        ViewHolderItem v;
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
-            viewHolderItem = new ViewHolderItem();
-            viewHolderItem.txtPlayer = (TextView) convertView
+            v = new ViewHolderItem();
+            v.txtPlayer = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_playerName);
-            viewHolderItem.txtPosition = (TextView) convertView
+            v.txtPosition = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_position);
-            viewHolderItem.txtTotal = (TextView) convertView
+            v.txtTotal = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_totalScore);
-            viewHolderItem.txtPar = (TextView) convertView
+            v.txtPar = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_par);
-            viewHolderItem.txtPar = (TextView) convertView
+            v.txtPar = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_par);
-            viewHolderItem.txtParLabel = (TextView) convertView
+            v.txtParLabel = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_parLabel);
-            viewHolderItem.txtLastHole = (TextView) convertView
+            v.txtLastHole = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_lastHole);
-            viewHolderItem.image = (NetworkImageView) convertView
+            v.image = (NetworkImageView) convertView
                     .findViewById(R.id.ONE_ROUND_image);
-            viewHolderItem.winner = (ImageView) convertView
+            v.winner = (ImageView) convertView
                     .findViewById(R.id.ONE_ROUND_winnerImage);
 
-            convertView.setTag(viewHolderItem);
+            convertView.setTag(v);
         } else {
-            viewHolderItem = (ViewHolderItem) convertView.getTag();
+            v = (ViewHolderItem) convertView.getTag();
         }
-
+        if (hidePictures) {
+            v.image.setVisibility(View.GONE);
+        }
         LeaderBoardDTO p = mList.get(position);
         if (p.getWinnerFlag() > 0) {
-            viewHolderItem.winner.setVisibility(View.VISIBLE);
+            v.winner.setVisibility(View.VISIBLE);
         } else {
-            viewHolderItem.winner.setVisibility(View.GONE);
+            v.winner.setVisibility(View.GONE);
         }
 
 
         if (p.getParStatus() == LeaderBoardDTO.NO_PAR_STATUS) {
-            viewHolderItem.txtPosition.setVisibility(View.GONE);
+            v.txtPosition.setVisibility(View.GONE);
         } else {
-            viewHolderItem.txtPosition.setVisibility(View.VISIBLE);
+            v.txtPosition.setVisibility(View.VISIBLE);
         }
 
-        if (p.getPosition() < 10) {
-            viewHolderItem.txtPosition.setText("0" + p.getPosition());
-        } else {
-            viewHolderItem.txtPosition.setText("" + p.getPosition());
-        }
+
+        v.txtPosition.setText("" + p.getPosition());
+
 
         if (p.isTied()) {
-            viewHolderItem.txtPosition.setText("T" + p.getPosition());
+            v.txtPosition.setText("T" + p.getPosition());
         }
-        viewHolderItem.txtPlayer.setText(p.getPlayer().getFirstName() + " "
+        v.txtPlayer.setText(p.getPlayer().getFirstName() + " "
                 + p.getPlayer().getLastName());
 
-        formatStrokes(viewHolderItem.txtTotal, p.getParStatus(), p.getTotalScore());
+
 
         //Log.e("adap", "totalPoints: " + p.getTotalPoints() + " tourType: "+ p.getTournamentType());
         if (p.getTournamentType() == 0) {
@@ -115,30 +118,34 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
         }
         switch (p.getTournamentType()) {
             case RequestDTO.STROKE_PLAY_INDIVIDUAL:
-                viewHolderItem.txtParLabel.setText(ctx.getResources().getString(R.string.par));
+                //Log.e("ADapter", "STROKE_PLAY_INDIVIDUAL");
+                v.txtParLabel.setText(ctx.getResources().getString(R.string.par));
                 if (p.getParStatus() == LeaderBoardDTO.NO_PAR_STATUS) {
-                    viewHolderItem.txtPar.setText("N/S");
-                    viewHolderItem.txtPar.setTextColor(ctx.getResources().getColor(R.color.grey2));
+                    v.txtPar.setText("N/S");
+                    v.txtPar.setTextColor(ctx.getResources().getColor(R.color.grey2));
 
                 } else {
-                    viewHolderItem.txtPar.setVisibility(View.VISIBLE);
-                    formatStrokes(viewHolderItem.txtPar, p.getParStatus());
+                    v.txtPar.setVisibility(View.VISIBLE);
+                    formatStrokes(v.txtPar, p.getParStatus());
                 }
+                formatStrokes(v.txtTotal, p.getParStatus(), p.getTotalScore(), v.txtPosition);
                 break;
             case RequestDTO.STABLEFORD_INDIVIDUAL:
-                viewHolderItem.txtParLabel.setText(ctx.getResources().getString(R.string.points));
-                viewHolderItem.txtPar.setText("" + p.getTotalPoints());
+                //Log.w("Adapter", "STABLEFORD_INDIVIDUAL");
+                v.txtParLabel.setText(ctx.getResources().getString(R.string.points));
+                v.txtPar.setText("" + p.getTotalPoints());
                 if (p.getTotalPoints() == 0) {
-                    viewHolderItem.txtPar.setTextColor(ctx.getResources().getColor(R.color.grey2));
+                    v.txtPar.setTextColor(ctx.getResources().getColor(R.color.grey2));
 
                 } else {
-                    viewHolderItem.txtPar.setVisibility(View.VISIBLE);
-                    viewHolderItem.txtPar.setTextColor(ctx.getResources().getColor(R.color.black));
+                    v.txtPar.setVisibility(View.VISIBLE);
+                    v.txtPar.setTextColor(ctx.getResources().getColor(R.color.black));
                 }
+                formatStablefordStrokes(v.txtTotal, p.getTotalPoints(), v.txtPosition, p);
                 break;
         }
 
-        viewHolderItem.txtLastHole.setText("" + p.getLastHole());
+        v.txtLastHole.setText("" + p.getLastHole());
         int x = position % 2;
         if (x > 0) {
             convertView.setBackgroundColor(ctx.getResources().getColor(R.color.beige_pale));
@@ -152,8 +159,8 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
                     .append(golfGroupID).append("/player/");
             sb.append("t");
             sb.append(p.getPlayer().getPlayerID()).append(".jpg");
-            viewHolderItem.image.setDefaultImageResId(R.drawable.boy);
-            viewHolderItem.image.setImageUrl(sb.toString(), imageLoader);
+            v.image.setDefaultImageResId(R.drawable.boy);
+            v.image.setImageUrl(sb.toString(), imageLoader);
         } catch (Exception e) {
             Log.w("OneRound", "network image view problem", e);
         }
@@ -187,17 +194,77 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
     }
 
-    private void formatStrokes(TextView txt, int parStatus, int score) {
+    private void formatStrokes(TextView txt, int parStatus, int score, TextView txtPos) {
         if (parStatus == 0) { //Even par
             txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval));
+            }
         }
         if (parStatus > 0) { //under par
             txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
+            }
         }
         if (parStatus < 0) { //over par
             txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval));
+            }
         }
         txt.setText("" + score);
+
+    }
+
+    private void formatStablefordStrokes(TextView txt, int points, TextView txtPos, LeaderBoardDTO board) {
+
+        int holeCount = 0;
+        for (TourneyScoreByRoundDTO tsb: board.getTourneyScoreByRoundList()) {
+            if (tsb.getScoringComplete() > 0) {
+                holeCount += board.getHolesPerRound();
+                continue;
+            }
+            if (tsb.getScore1() > 0) holeCount++;
+            if (tsb.getScore2() > 0) holeCount++;
+            if (tsb.getScore3() > 0) holeCount++;
+            if (tsb.getScore4() > 0) holeCount++;
+            if (tsb.getScore5() > 0) holeCount++;
+            if (tsb.getScore6() > 0) holeCount++;
+            if (tsb.getScore7() > 0) holeCount++;
+            if (tsb.getScore8() > 0) holeCount++;
+            if (tsb.getScore9() > 0) holeCount++;
+            if (tsb.getScore10() > 0) holeCount++;
+            if (tsb.getScore11() > 0) holeCount++;
+            if (tsb.getScore12() > 0) holeCount++;
+            if (tsb.getScore13() > 0) holeCount++;
+            if (tsb.getScore14() > 0) holeCount++;
+            if (tsb.getScore15() > 0) holeCount++;
+            if (tsb.getScore16() > 0) holeCount++;
+            if (tsb.getScore17() > 0) holeCount++;
+            if (tsb.getScore18() > 0) holeCount++;
+        }
+
+
+        if (points == (holeCount * 2)) { //Even par
+            txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval));
+            }
+        }
+        if (points > (holeCount * 2)) { //under par
+            txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
+            }
+        }
+        if (points < (holeCount * 2)) { //over par
+            txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval));
+            }
+        }
+        txt.setText("" + points);
 
     }
 

@@ -12,11 +12,26 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
-import com.android.volley.VolleyError;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.CountryDTO;
+import com.boha.malengagolf.library.data.GcmDeviceDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.GCMUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -24,7 +39,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.*;
+import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.checkNetworkOnDevice;
 
 public class RegistrationActivity extends FragmentActivity implements
 
@@ -47,7 +62,7 @@ public class RegistrationActivity extends FragmentActivity implements
         
         GolfGroupDTO dto = SharedUtil.getGolfGroup(ctx);
         if (dto != null) {
-            Log.i(LOG, "Not a virgin anymore ...checking GCM registration....");
+            Log.i(LOG, "++++++++ Not a virgin anymore ...checking GCM registration....");
             String id = GCMUtil.getRegistrationId(getApplicationContext());
             if (id == null) {
                 registerGCMDevice();
@@ -89,6 +104,7 @@ public class RegistrationActivity extends FragmentActivity implements
         }
     }
     private void sendRegistration() {
+
         if (eGroup.getText().toString().isEmpty()) {
             ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.enter_group_name));
             return;
@@ -140,28 +156,68 @@ public class RegistrationActivity extends FragmentActivity implements
 
         BaseVolley.checkNetworkOnDevice(ctx);
         ToastUtil.toast(ctx, ctx.getResources().getString(R.string.wait), 10, Gravity.CENTER);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, 360, new BohaVolleyListener() {
+
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,r,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (response.getStatusCode() > 0) {
-                    ToastUtil.errorToast(ctx, response.getMessage());
-                    return;
-                }
-                SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
-                SharedUtil.saveAdministration(ctx, response.getAdministrator());
-                Log.i(LOG, "Shared preferences saved. GolfGroup & Admin");
-                Intent intent = new Intent(ctx, MainPagerActivity.class);
-                startActivity(intent);
-                finish();
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (response.getStatusCode() > 0) {
+                            ToastUtil.errorToast(ctx, response.getMessage());
+                            return;
+                        }
+                        Log.i(LOG, "&&&&&&&& - " + response.getMessage());
+                        SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
+                        SharedUtil.saveAdministration(ctx, response.getAdministrator());
+                        Log.i(LOG, "@@@@@@@@@@ Shared preferences saved. GolfGroup & Admin");
+                        Intent intent = new Intent(ctx, MainPagerActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, 360, new BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (response.getStatusCode() > 0) {
+//                    ToastUtil.errorToast(ctx, response.getMessage());
+//                    return;
+//                }
+//                SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
+//                SharedUtil.saveAdministration(ctx, response.getAdministrator());
+//                Log.i(LOG, "Shared preferences saved. GolfGroup & Admin");
+//                Intent intent = new Intent(ctx, MainPagerActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+//            }
+//        });
 
     }
 
@@ -181,30 +237,69 @@ public class RegistrationActivity extends FragmentActivity implements
         r.setRequestType(RequestDTO.ADMIN_LOGIN);
         r.setEmail(email);
         r.setPin(ePin.getText().toString());
+        r.setGcmDevice(gcmDevice);
 
         setRefreshActionButtonState(true);
         BaseVolley.checkNetworkOnDevice(ctx);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, new BohaVolleyListener() {
+
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,r,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (response.getStatusCode() > 0) {
-                    ToastUtil.errorToast(ctx, response.getMessage());
-                    return;
-                }
-                SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
-                SharedUtil.saveAdministration(ctx, response.getAdministrator());
-                Log.i(LOG, "Shared preferences saved. GolfGroup & Admin");
-                Intent intent = new Intent(ctx, MainPagerActivity.class);
-                startActivity(intent);
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (response.getStatusCode() > 0) {
+                            ToastUtil.errorToast(ctx, response.getMessage());
+                            return;
+                        }
+                        SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
+                        SharedUtil.saveAdministration(ctx, response.getAdministrator());
+                        Log.i(LOG, "Shared preferences saved. GolfGroup & Admin");
+                        Intent intent = new Intent(ctx, MainPagerActivity.class);
+                        startActivity(intent);
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+                    }
+                });
             }
         });
+
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, r, ctx, new BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (response.getStatusCode() > 0) {
+//                    ToastUtil.errorToast(ctx, response.getMessage());
+//                    return;
+//                }
+//                SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
+//                SharedUtil.saveAdministration(ctx, response.getAdministrator());
+//                Log.i(LOG, "Shared preferences saved. GolfGroup & Admin");
+//                Intent intent = new Intent(ctx, MainPagerActivity.class);
+//                startActivity(intent);
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.error_server_comms));
+//            }
+//        });
 
     }
 
@@ -228,10 +323,12 @@ public class RegistrationActivity extends FragmentActivity implements
             return;
         }
         setRefreshActionButtonState(true);
-        getRemoteData(Statics.SERVLET_ADMIN, request, ctx,
-                new BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,request,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onResponseReceived(ResponseDTO response) {
+                    public void run() {
                         Log.i(LOG, "..............response received, should have country data ....");
                         setRefreshActionButtonState(false);
                         if (response.getStatusCode() > 0) {
@@ -243,16 +340,51 @@ public class RegistrationActivity extends FragmentActivity implements
                         setSpinnerCountry();
                         Log.i(LOG, "Countries received! Get your reward!!!! - " + countryList.size());
                         registerGCMDevice();
-
                     }
+                });
+            }
 
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(final String message) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onVolleyError(VolleyError error) {
+                    public void run() {
                         setRefreshActionButtonState(false);
-                        ErrorUtil.showServerCommsError(ctx);
+                        ToastUtil.errorToast(ctx,message);
                     }
-                }
-        );
+                });
+            }
+        });
+//        getRemoteData(Statics.SERVLET_ADMIN, request, ctx,
+//                new BohaVolleyListener() {
+//                    @Override
+//                    public void onResponseReceived(ResponseDTO response) {
+//                        Log.i(LOG, "..............response received, should have country data ....");
+//                        setRefreshActionButtonState(false);
+//                        if (response.getStatusCode() > 0) {
+//                            Log.e(LOG, "Error: " + response.getMessage());
+//                            ToastUtil.errorToast(ctx, response.getMessage());
+//                            return;
+//                        }
+//                        countryList = response.getCountries();
+//                        setSpinnerCountry();
+//                        Log.i(LOG, "Countries received! Get your reward!!!! - " + countryList.size());
+//                        registerGCMDevice();
+//
+//                    }
+//
+//                    @Override
+//                    public void onVolleyError(VolleyError error) {
+//                        setRefreshActionButtonState(false);
+//                        ErrorUtil.showServerCommsError(ctx);
+//                    }
+//                }
+//        );
     }
 
     private void setFields() {

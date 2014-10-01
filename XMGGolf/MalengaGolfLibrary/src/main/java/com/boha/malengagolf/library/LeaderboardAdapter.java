@@ -35,12 +35,13 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
     private Context ctx;
     private GolfGroupDTO golfGroup;
     private ImageLoader imageLoader;
+    private boolean hidePictures;
 
     private LeaderBoardListener listener;
     public LeaderboardAdapter(Context context,
                               int textViewResourceId,
                               List<LeaderBoardDTO> list, int rounds,
-                              int par, ImageLoader imageLoader,
+                              int par, ImageLoader imageLoader, boolean hidePictures,
                               LeaderBoardListener listener) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
@@ -49,6 +50,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         this.rounds = rounds;
         this.listener = listener;
         this.par = par;
+        this.hidePictures = hidePictures;
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         golfGroup = SharedUtil.getGolfGroup(ctx);
@@ -145,6 +147,9 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
             v = (ViewHolderItem) convertView.getTag();
         }
 
+        if (hidePictures) {
+            v.image.setVisibility(View.GONE);
+        }
         LeaderBoardDTO p = mList.get(position);
         listener.onScrollToItem(position);
         if (p.getWinnerFlag() > 0) {
@@ -155,8 +160,16 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         if (p.getTournamentType() == TournamentDTO.STABLEFORD_INDIVIDUAL ||
                 p.getTournamentType() == TournamentDTO.BETTER_BALL_STABLEFORD) {
             v.vPoints.setVisibility(View.VISIBLE);
-            v.txtPar.setTextSize(14f);
+            v.txtPar.setVisibility(View.GONE);
+            formatStablefordStrokes(v.txtPointsTotal,p.getTotalPoints(), v.txtPosition, p);
+
         } else {
+            if (p.getParStatus() == LeaderBoardDTO.NO_PAR_STATUS) {
+                v.vp.setVisibility(View.GONE);
+            } else {
+                v.vp.setVisibility(View.VISIBLE);
+                formatStrokes(v.txtPar, p.getParStatus(), v.txtPosition);
+            }
             v.vPoints.setVisibility(View.GONE);
         }
 
@@ -281,21 +294,9 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         v.txtTotal.setText("" + p.getTotalScore());
         v.txtPointsTotal.setText("" + p.getTotalPoints());
 
-        if (p.getParStatus() == LeaderBoardDTO.NO_PAR_STATUS) {
-            v.vp.setVisibility(View.GONE);
 
-        } else {
-            v.vp.setVisibility(View.VISIBLE);
-            formatStrokes(v.txtPar, p.getParStatus(), v.txtPosition);
-        }
 
-//        int x = position % 2;
-//        if (x > 0) {
-//            convertView.setBackgroundColor(ctx.getResources().getColor(R.color.white));
-//        } else {
-//            convertView.setBackgroundColor(ctx.getResources().getColor(R.color.white));
-//        }
-        //image
+
         try {
             StringBuilder sb = new StringBuilder();
             sb.append(Statics.IMAGE_URL).append("golfgroup")
@@ -307,9 +308,11 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         } catch (Exception e) {
             Log.w("LeaderBoardAdapter", "volley network image view problem", e);
         }
+        Statics.setRobotoFontLight(ctx, v.txtPlayer);
         animateView(convertView);
         return (convertView);
     }
+
 
     private void format(TextView txt, TourneyScoreByRoundDTO tsbr) {
         //Log.e("adapter","format, par: " + tsbr.getPar() + " totalScore: " + tsbr.getTotalScore());
@@ -358,6 +361,56 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         view.startAnimation(a);
     }
 
+    private void formatStablefordStrokes(TextView txt, int points, TextView txtPos, LeaderBoardDTO board) {
+
+        int holeCount = 0;
+        for (TourneyScoreByRoundDTO tsb: board.getTourneyScoreByRoundList()) {
+            if (tsb.getScoringComplete() > 0) {
+                holeCount += board.getHolesPerRound();
+                continue;
+            }
+            if (tsb.getScore1() > 0) holeCount++;
+            if (tsb.getScore2() > 0) holeCount++;
+            if (tsb.getScore3() > 0) holeCount++;
+            if (tsb.getScore4() > 0) holeCount++;
+            if (tsb.getScore5() > 0) holeCount++;
+            if (tsb.getScore6() > 0) holeCount++;
+            if (tsb.getScore7() > 0) holeCount++;
+            if (tsb.getScore8() > 0) holeCount++;
+            if (tsb.getScore9() > 0) holeCount++;
+            if (tsb.getScore10() > 0) holeCount++;
+            if (tsb.getScore11() > 0) holeCount++;
+            if (tsb.getScore12() > 0) holeCount++;
+            if (tsb.getScore13() > 0) holeCount++;
+            if (tsb.getScore14() > 0) holeCount++;
+            if (tsb.getScore15() > 0) holeCount++;
+            if (tsb.getScore16() > 0) holeCount++;
+            if (tsb.getScore17() > 0) holeCount++;
+            if (tsb.getScore18() > 0) holeCount++;
+        }
+
+
+        if (points == (holeCount * 2)) { //Even par
+            txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval));
+            }
+        }
+        if (points > (holeCount * 2)) { //under par
+            txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
+            }
+        }
+        if (points < (holeCount * 2)) { //over par
+            txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            if (txtPos != null) {
+                txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval));
+            }
+        }
+        txt.setText("" + points);
+
+    }
 
     private void formatStrokes(TextView txt, int parStatus, TextView pos) {
         if (parStatus == 0) { //Even par

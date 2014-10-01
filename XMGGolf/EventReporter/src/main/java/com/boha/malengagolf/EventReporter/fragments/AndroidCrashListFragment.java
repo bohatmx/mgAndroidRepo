@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.boha.malengagolf.EventReporter.adapters.AndroidCrashAdapter;
@@ -93,9 +94,20 @@ public class AndroidCrashListFragment extends Fragment implements MGPageFragment
         Log.e(LOG, "setFields.........");
         listView = (ListView) view.findViewById(R.id.ERR_list);
         txtCount = (TextView) view.findViewById(R.id.ERR_count);
+        txtCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedIndex++;
+                if (selectedIndex == errorStoreAndroidList.size()) {
+                    selectedIndex = 0;
+                }
+                listView.setSelection(selectedIndex);
+            }
+        });
 
     }
 
+    int selectedIndex = 0;
     public void setList() {
         Log.e(LOG, "setList.........");
         if (errorStoreAndroidList == null)
@@ -103,6 +115,12 @@ public class AndroidCrashListFragment extends Fragment implements MGPageFragment
         androidCrashAdapter = new AndroidCrashAdapter(ctx, R.layout.android_crash_item, errorStoreAndroidList);
         listView.setAdapter(androidCrashAdapter);
         txtCount.setText("" + errorStoreAndroidList.size());
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedIndex = position;
+            }
+        });
     }
 
 

@@ -143,13 +143,22 @@
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_height="wrap_content" />
+        <Switch
+            android:id="@+id/LB_switch"
+            android:layout_alignParentRight="true"
+            android:background="@color/white"
+            android:textColor="@color/green"
+            android:textOff="Off"
+            android:textOn="On"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <ListView
         android:id="@+id/LB_list"
         android:layout_below="@id/LB_dateLayout"
-        android:layout_marginTop="10dp"
-        android:dividerHeight="5dp"
+        android:layout_marginTop="5dp"
+        android:dividerHeight="3dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

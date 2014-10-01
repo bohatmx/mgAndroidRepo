@@ -44,7 +44,7 @@
         style="@style/Title3TextStyleBlack"
         android:textStyle="bold"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/TRN_image" />
 
     <TextView
@@ -67,14 +67,14 @@
         android:id="@+id/TRN_txtClubName"
         style="@style/Title3TextStyleBlue"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="2dp"
         android:layout_alignLeft="@id/TRN_txtName"
         android:layout_below="@id/TRN_txtStatus" />
 
     <RelativeLayout
         android:id="@+id/TRN_layoutStartDate"
         android:layout_width="match_parent"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_below="@+id/TRN_txtClubName"
         android:layout_alignLeft="@id/TRN_txtName"
         android:layout_height="wrap_content">
@@ -142,7 +142,7 @@
         android:layout_below="@+id/TRN_layoutEndDate"
         android:layout_alignLeft="@id/TRN_layoutEndDate"
         android:layout_width="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -170,7 +170,7 @@
         android:layout_below="@+id/TRN_layoutCount"
         android:layout_alignLeft="@id/TRN_layoutCount"
         android:layout_width="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_height="wrap_content">
 
         <TextView
@@ -229,6 +229,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="25dp"
+
         android:layout_below="@id/TRN_layoutExample" />
 
 

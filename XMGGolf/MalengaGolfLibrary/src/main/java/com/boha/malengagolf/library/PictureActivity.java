@@ -40,6 +40,7 @@ import com.boha.malengagolf.library.util.PictureUtil;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.TextureRenderer;
 import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -298,12 +299,21 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
         }
     }
 
+
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        File storageDir;
+        if (Util.hasStorage(true)) {
+            Log.i(LOG, "###### get file from getExternalStoragePublicDirectory");
+            storageDir = Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES);
+        } else {
+            Log.i(LOG, "###### get file from getDataDirectory");
+            storageDir = Environment.getDataDirectory();
+        }
+
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -400,14 +410,14 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
                         BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inSampleSize = 2;
                         Bitmap bm = BitmapFactory.decodeFile(photoFile.getAbsolutePath(), options);
-                        getLog(bm, "Raw Camera");
+                        //getLog(bm, "Raw Camera");
                         //scale and rotate for the screen
                         Matrix matrix = new Matrix();
                         matrix.postScale(1.0f, 1.0f);
                         matrix.postRotate(rotate);
                         bitmapForScreen = Bitmap.createBitmap
                                 (bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-                        getLog(bitmapForScreen, "Screen");
+                        //getLog(bitmapForScreen, "Screen");
                         //get thumbnail for upload
                         Matrix matrixThumbnail = new Matrix();
                         matrixThumbnail.postScale(0.4f, 0.4f);
@@ -415,7 +425,7 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
                         Bitmap thumb = Bitmap.createBitmap
                                 (bitmapForScreen, 0, 0, bitmapForScreen.getWidth(),
                                         bitmapForScreen.getHeight(), matrixThumbnail, true);
-                        getLog(thumb, "Thumb");
+                        //getLog(thumb, "Thumb");
                         //get resized "full" size for upload
                         Matrix matrixF = new Matrix();
                         matrixF.postScale(0.6f, 0.6f);
@@ -423,7 +433,7 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
                         Bitmap fullBm = Bitmap.createBitmap
                                 (bitmapForScreen, 0, 0, bitmapForScreen.getWidth(),
                                         bitmapForScreen.getHeight(), matrixF, true);
-                        getLog(fullBm, "Full");
+                        //getLog(fullBm, "Full");
                         currentFullFile = ImageUtil.getFileFromBitmap(fullBm, "m" + System.currentTimeMillis() + ".jpg");
                         currentThumbFile = ImageUtil.getFileFromBitmap(thumb, "t" + System.currentTimeMillis() + ".jpg");
                         thumbUri = Uri.fromFile(currentThumbFile);

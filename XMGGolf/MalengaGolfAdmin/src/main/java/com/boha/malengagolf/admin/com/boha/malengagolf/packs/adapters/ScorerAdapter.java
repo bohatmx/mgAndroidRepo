@@ -44,7 +44,7 @@ public class ScorerAdapter extends ArrayAdapter<ScorerDTO> {
     View view;
     static class ViewHolderItem {
         TextView txtName, txtNumber;
-        TextView txtEmail, txtCell;
+        TextView txtEmail, txtCell, txtCountRed, txtCountBlack, txtCountGreen;
         ImageView imagex;
         ImageView imgHistory, imgCamera, imgInvite, imgMessage, imgEdit;
     }
@@ -77,6 +77,12 @@ public class ScorerAdapter extends ArrayAdapter<ScorerDTO> {
             v.imgMessage = (ImageView) convertView
                     .findViewById(R.id.PA_imgMessage);
             v.imgHistory.setVisibility(View.GONE);
+            v.txtCountGreen = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterGreen);
+            v.txtCountBlack = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterBlack);
+            v.txtCountRed = (TextView) convertView
+                    .findViewById(R.id.PSN_txtCounterRed);
             convertView.setTag(v);
         } else {
             v = (ViewHolderItem) convertView.getTag();
@@ -88,6 +94,9 @@ public class ScorerAdapter extends ArrayAdapter<ScorerDTO> {
                 + p.getLastName());
         v.txtEmail.setText(p.getEmail());
         v.txtCell.setText(p.getCellphone());
+        v.txtCountRed.setVisibility(View.VISIBLE);
+        v.txtCountBlack.setVisibility(View.GONE);
+        v.txtCountGreen.setVisibility(View.GONE);
 
 
        // v.image.setDefaultImageResId(R.drawable.boy);

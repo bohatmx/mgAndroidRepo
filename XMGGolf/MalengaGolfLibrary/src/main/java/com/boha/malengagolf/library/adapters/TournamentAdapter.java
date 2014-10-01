@@ -4,18 +4,19 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Vibrator;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.toolbox.NetworkImageView;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.TournamentListListener;
+import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
 
 import java.text.SimpleDateFormat;
@@ -264,17 +265,47 @@ public class TournamentAdapter extends ArrayAdapter<TournamentDTO> {
         } catch (Exception e) {
 
         }
+        if (p.getClosedForScoringFlag() > 0) {
+            if (v.imgEdit != null)
+                v.imgEdit.setAlpha(0.3f);
+            if (v.imgEmail != null)
+                v.imgEmail.setAlpha(0.3f);
+            if (v.imgTee != null)
+                v.imgTee.setAlpha(0.3f);
+            if (v.imgCamera != null)
+                v.imgCamera.setAlpha(0.3f);
+            if (v.imgDelete != null)
+                v.imgDelete.setAlpha(0.3f);
+            if (v.imgScoring != null)
+                v.imgScoring.setAlpha(0.3f);
+        } else {
+            if (v.imgEdit != null)
+                v.imgEdit.setAlpha(1.0f);
+            if (v.imgEmail != null)
+                v.imgEmail.setAlpha(1.0f);
+            if (v.imgTee != null)
+                v.imgTee.setAlpha(1.0f);
+            if (v.imgCamera != null)
+                v.imgCamera.setAlpha(1.0f);
+            if (v.imgDelete != null)
+                v.imgDelete.setAlpha(1.0f);
+            if (v.imgScoring != null)
+                v.imgScoring.setAlpha(1.0f);
+        }
+        Statics.setRobotoFontBold(ctx, v.txtClubName);
+        Statics.setRobotoFontBold(ctx, v.txtName);
+        Statics.setRobotoFontBold(ctx, v.txtType);
         animateView(convertView);
         return (convertView);
     }
 
     public void animateView(final View view) {
-        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 0.5f);
-        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 0.5f);
+        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 0.3f);
+        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 0.3f);
         ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1.0f);
         ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1.0f);
-        scaleDownX.setDuration(1000);
-        scaleDownY.setDuration(1000);
+        scaleDownX.setDuration(500);
+        scaleDownY.setDuration(500);
 
         final AnimatorSet scaleDown = new AnimatorSet();
         scaleDown.play(scaleUpX).with(scaleUpY);

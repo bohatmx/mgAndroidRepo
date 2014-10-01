@@ -20,6 +20,9 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
+import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.AdministratorDTO;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
@@ -45,8 +48,10 @@ import java.util.List;
 public class ScoringByHoleFragment extends Fragment {
 
     public interface ScoringByHoleListener {
-        public void scoringSubmitted(List<LeaderBoardDTO> tps);
+        public void scoringSubmitted(List<LeaderBoardDTO> leaderBoardList);
+
         public void onError(String message);
+
         public void setBusy();
 
         public void setNotBusy();
@@ -98,6 +103,7 @@ public class ScoringByHoleFragment extends Fragment {
     TextView reminder;
 
     private void setFields() {
+
         frontNine = (RelativeLayout) view.findViewById(R.id.SBH_frontNine);
         backNine = (RelativeLayout) view.findViewById(R.id.SBH_backNine);
         spinner = (Spinner) view.findViewById(R.id.SBH_spinnerRound);
@@ -422,13 +428,20 @@ public class ScoringByHoleFragment extends Fragment {
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.UPDATE_TOURNAMENT_SCORES);
         w.setTournamentType(tournament.getTournamentType());
+        if (SharedUtil.getAdministrator(ctx) != null) {
+            w.setAdministratorID(SharedUtil.getAdministrator(ctx).getAdministratorID());
+        }
+        if (SharedUtil.getScorer(ctx) != null) {
+            w.setScorerID(SharedUtil.getScorer(ctx).getScorerID());
+        }
+        w.setSessionID(SharedUtil.getSessionID(ctx));
 
         LeaderBoardDTO lb = new LeaderBoardDTO();
         lb.setTournamentID(tournament.getTournamentID());
         lb.setLeaderBoardID(leaderBoard.getLeaderBoardID());
 
         lb.setTourneyScoreByRoundList(new ArrayList<TourneyScoreByRoundDTO>());
-        for (TourneyScoreByRoundDTO tsbr: leaderBoard.getTourneyScoreByRoundList()) {
+        for (TourneyScoreByRoundDTO tsbr : leaderBoard.getTourneyScoreByRoundList()) {
             TourneyScoreByRoundDTO cc = new TourneyScoreByRoundDTO();
             cc = tsbr;
             //cc.setClubCourse(tsbr.getClubCourse());
@@ -443,11 +456,17 @@ public class ScoringByHoleFragment extends Fragment {
 
         WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onMessage(ResponseDTO r) {
-                response = r;
+            public void onMessage(final ResponseDTO r) {
                 scoringByHoleListener.setNotBusy();
+                if (r.getLeaderBoard() != null) {
+                    Log.w(LOG, "##### onMessage: scoring update coming in, ignored");
+                    return;
+                }
+                response = r;
+
                 Log.i(LOG, "Scores submitted OK, telling listener -> tourneyPlayerScoreList");
                 scoringByHoleListener.scoringSubmitted(response.getLeaderBoardList());
+
 
             }
 
@@ -458,8 +477,11 @@ public class ScoringByHoleFragment extends Fragment {
 
             @Override
             public void onError(final String message) {
+                scoringByHoleListener.setNotBusy();
                 Log.e(LOG, message);
                 scoringByHoleListener.onError(message);
+
+
             }
 
 
@@ -3419,6 +3441,20 @@ public class ScoringByHoleFragment extends Fragment {
         } else {
             reminder.setVisibility(View.GONE);
         }
+        Statics.setRobotoFontBold(ctx,txtPlayer);
+        NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.SBH_image);
+        StringBuilder sb = new StringBuilder();
+        sb.append(Statics.IMAGE_URL).append("golfgroup")
+                .append(SharedUtil.getGolfGroup(ctx).getGolfGroupID()).append("/")
+                .append("player/t")
+                .append(leaderBoard.getPlayer().getPlayerID())
+                .append(".jpg");
+        //Picasso.with(ctx).load(sb.toString()).placeholder(ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
+        MGApp app = (MGApp)getActivity().getApplication();
+        ImageLoader loader = app.getImageLoader();
+        imageView.setDefaultImageResId(R.drawable.boy);
+        imageView.setImageUrl(sb.toString(), loader);
+        //
         //
 //        if (tournament.getHolesPerRound() == 9) {
 //            if (leaderBoard.getTourneyScoreByRoundList()

@@ -37,7 +37,7 @@ public class PaymentStatusReceiver extends BroadcastReceiver {
         Log.d(TAG, "- operator:         " + extras.getString("operator"));
         Log.d(TAG, "- billing_type:     " + extras.getString("billing_type"));
         Log.d(TAG, "- sender:         " + extras.getString("sender"));
-        Log.d(TAG, "- test:         " + extras.getString("test"));
+        Log.d(TAG, "- unpack:         " + extras.getString("unpack"));
         Log.d(TAG, "- user_share:         " + extras.getString("user_share"));
         Log.d(TAG, "- status:         " + extras.getString("status"));
         Log.d(TAG, "- currency:         " + extras.getString("currency"));

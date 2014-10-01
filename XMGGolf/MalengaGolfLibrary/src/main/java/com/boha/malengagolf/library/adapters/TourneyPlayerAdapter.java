@@ -151,9 +151,9 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
         }
         vhi.txtNumber.setText("" + (position + 1));
         if (hideIcons) {
-            vhi.icons.setVisibility(View.GONE);
+            vhi.imgRemove.setVisibility(View.GONE);
         } else {
-            vhi.icons.setVisibility(View.VISIBLE);
+            vhi.imgRemove.setVisibility(View.VISIBLE);
         }
         vhi.imgScoring.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,6 +320,12 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
         vhi.image.setDefaultImageResId(R.drawable.boy);
         vhi.image.setImageUrl(sb.toString(), imageLoader);
 
+        Statics.setRobotoFontLight(ctx,vhi.txtName);
+        Statics.setRobotoFontLight(ctx,vhi.txtRound1p);
+        Statics.setRobotoFontLight(ctx,vhi.txtRound2p);
+        Statics.setRobotoFontLight(ctx,vhi.txtRound3p);
+        Statics.setRobotoFontLight(ctx,vhi.txtRound4p);
+        Statics.setRobotoFontLight(ctx,vhi.txtRound5p);
         animateView(convertView);
         return (convertView);
     }

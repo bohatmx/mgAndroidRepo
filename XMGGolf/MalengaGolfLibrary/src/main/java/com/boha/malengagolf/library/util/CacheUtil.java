@@ -76,7 +76,7 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(Constants.PLAYER_LIST);
                         if (file != null) {
                             Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " items: " + response.getPlayers().size());
+                                    " - length: " + file.length());
                         }
                         break;
                     case CACHE_SCORERS:
@@ -86,7 +86,7 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(Constants.SCORER_LIST);
                         if (file != null) {
                             Log.w(LOG, ".....Scorers Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " items: " + response.getScorers().size());
+                                    " - length: " + file.length() );
                         }
                         break;
                     case CACHE_ADMINS:
@@ -96,7 +96,7 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(Constants.ADMIN_LIST);
                         if (file != null) {
                             Log.w(LOG, "......Admins Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " items: " + response.getAdministrators().size());
+                                    " - length: " + file.length());
                         }
                         break;
                     case CACHE_TOURNAMENTS:
@@ -106,7 +106,7 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(Constants.TOURNAMENT_LIST);
                         if (file != null) {
                             Log.w(LOG, ".....Tournament Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + response.getTournaments().size());
+                                    " - length: " + file.length());
                         }
                         break;
                     case CACHE_GOLFGROUPS:
@@ -116,20 +116,18 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(Constants.GOLF_GROUPS);
                         if (file != null) {
                             Log.w(LOG, "......GolfGroup Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " items: " + response.getGolfGroups().size());
+                                    " - length: " + file.length());
                         }
                         break;
                     case CACHE_LEADER_BOARD:
-                        for (LeaderBoardDTO d: response.getLeaderBoardList()) {
-                            d.setTimeStamp(new Date().getTime());
-                        }
+
                         json = gson.toJson(response);
                         outputStream = ctx.openFileOutput(Constants.LEADERBOARD + tournamentID, Context.MODE_PRIVATE);
                         write(outputStream, json);
                         file = ctx.getFileStreamPath(Constants.LEADERBOARD + tournamentID);
                         if (file != null) {
                             Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " items: " + response.getLeaderBoardList().size());
+                                    " - length: " + file.length());
                         }
                         break;
                     case CACHE_TOURN_PLAYERS:
@@ -163,7 +161,7 @@ public class CacheUtil {
                         file = ctx.getFileStreamPath(Constants.NEAREST_CLUBS);
                         if (file != null) {
                             Log.w(LOG, "......Data cache json written to disk,  - path: " + file.getAbsolutePath() +
-                                    " - length: " + file.length() + " items: " + response.getClubs().size());
+                                    " - length: " + file.length());
                         }
                         break;
                     default:

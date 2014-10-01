@@ -16,12 +16,33 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
+
 import com.android.volley.VolleyError;
 import com.boha.malengagolf.library.adapters.ClubAdapter;
+import com.boha.malengagolf.library.data.ClubDTO;
+import com.boha.malengagolf.library.data.CountryDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.ProvinceDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
-import com.boha.malengagolf.library.util.*;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -33,7 +54,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,7 +90,13 @@ public class GolfCourseMapActivity extends FragmentActivity
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
                 .findFragmentById(R.id.map);
+
         googleMap = mapFragment.getMap();
+        if (googleMap == null) {
+            ToastUtil.toast(ctx, "Map not available. Please try again!");
+            finish();
+            return;
+        }
 
         requestOrigin = getIntent().getIntExtra("requestOrigin", ORIGIN_SEARCH);
         golfGroup = SharedUtil.getGolfGroup(ctx);
@@ -185,27 +216,62 @@ public class GolfCourseMapActivity extends FragmentActivity
             return;
         }
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO response) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, response)) {
-                    return;
-                }
-                addingNewClub = false;
-                closeForEdit();
-                clubList.add(0, response.getClubs().get(0));
-                adapter.notifyDataSetChanged();
-                putClubMarkersOnMap();
+            public void onMessage(final ResponseDTO response) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        addingNewClub = false;
+                        closeForEdit();
+                        clubList.add(0, response.getClubs().get(0));
+                        adapter.notifyDataSetChanged();
+                        putClubMarkersOnMap();
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
 
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO response) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, response)) {
+//                    return;
+//                }
+//                addingNewClub = false;
+//                closeForEdit();
+//                clubList.add(0, response.getClubs().get(0));
+//                adapter.notifyDataSetChanged();
+//                putClubMarkersOnMap();
+//
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     ClubDTO club;
@@ -431,7 +497,11 @@ public class GolfCourseMapActivity extends FragmentActivity
 
         @Override
         public void onDismiss(DialogInterface dialog) {
-            ((GolfCourseMapActivity) getActivity()).onDialogDismissed();
+            try {
+                ((GolfCourseMapActivity) getActivity()).onDialogDismissed();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -471,6 +541,8 @@ public class GolfCourseMapActivity extends FragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.golf_map_menu, menu);
         mMenu = menu;
+        menu.getItem(0).setVisible(false);
+        menu.getItem(3).setVisible(false);
         loadIcons();
         loadDrawables();
         if (provinceList == null) {
@@ -606,8 +678,10 @@ public class GolfCourseMapActivity extends FragmentActivity
         txtResults.setText("");
         listView = (ListView) findViewById(R.id.list);
         disableButtons();
-        String locale = ctx.getResources().getConfiguration().locale.getCountry();
-        if (locale.equalsIgnoreCase("US")) {
+        String name = SharedUtil.getGolfGroup(ctx).getCountryName();
+        if (name.contains("united-states")
+                || name.contains("united-kingdom")
+                || name.contains("canada")) {
             txtSeekBar.setText("20 miles");
         } else {
             txtSeekBar.setText("20 km");
@@ -769,6 +843,57 @@ public class GolfCourseMapActivity extends FragmentActivity
         if (provinceList == null || provinceList.isEmpty()) {
             setRefreshActionButtonState(true);
         }
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+            @Override
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (r.getStatusCode() > 0) {
+                            ToastUtil.errorToast(ctx, r.getMessage());
+                            return;
+                        }
+                        provinceList = r.getProvinces();
+                        setProvinceSpinner();
+                        CountryDTO c = new CountryDTO();
+                        c.setCountryName(SharedUtil.getGolfGroup(getApplicationContext()).getCountryName());
+                        c.setCountryID(SharedUtil.getGolfGroup(getApplicationContext()).getCountryID());
+                        c.setProvinces(provinceList);
+                        r.setCountry(c);
+
+                        CacheUtil.cacheData(getApplicationContext(), r, CacheUtil.CACHE_COUNTRY, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
+
+                            }
+
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
+
+                    }
+                });
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
+            }
+        });
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
             @Override
             public void onResponseReceived(ResponseDTO r) {
@@ -810,12 +935,13 @@ public class GolfCourseMapActivity extends FragmentActivity
     boolean isFirstTime = true;
 
     private void getCachedClubs() {
-        CacheUtil.getCachedData(getApplicationContext(),CacheUtil.CACHE_NEAREST_CLUBS, 0, new CacheUtil.CacheUtilListener() {
+        CacheUtil.getCachedData(getApplicationContext(), CacheUtil.CACHE_NEAREST_CLUBS, 0, new CacheUtil.CacheUtilListener() {
             @Override
             public void onFileDataDeserialized(ResponseDTO response) {
                 if (response != null) {
                     clubList = response.getClubs();
-                    putClubMarkersOnMap();
+                    if (googleMap != null)
+                        putClubMarkersOnMap();
                     setList();
                 }
                 getNearbyClubs();
@@ -827,6 +953,7 @@ public class GolfCourseMapActivity extends FragmentActivity
             }
         });
     }
+
     private void getNearbyClubs() {
         Log.i(LOG, "getNearbyClubs ..........");
         if (latitude == 0 && longitude == 0) return;
@@ -855,51 +982,111 @@ public class GolfCourseMapActivity extends FragmentActivity
         }
         txtResults.setText("");
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
-                if (isFirstTime) {
-                    isFirstTime = false;
-                    getProvinceList();
-                }
-                clubList = r.getClubs();
-                putClubMarkersOnMap();
-                setList();
-
-                CacheUtil.cacheData(getApplicationContext(), r, CacheUtil.CACHE_NEAREST_CLUBS, new CacheUtil.CacheUtilListener() {
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void onFileDataDeserialized(ResponseDTO response) {
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, r)) {
+                            return;
+                        }
+                        if (isFirstTime) {
+                            isFirstTime = false;
+                            getProvinceList();
+                        }
+                        clubList = r.getClubs();
+                        putClubMarkersOnMap();
+                        setList();
 
-                    }
+                        CacheUtil.cacheData(getApplicationContext(), r, CacheUtil.CACHE_NEAREST_CLUBS, new CacheUtil.CacheUtilListener() {
+                            @Override
+                            public void onFileDataDeserialized(ResponseDTO response) {
 
-                    @Override
-                    public void onDataCached() {
+                            }
 
+                            @Override
+                            public void onDataCached() {
+
+                            }
+                        });
+
+                        totalPages = r.getTotalPages();
+                        txtPages.setText("" + currentPage + "/" + r.getTotalPages());
+                        txtResults.setText(ctx.getResources().getString(R.string.clubs_on_map)
+                                + " " + clubList.size() + "/" + r.getTotalClubs());
+                        if (r.getTotalPages() > 1) {
+                            enableButtons();
+                        } else {
+                            disableButtons();
+                        }
+                        searchType = FROM_NEARBY;
                     }
                 });
-
-                totalPages = r.getTotalPages();
-                txtPages.setText("" + currentPage + "/" + r.getTotalPages());
-                txtResults.setText(ctx.getResources().getString(R.string.clubs_on_map)
-                        + " " + clubList.size() + "/" + r.getTotalClubs());
-                if (r.getTotalPages() > 1) {
-                    enableButtons();
-                } else {
-                    disableButtons();
-                }
-                searchType = FROM_NEARBY;
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        ErrorUtil.showServerCommsError(ctx);
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                if (isFirstTime) {
+//                    isFirstTime = false;
+//                    getProvinceList();
+//                }
+//                clubList = r.getClubs();
+//                putClubMarkersOnMap();
+//                setList();
+//
+//                CacheUtil.cacheData(getApplicationContext(), r, CacheUtil.CACHE_NEAREST_CLUBS, new CacheUtil.CacheUtilListener() {
+//                    @Override
+//                    public void onFileDataDeserialized(ResponseDTO response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onDataCached() {
+//
+//                    }
+//                });
+//
+//                totalPages = r.getTotalPages();
+//                txtPages.setText("" + currentPage + "/" + r.getTotalPages());
+//                txtResults.setText(ctx.getResources().getString(R.string.clubs_on_map)
+//                        + " " + clubList.size() + "/" + r.getTotalClubs());
+//                if (r.getTotalPages() > 1) {
+//                    enableButtons();
+//                } else {
+//                    disableButtons();
+//                }
+//                searchType = FROM_NEARBY;
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void enableButtons() {
@@ -931,35 +1118,78 @@ public class GolfCourseMapActivity extends FragmentActivity
         }
         txtResults.setText("");
         setRefreshActionButtonState(true);
-        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
             @Override
-            public void onResponseReceived(ResponseDTO r) {
-                setRefreshActionButtonState(false);
-                if (!ErrorUtil.checkServerError(ctx, r)) {
-                    return;
-                }
-                Log.e(LOG, "Have found " + r.getClubs().size() + " clubs in province");
-                clubList = r.getClubs();
-                putClubMarkersOnMap();
-                setList();
-                totalPages = r.getTotalPages();
-                txtPages.setText("" + currentPage + "/" + r.getTotalPages());
-                txtResults.setText(ctx.getResources().getString(R.string.clubs_on_map)
-                        + " " + clubList.size() + "/" + r.getTotalClubs());
-                if (r.getTotalPages() > 1) {
-                    enableButtons();
-                } else {
-                    disableButtons();
-                }
-                searchType = FROM_PROVINCE;
+            public void onMessage(final ResponseDTO r) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setRefreshActionButtonState(false);
+                        if (!ErrorUtil.checkServerError(ctx, r)) {
+                            return;
+                        }
+                        Log.e(LOG, "Have found " + r.getClubs().size() + " clubs in province");
+                        clubList = r.getClubs();
+                        putClubMarkersOnMap();
+                        setList();
+                        totalPages = r.getTotalPages();
+                        txtPages.setText("" + currentPage + "/" + r.getTotalPages());
+                        txtResults.setText(ctx.getResources().getString(R.string.clubs_on_map)
+                                + " " + clubList.size() + "/" + r.getTotalClubs());
+                        if (r.getTotalPages() > 1) {
+                            enableButtons();
+                        } else {
+                            disableButtons();
+                        }
+                        searchType = FROM_PROVINCE;
+                    }
+                });
             }
 
             @Override
-            public void onVolleyError(VolleyError error) {
-                setRefreshActionButtonState(false);
-                ErrorUtil.showServerCommsError(ctx);
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onError(String message) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+                });
             }
         });
+//        BaseVolley.getRemoteData(Statics.SERVLET_ADMIN, w, ctx, new BaseVolley.BohaVolleyListener() {
+//            @Override
+//            public void onResponseReceived(ResponseDTO r) {
+//                setRefreshActionButtonState(false);
+//                if (!ErrorUtil.checkServerError(ctx, r)) {
+//                    return;
+//                }
+//                Log.e(LOG, "Have found " + r.getClubs().size() + " clubs in province");
+//                clubList = r.getClubs();
+//                putClubMarkersOnMap();
+//                setList();
+//                totalPages = r.getTotalPages();
+//                txtPages.setText("" + currentPage + "/" + r.getTotalPages());
+//                txtResults.setText(ctx.getResources().getString(R.string.clubs_on_map)
+//                        + " " + clubList.size() + "/" + r.getTotalClubs());
+//                if (r.getTotalPages() > 1) {
+//                    enableButtons();
+//                } else {
+//                    disableButtons();
+//                }
+//                searchType = FROM_PROVINCE;
+//            }
+//
+//            @Override
+//            public void onVolleyError(VolleyError error) {
+//                setRefreshActionButtonState(false);
+//                ErrorUtil.showServerCommsError(ctx);
+//            }
+//        });
     }
 
     private void startDirectionsMap(double lat, double lng) {
@@ -992,106 +1222,110 @@ public class GolfCourseMapActivity extends FragmentActivity
     List<BitmapDescriptor> bmdList = new ArrayList<BitmapDescriptor>();
 
     private void loadIcons() {
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_1));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_2));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_3));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_4));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_5));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_6));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_7));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_8));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_9));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_10));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_11));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_12));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_13));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_14));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_15));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_16));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_17));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_18));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_19));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_20));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_21));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_22));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_23));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_24));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_25));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_26));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_27));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_28));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_29));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_30));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_31));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_32));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_33));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_34));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_35));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_36));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_37));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_38));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_39));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_40));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_41));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_42));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_43));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_44));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_45));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_46));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_47));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_48));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_49));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_50));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_51));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_52));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_53));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_54));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_55));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_56));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_57));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_58));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_59));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_60));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_61));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_62));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_63));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_64));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_65));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_66));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_67));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_68));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_69));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_70));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_71));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_72));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_73));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_74));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_75));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_76));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_77));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_78));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_79));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_80));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_81));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_82));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_83));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_84));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_85));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_86));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_87));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_88));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_89));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_90));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_91));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_92));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_93));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_94));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_95));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_96));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_97));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_98));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_99));
-        bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_100));
+        try {
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_1));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_2));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_3));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_4));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_5));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_6));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_7));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_8));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_9));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_10));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_11));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_12));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_13));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_14));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_15));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_16));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_17));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_18));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_19));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_20));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_21));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_22));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_23));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_24));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_25));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_26));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_27));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_28));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_29));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_30));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_31));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_32));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_33));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_34));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_35));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_36));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_37));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_38));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_39));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_40));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_41));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_42));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_43));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_44));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_45));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_46));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_47));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_48));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_49));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_50));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_51));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_52));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_53));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_54));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_55));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_56));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_57));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_58));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_59));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_60));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_61));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_62));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_63));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_64));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_65));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_66));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_67));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_68));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_69));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_70));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_71));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_72));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_73));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_74));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_75));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_76));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_77));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_78));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_79));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_80));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_81));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_82));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_83));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_84));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_85));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_86));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_87));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_88));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_89));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_90));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_91));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_92));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_93));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_94));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_95));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_96));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_97));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_98));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_99));
+            bmdList.add(BitmapDescriptorFactory.fromResource(R.drawable.number_100));
+        } catch (Exception e) {
+            Log.e(LOG, "Load icons failed", e);
+        }
 
 
     }
