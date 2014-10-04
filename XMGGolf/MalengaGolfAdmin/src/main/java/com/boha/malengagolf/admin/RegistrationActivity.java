@@ -32,7 +32,6 @@ import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 
@@ -168,7 +167,14 @@ public class RegistrationActivity extends FragmentActivity implements
                             ToastUtil.errorToast(ctx, response.getMessage());
                             return;
                         }
-                        Log.i(LOG, "&&&&&&&& - " + response.getMessage());
+                        if (response.getGolfGroup() == null) {
+                            Log.e(LOG, "GolfGroup is null, ignoring .... " + response.getMessage());
+                            return;
+                        }
+                        if (response.getAdministrator() == null) {
+                            Log.e(LOG, "Admin is null, ignoring .... " + response.getMessage());
+                            return;
+                        }
                         SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
                         SharedUtil.saveAdministration(ctx, response.getAdministrator());
                         Log.i(LOG, "@@@@@@@@@@ Shared preferences saved. GolfGroup & Admin");
@@ -227,12 +233,10 @@ public class RegistrationActivity extends FragmentActivity implements
             ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.enter_password));
             return;
         }
-
         if (email == null) {
             ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.select_email));
             return;
         }
-
         RequestDTO r = new RequestDTO();
         r.setRequestType(RequestDTO.ADMIN_LOGIN);
         r.setEmail(email);
@@ -253,9 +257,17 @@ public class RegistrationActivity extends FragmentActivity implements
                             ToastUtil.errorToast(ctx, response.getMessage());
                             return;
                         }
+                        if (response.getGolfGroup() == null) {
+                            Log.e(LOG, "GolfGroup is null, ignoring .... " + response.getMessage());
+                            return;
+                        }
+                        if (response.getAdministrator() == null) {
+                            Log.e(LOG, "Admin is null, ignoring .... " + response.getMessage());
+                            return;
+                        }
                         SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
                         SharedUtil.saveAdministration(ctx, response.getAdministrator());
-                        Log.i(LOG, "Shared preferences saved. GolfGroup & Admin");
+                        Log.i(LOG, "**************Shared preferences saved. GolfGroup & Admin");
                         Intent intent = new Intent(ctx, MainPagerActivity.class);
                         startActivity(intent);
                     }
@@ -581,11 +593,10 @@ public class RegistrationActivity extends FragmentActivity implements
 
     public void getEmail() {
         AccountManager am = AccountManager.get(getApplicationContext());
-        Account[] accts = am
-                .getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        Account[] accts = am.getAccounts();
         if (accts.length == 0) {
             //TODO - send user to create acct
-            ToastUtil.errorToast(ctx, "No Google account found. Please create one and try again");
+            ToastUtil.errorToast(ctx, "No Accounts found. Please create one and try again");
             finish();
             return;
         }

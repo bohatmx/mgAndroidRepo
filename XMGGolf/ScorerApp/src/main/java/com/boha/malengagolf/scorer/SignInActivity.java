@@ -30,7 +30,6 @@ import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 
@@ -155,6 +154,11 @@ public class SignInActivity extends FragmentActivity implements
                         if (!ErrorUtil.checkServerError(ctx, response)) {
                             return;
                         }
+                        if (response.getGolfGroup() == null) {
+                            Log.e(LOG, "GolfGroup is null, ignoring .... " + response.getMessage());
+                            return;
+                        }
+
                         SharedUtil.saveGolfGroup(ctx, response.getGolfGroup());
                         switch (type) {
                             case ADMIN:
@@ -357,8 +361,7 @@ public class SignInActivity extends FragmentActivity implements
 
     public void getEmail() {
         AccountManager am = AccountManager.get(getApplicationContext());
-        Account[] accts = am
-                .getAccountsByType(GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE);
+        Account[] accts = am.getAccounts();
         if (accts.length == 0) {
             //TODO - send user to create acct
             ToastUtil.errorToast(ctx, "No Google account found. Please create one and try again");

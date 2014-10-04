@@ -23,9 +23,7 @@ import java.nio.ByteBuffer;
 public class WebSocketUtil {
     public interface WebSocketListener {
         public void onMessage(ResponseDTO response);
-
         public void onClose();
-
         public void onError(String message);
 
     }

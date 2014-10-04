@@ -357,7 +357,14 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
         switch (requestCode) {
             case CAMERA_REQUESTED:
                 if (resultCode == Activity.RESULT_OK) {
-                    staggeredTournamentGridFragment.getTournamentPictures();
+                    try {
+                        staggeredTournamentGridFragment.getTournamentPictures();
+                    } catch (Exception e) {
+                        Log.e(LOG,"###### failed to execute method",e);
+                        Intent x = new Intent(ctx, PictureActivity.class);
+                        x.putExtra("tournament", tournament);
+                        startActivityForResult(x, CAMERA_REQUESTED);
+                    }
                 }
                 break;
         }

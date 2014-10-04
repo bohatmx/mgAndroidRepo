@@ -75,6 +75,7 @@
     <string name="select_club">Select Golf Club</string>
     <string name="select_course">Select Golf Course</string>
     <string name="add_new_club">Add Golf Club</string>
+    <string name="uploading">Uploading image. Wait a second....!</string>
     <string name="scoring_closed">Scoring completed for this Tournament or Player</string>
     <string name="scoring_not_started">Scoring has not started yet. Try later!</string>
     <string name="enter_clubname">Enter Golf Club name</string>

@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -128,6 +129,7 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
 
     private void sendThumbnail(String uri) {
         Log.e(LOG, "..........sendThumbnail ........: " + uri);
+
         switch (type) {
             case GOLF_GROUP_PICTURE:
                 break;
@@ -219,7 +221,7 @@ public class PictureActivity extends Activity implements GLSurfaceView.Renderer 
                 break;
         }
 
-
+        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.uploading),4, Gravity.CENTER);
     }
 
 
