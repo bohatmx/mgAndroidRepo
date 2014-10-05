@@ -33,7 +33,6 @@ public class ZipUtil {
         InputStream is = new ByteArrayInputStream(bb.array());
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
         ResponseDTO response = null;
-        Log.d(LOG, "##### before the try .....");
         try {
             ZipEntry ze;
             while ((ze = zis.getNextEntry()) != null) {
@@ -46,9 +45,7 @@ public class ZipUtil {
                 String filename = ze.getName();
                 byte[] bytes = baos.toByteArray();
                 String json = new String(bytes);
-                Log.e(LOG, "#### Downloaded file: " + filename + ", length: " + json.length()
-                        + "\n" + json);
-
+                Log.e(LOG, "#### Downloaded file: " + filename + ", length: " + json.length());
                 response = gson.fromJson(json, ResponseDTO.class);
             }
         } catch (Exception e) {

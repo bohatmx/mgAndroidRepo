@@ -17,10 +17,10 @@
             android:icon="@drawable/ic_action_view_as_list"
             android:title="@string/list"/>
     <item
-            android:id="@+id/menu_back"
+            android:id="@+id/menu_search_by_state"
             android:showAsAction="ifRoom"
             android:icon="@drawable/ic_action_back"
-            android:title="@string/back"/>
+            android:title="@string/search_by_state"/>
     <item
             android:id="@+id/menu_help"
             android:showAsAction="never"

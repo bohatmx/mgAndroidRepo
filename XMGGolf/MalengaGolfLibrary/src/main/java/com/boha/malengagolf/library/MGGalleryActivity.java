@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by aubreyM on 2014/04/22.
@@ -361,10 +362,20 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
         getMenuInflater().inflate(R.menu.gallery, menu);
         mMenu = menu;
         getLeaderBoard();
+        if (tournament.getClosedForScoringFlag() > 0) {
+            if (new Date().getTime() < (tournament.getEndDate() + CUT_OFF_TIME)) {
+                menu.getItem(0).setVisible(true);
+                menu.getItem(1).setVisible(true);
+            } else {
+                menu.getItem(0).setVisible(false);
+                menu.getItem(1).setVisible(false);
+            }
+        }
         return true;
     }
 
     static final int CAMERA_REQUESTED = 5533;
+    static final long CUT_OFF_TIME = TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS);
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

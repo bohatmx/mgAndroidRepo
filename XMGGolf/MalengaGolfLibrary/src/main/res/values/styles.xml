@@ -275,6 +275,7 @@
 
     <style name="TextStyleSmall" parent="@android:style/TextAppearance.Small">
         <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="TextStyleBold" parent="@android:style/TextAppearance.Medium">

@@ -190,7 +190,6 @@ public class WebSocketUtil {
             @Override
             public void onMessage(ByteBuffer bb) {
                 Log.i(LOG, "########## onMessage ... got ByteBuffer, capacity: " + bb.capacity());
-
                 TimerUtil.killTimer();
                 try {
                     ZipUtil.unpack(bb, webSocketListener);
@@ -203,7 +202,10 @@ public class WebSocketUtil {
             @Override
             public void onClose(final int i, String s, boolean b) {
                 Log.e(LOG, "########## WEBSOCKET onClose, status code:  " + i + " boolean: " + b);
-                webSocketListener.onClose();
+                //webSocketListener.onClose();
+                Log.e(LOG, "### #### onClose: re-starting mWebSocketClient.connect ...");
+                mWebSocketClient.connect();
+
             }
 
             @Override
@@ -215,7 +217,7 @@ public class WebSocketUtil {
             }
         };
 
-        Log.d(LOG, "### #### -------------> starting mWebSocketClient.connect ...");
+        Log.w(LOG, "### #### -------------> starting mWebSocketClient.connect ...");
         mWebSocketClient.connect();
     }
 

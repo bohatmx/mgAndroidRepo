@@ -542,7 +542,6 @@ public class GolfCourseMapActivity extends FragmentActivity
         getMenuInflater().inflate(R.menu.golf_map_menu, menu);
         mMenu = menu;
         menu.getItem(0).setVisible(false);
-        menu.getItem(3).setVisible(false);
         loadIcons();
         loadDrawables();
         if (provinceList == null) {
@@ -553,7 +552,7 @@ public class GolfCourseMapActivity extends FragmentActivity
 
     public void setRefreshActionButtonState(final boolean refreshing) {
         if (mMenu != null) {
-            final MenuItem refreshItem = mMenu.findItem(R.id.menu_add);
+            final MenuItem refreshItem = mMenu.findItem(R.id.menu_list);
             if (refreshItem != null) {
                 if (refreshing) {
                     refreshItem.setActionView(R.layout.action_bar_progess);
@@ -578,8 +577,9 @@ public class GolfCourseMapActivity extends FragmentActivity
             listView.setVisibility(View.VISIBLE);
             return true;
         }
-        if (item.getItemId() == R.id.menu_back) {
-            onBackPressed();
+        if (item.getItemId() == R.id.menu_search_by_state) {
+            provinceSpinner.setVisibility(View.VISIBLE);
+            setProvinceSpinner();
             return true;
         }
         if (item.getItemId() == R.id.menu_add) {
@@ -669,6 +669,7 @@ public class GolfCourseMapActivity extends FragmentActivity
         btnSave = (Button) findViewById(R.id.MAP_btnSave);
         editLayout.setVisibility(View.GONE);
         provinceSpinner = (Spinner) findViewById(R.id.MAP_spinner);
+        provinceSpinner.setVisibility(View.GONE);
         seekBar = (SeekBar) findViewById(R.id.MAP_seekBar);
         txtSeekBar = (TextView) findViewById(R.id.MAP_seekBarValue);
         txtPages = (TextView) findViewById(R.id.MAP_pages);
@@ -787,6 +788,11 @@ public class GolfCourseMapActivity extends FragmentActivity
         Log.i(LOG, "setProvinceSpinner ...");
         List<String> list = new ArrayList<String>();
         list.add(ctx.getResources().getString(R.string.select_province));
+        if (provinceList == null) {
+            Log.e(LOG,"###### error, provinceList is NULL ------->");
+            provinceSpinner.setVisibility(View.GONE);
+            return;
+        }
         for (ProvinceDTO p : provinceList) {
             list.add(p.getProvinceName());
         }

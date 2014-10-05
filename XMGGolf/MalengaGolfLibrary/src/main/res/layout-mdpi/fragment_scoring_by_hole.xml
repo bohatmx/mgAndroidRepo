@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:src="@drawable/boy"
             android:scaleType="centerCrop"
-            android:layout_height="80dp" />
+            android:layout_height="90dp" />
 
         <TextView
             android:id="@+id/SBH_txtTotal"
@@ -120,7 +120,7 @@
                         android:id="@+id/SBH_btnUp1"
                         style="@style/ButtonCancelSmall"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginLeft="45dp"
                         android:layout_toRightOf="@id/SBH_txtScore1"
                         android:drawableLeft="@drawable/arrow_circle_up32"
                         android:layout_width="wrap_content"
@@ -170,7 +170,7 @@
                         android:id="@+id/SBH_btnPointsUp1"
                         style="@style/ButtonCancelSmall"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="45dp"
+                        android:layout_marginLeft="40dp"
                         android:layout_toRightOf="@id/SBH_txtPoints1"
                         android:drawableLeft="@drawable/arrow_circle_up32"
                         android:layout_width="wrap_content"
@@ -223,7 +223,7 @@
                         android:id="@+id/SBH_btnUp2"
                         style="@style/ButtonCancelSmall"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginLeft="40dp"
                         android:layout_toRightOf="@id/SBH_txtScore2"
                         android:drawableLeft="@drawable/arrow_circle_up32"
                         android:layout_width="wrap_content"
@@ -271,7 +271,7 @@
                         android:id="@+id/SBH_btnPointsUp2"
                         style="@style/ButtonCancelSmall"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="45dp"
+                        android:layout_marginLeft="40dp"
                         android:layout_toRightOf="@id/SBH_txtPoints2"
                         android:drawableLeft="@drawable/arrow_circle_up32"
                         android:layout_width="wrap_content"

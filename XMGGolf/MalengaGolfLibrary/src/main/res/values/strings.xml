@@ -55,6 +55,7 @@
     <string name="end_date">End Date</string>
     <string name="cellphone">Cellphone</string>
     <string name="search_map">Use Map for Club search</string>
+    <string name="search_by_state">List Clubs by State/Province</string>
 
     <string name="invited">You are invited to download this app\:</string>
     <string name="click_link">Click or tap the link below to navigate to Google Play</string>
