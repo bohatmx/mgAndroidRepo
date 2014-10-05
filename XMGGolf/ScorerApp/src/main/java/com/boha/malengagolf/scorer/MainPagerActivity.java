@@ -19,6 +19,7 @@ import com.boha.malengagolf.library.PictureActivity;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.ScorerDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.GolfGroupTournamentListFragment;
 import com.boha.malengagolf.library.fragments.SplashFragment;
@@ -52,7 +53,10 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
         mPager = (ViewPager) findViewById(R.id.pager);
         MGApp app = (MGApp) getApplication();
         imageLoader = app.getImageLoader();
+        //
         setTitle(golfGroup.getGolfGroupName());
+        ScorerDTO s = SharedUtil.getScorer(ctx);
+        getActionBar().setSubtitle(s.getFullName());
 
     }
 
@@ -185,6 +189,9 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
                     public void run() {
                         setRefreshActionButtonState(false);
                         if (!ErrorUtil.checkServerError(ctx, response)) {
+                            return;
+                        }
+                        if (response.getTournaments() == null) {
                             return;
                         }
                         tournamentList = response.getTournaments();

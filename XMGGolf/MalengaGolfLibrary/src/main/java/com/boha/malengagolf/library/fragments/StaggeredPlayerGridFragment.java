@@ -65,6 +65,7 @@ public class StaggeredPlayerGridFragment extends Fragment implements MGPageFragm
     private List<LeaderBoardDTO> leaderBoardList;
 
     public AgeGroupDTO getAgeGroup() {
+        if (leaderBoardList == null) return null;
         AgeGroupDTO c = leaderBoardList.get(0).getAgeGroup();
         return c;
     }

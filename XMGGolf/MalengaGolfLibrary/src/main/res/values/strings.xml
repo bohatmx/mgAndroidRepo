@@ -85,6 +85,7 @@
     <string name="all_players">All?</string>
     <string name="clubs_loading">Golf Clubs Loading...</string>
     <string name="tournaments">Tournaments</string>
+    <string name="tournament_images_not_found">Tournament gallery images not available yet.</string>
     <string name="selected">Selected</string>
     <string name="players">Players</string>
     <string name="parents">Parents</string>
@@ -236,7 +237,7 @@
     <string name="delete_tourn">Delete Tournament</string>
     <string name="tee_time_notdone">This player has no tee off time.</string>
     <string name="take_pic">Take Picture</string>
-    <string name="tourn_pics">Pictures</string>
+    <string name="tourn_pics">Tournament Images</string>
     <string name="tourn_player_pics">Tournament Players</string>
     <string name="take_vid">Make a Video Clip</string>
     <string name="no_pics">There are no tournament pictures available at this time. Enjoy this one!</string>

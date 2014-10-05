@@ -9,4 +9,5 @@ public interface StaggeredListener {
     public void setBusy();
     public void setNotBusy();
     public void onPlayerTapped(LeaderBoardDTO lb, int index);
+    public void onTournamentImagesNotFound();
 }

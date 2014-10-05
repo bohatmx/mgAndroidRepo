@@ -201,11 +201,14 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
             StaggeredPlayerGridFragment spgf = new StaggeredPlayerGridFragment();
             Bundle b2 = new Bundle();
             ResponseDTO w = new ResponseDTO();
+            for (LeaderBoardDTO d: carrier.getLeaderBoardList()) {
+                d.setAgeGroup(carrier.getAgeGroup());
+            }
             setPositions(carrier.getLeaderBoardList());
             w.setLeaderBoardList(carrier.getLeaderBoardList());
             w.setTournaments(new ArrayList<TournamentDTO>());
             w.getTournaments().add(tournament);
-            b2.putSerializable("response",w);
+            b2.putSerializable("response", w);
             spgf.setArguments(b2);
             pageFragmentList.add(spgf);
         }
@@ -307,6 +310,13 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
         startActivity(w);
     }
 
+    @Override
+    public void onTournamentImagesNotFound() {
+        pageFragmentList.remove(pageFragmentList.size() - 1);
+        mPagerAdapter.notifyDataSetChanged();
+        ToastUtil.toast(ctx, ctx.getResources().getString(R.string.tournament_images_not_found));
+    }
+
     private class PagerAdapter extends FragmentStatePagerAdapter {
 
         public PagerAdapter(FragmentManager fm) {
@@ -326,7 +336,7 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
 
         @Override
         public CharSequence getPageTitle(int position) {
-            String title = ctx.getResources().getString(R.string.tourn_pics);
+            String title = "";
             if (pageFragmentList.get(position) instanceof StaggeredPlayerGridFragment) {
                 StaggeredPlayerGridFragment f = (StaggeredPlayerGridFragment)pageFragmentList.get(position);
                 AgeGroupDTO ag = f.getAgeGroup();
@@ -334,6 +344,9 @@ public class MGGalleryActivity extends FragmentActivity implements StaggeredList
                     title = ag.getGroupName();
                 } else {
                     title = ctx.getResources().getString(R.string.leaderboard);
+                    if (tournament.getUseAgeGroups() > 0) {
+                        title = ctx.getResources().getString(R.string.combined_leaderboard);
+                    }
                 }
             }
             if (pageFragmentList.get(position) instanceof StaggeredTournamentGridFragment) {

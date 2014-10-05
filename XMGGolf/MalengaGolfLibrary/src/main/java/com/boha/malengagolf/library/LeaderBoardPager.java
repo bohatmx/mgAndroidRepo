@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.data.AdministratorDTO;
@@ -81,6 +82,7 @@ public class LeaderBoardPager extends FragmentActivity
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
+        pagerTitleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
 
     }
 
@@ -90,7 +92,6 @@ public class LeaderBoardPager extends FragmentActivity
     private AppUserDTO appUser;
     private ScorerDTO scorer;
     private PlayerDTO player;
-
     private List<LeaderBoardCarrierDTO> carrierList;
     LeaderBoardSplashFragment splashFragment;
 
@@ -128,6 +129,11 @@ public class LeaderBoardPager extends FragmentActivity
         }
 
         Collections.sort(carrierList);
+        if (carrierList.size() > 1) {
+            pagerTitleStrip.setVisibility(View.VISIBLE);
+        } else {
+            pagerTitleStrip.setVisibility(View.GONE);
+        }
         for (LeaderBoardCarrierDTO carrierDTO : carrierList) {
             LeaderboardFragment fragment = new LeaderboardFragment();
             Bundle bundle = new Bundle();

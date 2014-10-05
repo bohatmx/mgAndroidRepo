@@ -86,6 +86,10 @@ public class StaggeredTournamentGridFragment extends Fragment implements MGPageF
                     public void run() {
                         listener.setNotBusy();
                         if (ErrorUtil.checkServerError(ctx, r)) {
+                            if (r.getImageFileNames().isEmpty()) {
+                                listener.onTournamentImagesNotFound();
+                                return;
+                            }
                             fileNames = r.getImageFileNames();
                             createURLs();
                         }

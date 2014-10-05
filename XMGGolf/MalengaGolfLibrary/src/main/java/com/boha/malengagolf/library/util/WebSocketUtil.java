@@ -41,6 +41,7 @@ public class WebSocketUtil {
     }
 
     public static void sendRequest(Context c, final String suffix, RequestDTO req, WebSocketListener listener) {
+        Log.e(LOG,"&&&&&&&&& about to start communications with websocket endpoint: " + suffix);
         start = System.currentTimeMillis();
         webSocketListener = listener;
         request = req;
@@ -201,7 +202,7 @@ public class WebSocketUtil {
 
             @Override
             public void onClose(final int i, String s, boolean b) {
-                Log.e(LOG, "########## WEBSOCKET onClose, status code:  " + i);
+                Log.e(LOG, "########## WEBSOCKET onClose, status code:  " + i + " boolean: " + b);
                 webSocketListener.onClose();
             }
 

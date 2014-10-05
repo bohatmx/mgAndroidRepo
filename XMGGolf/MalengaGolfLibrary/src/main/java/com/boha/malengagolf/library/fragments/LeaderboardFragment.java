@@ -434,6 +434,7 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             }
             index++;
         }
+
         listView.setSelection(index);
     }
     public void setList() {

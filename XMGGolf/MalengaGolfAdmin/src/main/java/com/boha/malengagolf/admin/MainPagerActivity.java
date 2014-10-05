@@ -79,6 +79,8 @@ public class MainPagerActivity extends FragmentActivity
         mLocationClient = new LocationClient(getApplicationContext(), this,
                 this);
         setTitle(golfGroup.getGolfGroupName());
+        AdministratorDTO a = SharedUtil.getAdministrator(ctx);
+        getActionBar().setSubtitle(a.getFullName());
     }
 
     @Override

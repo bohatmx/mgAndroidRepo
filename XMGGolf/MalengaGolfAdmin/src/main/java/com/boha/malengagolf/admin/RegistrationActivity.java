@@ -116,10 +116,7 @@ public class RegistrationActivity extends FragmentActivity implements
             ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.enter_lastname));
             return;
         }
-        if (eCell.getText().toString().isEmpty()) {
-            ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.enter_cell));
-            return;
-        }
+
         if (ePin.getText().toString().isEmpty()) {
             ToastUtil.errorToast(ctx, ctx.getResources().getString(R.string.enter_password));
             return;
@@ -133,6 +130,7 @@ public class RegistrationActivity extends FragmentActivity implements
             return;
         }
         AdministratorDTO a = new AdministratorDTO();
+        if (!eCell.getText().toString().isEmpty())
         a.setCellphone(eCell.getText().toString());
         a.setEmail(email);
         a.setFirstName(eFirstName.getText().toString());
@@ -419,6 +417,7 @@ public class RegistrationActivity extends FragmentActivity implements
                 mainRegLayout.setVisibility(View.GONE);
                 mainEPLayout.setVisibility(View.VISIBLE);
                 isRegistration = true;
+                eCell.setVisibility(View.VISIBLE);
                 btnSave.setText(ctx.getResources().getString(R.string.register));
                 txtHdr.setText(ctx.getResources().getString(R.string.group_reg));
             }
