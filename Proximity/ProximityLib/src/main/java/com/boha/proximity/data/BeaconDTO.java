@@ -5,17 +5,14 @@
  */
 package com.boha.proximity.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author aubreyM
  */
-public class BeaconDTO implements Parcelable {
+public class BeaconDTO implements Serializable {
 
     private int beaconID;
     private String macAddress, beaconName,companyName, branchName;
@@ -122,54 +119,6 @@ public class BeaconDTO implements Parcelable {
         this.beaconDataItemList = beaconDataItemList;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.beaconID);
-        dest.writeString(this.macAddress);
-        dest.writeString(this.beaconName);
-        dest.writeString(this.companyName);
-        dest.writeString(this.branchName);
-        dest.writeString(this.proximityUUID);
-        dest.writeInt(this.major);
-        dest.writeInt(this.minor);
-        dest.writeInt(this.branchID);
-        dest.writeInt(this.companyID);
-        dest.writeList(this.beaconDataItemList);
-        dest.writeList(this.imageFileNameList);
-    }
 
-    public BeaconDTO() {
-    }
-
-    private BeaconDTO(Parcel in) {
-        this.beaconID = in.readInt();
-        this.macAddress = in.readString();
-        this.beaconName = in.readString();
-        this.companyName = in.readString();
-        this.branchName = in.readString();
-        this.proximityUUID = in.readString();
-        this.major = in.readInt();
-        this.minor = in.readInt();
-        this.branchID = in.readInt();
-        this.companyID = in.readInt();
-        this.beaconDataItemList = new ArrayList<BeaconDataItemDTO>();
-        in.readList(this.beaconDataItemList, BeaconDataItemDTO.class.getClassLoader());
-        this.imageFileNameList = new ArrayList<String>();
-        in.readList(this.imageFileNameList, String.class.getClassLoader());
-    }
-
-    public static final Creator<BeaconDTO> CREATOR = new Creator<BeaconDTO>() {
-        public BeaconDTO createFromParcel(Parcel source) {
-            return new BeaconDTO(source);
-        }
-
-        public BeaconDTO[] newArray(int size) {
-            return new BeaconDTO[size];
-        }
-    };
 }

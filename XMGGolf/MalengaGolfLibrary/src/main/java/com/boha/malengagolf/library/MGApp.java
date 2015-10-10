@@ -1,8 +1,8 @@
 package com.boha.malengagolf.library;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
@@ -10,17 +10,12 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.volley.toolbox.BitmapLruCache;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.model.GlideUrl;
-import com.bumptech.glide.load.model.stream.HttpUrlGlideUrlLoader;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
-
-import java.io.InputStream;
 
 /**
  * Created by aubreyM on 2014/05/17.
@@ -40,7 +35,7 @@ import java.io.InputStream;
                 ReportField.LOGCAT},
         socketTimeout = 3000
 )
-public class MGApp extends Application {
+public class MGApp extends MultiDexApplication {
 
     @Override
     public void onCreate() {
@@ -51,18 +46,8 @@ public class MGApp extends Application {
         Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
         initializeVolley(getApplicationContext());
 
-        //Glide.get(this).register(GlideUrl.class, InputStream.class,
-        //        new VolleyUrlLoader.Factory(requestQueue));
 
-        Glide.get(this).register(GlideUrl.class, InputStream.class, new HttpUrlGlideUrlLoader.Factory());
-        Log.e(LOG, "###### Glide has been initialised");
-//        Glide.with(this)
-//                .load("")
-//                .centerCrop()
-//                .placeholder(R.drawable.boy)
-//                .crossFade()
-//                .into(myImageView);
-    }
+           }
 
     /**
      * Set up Volley Networking; create RequestQueue and ImageLoader

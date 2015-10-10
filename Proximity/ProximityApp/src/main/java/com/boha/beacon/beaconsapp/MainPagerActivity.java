@@ -91,7 +91,7 @@ public class MainPagerActivity extends FragmentActivity {
                 pf.setImageLoader(imageLoader);
                 Bundle b = new Bundle();
                 b.putString("fileName", item);
-                b.putParcelable("beacon", beacon);
+                b.putSerializable("beacon", beacon);
                 pf.setArguments(b);
                 pageList.add(pf);
             }

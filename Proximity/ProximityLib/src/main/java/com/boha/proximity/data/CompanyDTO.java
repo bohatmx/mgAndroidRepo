@@ -6,17 +6,14 @@
 
 package com.boha.proximity.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author aubreyM
  */
-public class CompanyDTO implements Parcelable {
+public class CompanyDTO implements Serializable {
     private int companyID;
     private String companyName;
     private String email;
@@ -63,39 +60,5 @@ public class CompanyDTO implements Parcelable {
         this.branchList = branchList;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.companyID);
-        dest.writeString(this.companyName);
-        dest.writeString(this.email);
-        dest.writeString(this.cellphone);
-        dest.writeList(this.branchList);
-    }
-
-    public CompanyDTO() {
-    }
-
-    private CompanyDTO(Parcel in) {
-        this.companyID = in.readInt();
-        this.companyName = in.readString();
-        this.email = in.readString();
-        this.cellphone = in.readString();
-        this.branchList = new ArrayList<BranchDTO>();
-        in.readList(this.branchList, BranchDTO.class.getClassLoader());
-    }
-
-    public static final Creator<CompanyDTO> CREATOR = new Creator<CompanyDTO>() {
-        public CompanyDTO createFromParcel(Parcel source) {
-            return new CompanyDTO(source);
-        }
-
-        public CompanyDTO[] newArray(int size) {
-            return new CompanyDTO[size];
-        }
-    };
 }

@@ -7,7 +7,7 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,27 +16,39 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import com.boha.malengagolf.library.data.ClubDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.util.ToastUtil;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.*;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
 import java.util.List;
 
+//import com.google.android.gms.location.LocationClient;
 
-public class GolfMapActivity extends FragmentActivity implements
+
+public class GolfMapActivity extends AppCompatActivity implements
         GoogleMap.OnMapClickListener, GoogleMap.OnInfoWindowClickListener,
         LocationListener,
-		GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener {
+		GoogleApiClient.ConnectionCallbacks,
+		GoogleApiClient.OnConnectionFailedListener {
+
+
+	GoogleMap googleMap;
+	GoogleApiClient mGoogleApiClient;
+	LocationRequest locationRequest;
+	Location location;
     static final String LOG = "GolfMapActivity";
 	/*
 	 * Called when the Activity is restarted, even before it becomes visible.
@@ -44,24 +56,16 @@ public class GolfMapActivity extends FragmentActivity implements
 	@Override
 	public void onStart() {
 		super.onStart();
-		mLocationClient.connect();
-		Log.i(LOG, "### onStart - locationClient connected: "
-				+ mLocationClient.isConnected());
+
 
 	}
 	@Override
 	public void onStop() {
-		if (mLocationClient.isConnected()) {
-			stopPeriodicUpdates();
-		}
-		mLocationClient.disconnect();
-		Log.e(LOG, "### onStop - locationClient disconnected: "
-				+ mLocationClient.isConnected());
+
 		super.onStop();
 	}
 
 	private void stopPeriodicUpdates() {
-		mLocationClient.removeLocationUpdates((com.google.android.gms.location.LocationListener) this);
 	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +83,6 @@ public class GolfMapActivity extends FragmentActivity implements
 		 mLocationRequest.setFastestInterval(1000);
 
 
-		mLocationClient = new LocationClient(getApplicationContext(), this,
-				this);
 		setFields();
 		setMap();
 	}
@@ -113,22 +115,15 @@ public class GolfMapActivity extends FragmentActivity implements
 	public void onConnected(Bundle arg0) {
 		Log.i(LOG,
 				"### ---> PlayServices onConnected() - gotta start something! >>");
-		mCurrentLocation = mLocationClient.getLastLocation();
-		if (mCurrentLocation != null) {
-			latitude = mCurrentLocation.getLatitude();
-			longitude = mCurrentLocation.getLongitude();
 
-			onLocationChanged(mCurrentLocation);
-		} else {
-			Log.e(LOG, "$$$$ mCurrentLocation is NULL");
-		}
 	}
 
 	@Override
-	public void onDisconnected() {
-		Log.e(LOG, "### onDisconnected ...");
+	public void onConnectionSuspended(int i) {
 
 	}
+
+
 
 	@Override
 	public void onLocationChanged(Location loc) {
@@ -268,6 +263,5 @@ public class GolfMapActivity extends FragmentActivity implements
 	TextView txtRadius, txtCount, txtTitle, txtEstimated;
 	HashMap<Integer, Marker> markerMap;
 	boolean hasJustTappedLandmark;
-	private LocationClient mLocationClient;
 
 }

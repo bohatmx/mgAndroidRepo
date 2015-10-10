@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.android.volley.VolleyError;
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/05/20.
  */
-public class MainPagerActivity extends FragmentActivity implements GolfGroupTournamentListFragment.TournamentListener {
+public class MainPagerActivity extends AppCompatActivity implements GolfGroupTournamentListFragment.TournamentListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

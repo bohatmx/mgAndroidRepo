@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -33,17 +33,17 @@ import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.checkNetworkOnDevice;
 
-public class RegistrationActivity extends FragmentActivity implements
+public class RegistrationActivity extends AppCompatActivity implements
 
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     Context ctx;
 
@@ -486,7 +486,7 @@ public class RegistrationActivity extends FragmentActivity implements
                 country = countryList.get(i - 1);
                 ResponseDTO w = new ResponseDTO();
                 w.setCountry(country);
-                CacheUtil.cacheData(ctx,w, CacheUtil.CACHE_COUNTRY, new CacheUtil.CacheUtilListener() {
+                CacheUtil.cacheData(ctx, w, CacheUtil.CACHE_COUNTRY, new CacheUtil.CacheUtilListener() {
                     @Override
                     public void onFileDataDeserialized(ResponseDTO response) {
 
@@ -568,15 +568,6 @@ public class RegistrationActivity extends FragmentActivity implements
     }
 
 
-
-
-
-    @Override
-    public void onDisconnected() {
-        Log.w(LOG, "### ---> PlayServices onDisconnected() ");
-    }
-
-
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e(LOG, "onConnection failed: " + connectionResult.toString());
@@ -649,6 +640,11 @@ public class RegistrationActivity extends FragmentActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG, "### ---> PlayServices onConnected() - gotta go! >>");
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
 
     }
 

@@ -5,22 +5,16 @@
       <GradleProjectSettings>
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="1.8" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/CloudBackEnd" />
-            <option value="$PROJECT_DIR$/EventReporter" />
             <option value="$PROJECT_DIR$/LeaderBoardApp" />
             <option value="$PROJECT_DIR$/MalengaGolfAdmin" />
             <option value="$PROJECT_DIR$/MalengaGolfLibrary" />
-            <option value="$PROJECT_DIR$/PlayerApp" />
-            <option value="$PROJECT_DIR$/ScorerApp" />
-            <option value="$PROJECT_DIR$/ScraperApp" />
-            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
       </GradleProjectSettings>
     </option>
   </component>
 </project>
-

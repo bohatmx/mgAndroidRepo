@@ -1,17 +1,18 @@
 package com.boha.malengagolf.library;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.fragments.MessageFragment;
 
 /**
  * Created by aubreyM on 2014/05/28.
  */
-public class MessageActivity extends FragmentActivity {
+public class MessageActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

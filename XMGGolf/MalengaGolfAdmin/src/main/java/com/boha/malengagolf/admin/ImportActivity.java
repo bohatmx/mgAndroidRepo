@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +16,7 @@ import com.boha.malengagolf.library.util.SharedUtil;
 /**
  * Created by aubreyM on 2014/06/13.
  */
-public class ImportActivity extends FragmentActivity implements ImportFragment.ImportFragmentListener{
+public class ImportActivity extends AppCompatActivity implements ImportFragment.ImportFragmentListener{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

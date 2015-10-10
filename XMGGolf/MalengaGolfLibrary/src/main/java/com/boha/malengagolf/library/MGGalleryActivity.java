@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by aubreyM on 2014/04/22.
  */
-public class MGGalleryActivity extends FragmentActivity implements StaggeredListener{
+public class MGGalleryActivity extends AppCompatActivity implements StaggeredListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.scorer_main_pager);

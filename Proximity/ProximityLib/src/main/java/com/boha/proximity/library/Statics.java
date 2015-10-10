@@ -11,11 +11,11 @@ public class Statics {
     //google cloud http://mggolf-303.appspot.com/golf?JSON={requestType:38,golfGroupID:21}
     //public static final String URL = "http://mggolf-303.appspot.com/";
 
-    public static final String URL = "http://bohamaker.com:51490/prox/";
-    public static final String IMAGE_URL = "http://bohamaker.com:51490/proximity_images/";
+//    public static final String URL = "http://bohamaker.com:51490/prox/";
+//    public static final String IMAGE_URL = "http://bohamaker.com:51490/proximity_images/";
 
-//	public static final String URL = "http://192.168.1.81:8050/prox/";
-//	public static final String IMAGE_URL = "http://192.168.1.81:8050/proximity_images/";
+	public static final String URL = "http://192.168.1.111:8080/prox/";
+	public static final String IMAGE_URL = "http://192.168.1.111:8080/proximity_images/";
 
     public static final String SERVLET_ADMIN = "admin?JSON=";
 

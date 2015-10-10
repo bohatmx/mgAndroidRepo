@@ -18,8 +18,6 @@ import com.boha.proximity.library.Statics;
 import com.boha.proximity.util.CacheUtil;
 import com.boha.proximity.volley.BaseVolley;
 
-import org.acra.ACRA;
-
 public class CompanyListActivity extends ActionBarActivity
         implements CompanyListFragment.CompanyListFragmentListener {
 
@@ -29,7 +27,7 @@ public class CompanyListActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company_list);
         ctx = getApplicationContext();
-        ACRA.getErrorReporter().putCustomData("name", "CMS App");
+//        ACRA.getErrorReporter().putCustomData("name", "CMS App");
         companyListFragment = (CompanyListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment);
     }

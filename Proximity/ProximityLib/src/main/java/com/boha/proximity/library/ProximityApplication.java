@@ -7,7 +7,6 @@ import com.android.volley.toolbox.ImageLoader;
 import com.boha.proximity.volley.BohaVolley;
 import com.estimote.sdk.BeaconManager;
 
-import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
 
@@ -32,8 +31,8 @@ public class ProximityApplication extends Application {
         beaconManager = new BeaconManager(getApplicationContext());
         imageLoader = BohaVolley.getImageLoader(getApplicationContext());
 
-        ACRA.init(this);
-        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
+       // ACRA.init(this);
+       // Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
 
     }
     private BeaconManager beaconManager;

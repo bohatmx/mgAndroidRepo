@@ -84,7 +84,7 @@ public class SeverEventListFragment extends Fragment implements MGPageFragment {
 
     @Override
     public void onSaveInstanceState(Bundle b) {
-        b.putParcelable("response", response);
+        b.putSerializable("response", response);
         super.onSaveInstanceState(b);
     }
 

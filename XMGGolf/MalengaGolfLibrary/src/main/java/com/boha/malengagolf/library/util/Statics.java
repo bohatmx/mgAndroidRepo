@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.widget.TextView;
 
-import com.boha.malengagolf.library.R;
 
 public class Statics {
 
@@ -13,9 +12,15 @@ public class Statics {
      * REMOTE URL - bohamaker back end - production
      */
     //
-    public static final String WEBSOCKET_URL = "ws://bohamaker.com:51490/golf/";
-    public static final String URL = "http://bohamaker.com:51490/golf/";
-    public static final String IMAGE_URL = "http://bohamaker.com:51490/golf_images/";
+    public static final String WEBSOCKET_URL = "ws://bohamaker.com:3030/golf/";
+    public static final String URL = "http://bohamaker.com:3030/golf/";
+    public static final String IMAGE_URL = "http://bohamaker.com:3030/golf_images/";
+
+    //@dynatech
+//    public static final String WEBSOCKET_URL = "ws://192.168.1.111:8055/golf/";
+//    public static final String URL = "http://192.168.1.111:8055/golf/";
+//    public static final String IMAGE_URL = "http://192.168.1.111:8055/golf_images/";
+
 
     //google cloud http://mggolf-303.appspot.com/golf?JSON={requestType:38,golfGroupID:21}
     //public static final String URL = "http://mggolf-303.appspot.com/";
@@ -48,7 +53,7 @@ public class Statics {
             LEADERBOARD_ENDPOINT = "wsleaderboard";
 
     public static final String SESSION_ID = "sessionID";
-    public static final int CRASH_STRING = R.string.crash_toast;
+
     public static void setDroidFontBold(Context ctx, TextView txt) {
         Typeface font = Typeface.createFromAsset(ctx.getAssets(),
                 "DroidSerif-Bold");

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MalengaGolfAdmin/MalengaGolfAdmin.iml" filepath="$PROJECT_DIR$/MalengaGolfAdmin/MalengaGolfAdmin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MalengaGolfLibrary/MalengaGolfLibrary.iml" filepath="$PROJECT_DIR$/MalengaGolfLibrary/MalengaGolfLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/XMGGolf-001.iml" filepath="$PROJECT_DIR$/XMGGolf-001.iml" />
+    </modules>
+  </component>
+</project>

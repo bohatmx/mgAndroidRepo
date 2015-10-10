@@ -8,10 +8,13 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,12 +47,8 @@ import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -68,10 +67,11 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/04/30.
  */
-public class GolfCourseMapActivity extends FragmentActivity
+public class GolfCourseMapActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         LocationListener,
-        GoogleApiClient.OnConnectionFailedListener, GooglePlayServicesClient.ConnectionCallbacks {
+        GoogleApiClient.OnConnectionFailedListener
+         {
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap googleMap;
@@ -85,9 +85,8 @@ public class GolfCourseMapActivity extends FragmentActivity
         fragmentActivity = this;
         initialize();
         setFields();
-        mLocationClient = new LocationClient(getApplicationContext(), this,
-                this);
-        android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
                 .findFragmentById(R.id.map);
 
@@ -370,7 +369,6 @@ public class GolfCourseMapActivity extends FragmentActivity
         Log.e(LOG, "################ onStart .... connect API and location clients ");
         if (!mResolvingError) {  // more about this later
             mGoogleApiClient.connect();
-            mLocationClient.connect();
         }
 
     }
@@ -380,8 +378,6 @@ public class GolfCourseMapActivity extends FragmentActivity
         Log.w(LOG, "############## onStop stopping google service clients");
         try {
             mGoogleApiClient.disconnect();
-            mLocationClient.disconnect();
-            //mLocationClient.removeLocationUpdates(this);
         } catch (Exception e) {
             Log.e(LOG, "Failed to Stop something", e);
         }
@@ -393,8 +389,6 @@ public class GolfCourseMapActivity extends FragmentActivity
         // reduce the need to do it on my own server ...THINK!!
         Log.e(LOG, "############ initialize GoogleApiClient... do not need it at this point");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
@@ -408,23 +402,16 @@ public class GolfCourseMapActivity extends FragmentActivity
     public void onConnected(Bundle bundle) {
         Log.e(LOG, "########### onConnected .... what is in the bundle...?");
 
-        Location loc = mLocationClient.getLastLocation();
-        if (loc != null) {
-            latitude = loc.getLatitude();
-            longitude = loc.getLongitude();
-            Log.d(LOG, "----------------> Last location, lat: " + latitude + " lng: " + longitude);
-        }
+//        if (loc != null) {
+//            latitude = loc.getLatitude();
+//            longitude = loc.getLongitude();
+//            Log.d(LOG, "----------------> Last location, lat: " + latitude + " lng: " + longitude);
+//        }
 
         locationRequest = new LocationRequest();
         locationRequest.setFastestInterval(FIVE_MINUTES);
         locationRequest.setInterval(ONE_MINUTE);
 
-        mLocationClient.requestLocationUpdates(locationRequest, this);
-    }
-
-    @Override
-    public void onDisconnected() {
-        Log.e(LOG, "onDisconnected.....");
     }
 
     @Override
@@ -480,6 +467,35 @@ public class GolfCourseMapActivity extends FragmentActivity
                 + " at: " + sdf.format(new Date()));
     }
 
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    /**
+     * Called when the provider is enabled by the user.
+     *
+     * @param provider the name of the location provider associated with this
+     *                 update.
+     */
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    /**
+     * Called when the provider is disabled by the user. If requestLocationUpdates
+     * is called on an already disabled provider, this method is called
+     * immediately.
+     *
+     * @param provider the name of the location provider associated with this
+     *                 update.
+     */
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
     static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
     /* A fragment to display an error dialog */
@@ -531,7 +547,6 @@ public class GolfCourseMapActivity extends FragmentActivity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
-    protected LocationClient mLocationClient;
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
     static final String LOG = "GolfCourseMapActivity";

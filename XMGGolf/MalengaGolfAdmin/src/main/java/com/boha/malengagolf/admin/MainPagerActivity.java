@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,8 +30,7 @@ import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
 import com.boha.malengagolf.library.util.*;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 
 import org.acra.ACRA;
@@ -41,11 +41,11 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/04/09.
  */
-public class MainPagerActivity extends FragmentActivity
+public class MainPagerActivity extends AppCompatActivity
         implements
         com.google.android.gms.location.LocationListener,
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
         BusyListener, TournamentListFragment.TournamentListener,
         PlayerListFragment.PlayerListener, ParentListFragment.ParentListener,
         ScorerListFragment.ScorerListener, AdministratorListFragment.AdministratorListener,
@@ -76,8 +76,8 @@ public class MainPagerActivity extends FragmentActivity
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setFastestInterval(1000);
 
-        mLocationClient = new LocationClient(getApplicationContext(), this,
-                this);
+//        mLocationClient = new LocationClient(getApplicationContext(), this,
+//                this);
         setTitle(golfGroup.getGolfGroupName());
         AdministratorDTO a = SharedUtil.getAdministrator(ctx);
         getActionBar().setSubtitle(a.getFullName());
@@ -86,30 +86,30 @@ public class MainPagerActivity extends FragmentActivity
     @Override
     public void onStart() {
         super.onStart();
-        if (mLocationClient != null) {
-            mLocationClient.connect();
-            Log.i(LOG,
-                    "#################### onStart - locationClient connecting ... ");
-        }
+//        if (mLocationClient != null) {
+//            mLocationClient.connect();
+//            Log.i(LOG,
+//                    "#################### onStart - locationClient connecting ... ");
+//        }
 
     }
 
     private void stopPeriodicUpdates() {
-        mLocationClient.removeLocationUpdates(this);
+//        mLocationClient.removeLocationUpdates(this);
     }
 
     @Override
     public void onStop() {
 
-        if (mLocationClient.isConnected()) {
-            stopPeriodicUpdates();
-        }
-
-        // After disconnect() is called, the client is considered "dead".
-        mLocationClient.disconnect();
-        Log.e("map", "### onStop - locationClient disconnected: "
-                + mLocationClient.isConnected());
-        //WebSocketUtil.disconnectSession();
+//        if (mLocationClient.isConnected()) {
+//            stopPeriodicUpdates();
+//        }
+//
+//        // After disconnect() is called, the client is considered "dead".
+//        mLocationClient.disconnect();
+//        Log.e("map", "### onStop - locationClient disconnected: "
+//                + mLocationClient.isConnected());
+//        //WebSocketUtil.disconnectSession();
         super.onStop();
     }
 
@@ -724,23 +724,22 @@ public class MainPagerActivity extends FragmentActivity
     public void onConnected(Bundle bundle) {
         Log.i(LOG,
                 "### ---> PlayServices onConnected() - gotta start something! >>");
-        mCurrentLocation = mLocationClient.getLastLocation();
-        if (mCurrentLocation != null) {
-            latitude = mCurrentLocation.getLatitude();
-            longitude = mCurrentLocation.getLongitude();
-            Log.e(LOG, "######### onConnected() - starting ServerTask");
-            if (response == null) return;
-            onLocationChanged(mCurrentLocation);
-        } else {
-            Log.e("map", "$$$$ mCurrentLocation is NULL");
-        }
+//        mCurrentLocation = mLocationClient.getLastLocation();
+//        if (mCurrentLocation != null) {
+//            latitude = mCurrentLocation.getLatitude();
+//            longitude = mCurrentLocation.getLongitude();
+//            Log.e(LOG, "######### onConnected() - starting ServerTask");
+//            if (response == null) return;
+//            onLocationChanged(mCurrentLocation);
+//        } else {
+//            Log.e("map", "$$$$ mCurrentLocation is NULL");
+//        }
     }
 
     @Override
-    public void onDisconnected() {
+    public void onConnectionSuspended(int i) {
 
     }
-
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
@@ -916,7 +915,7 @@ public class MainPagerActivity extends FragmentActivity
     static final String LOG = "MainPagerActivity";
     public static final int MANAGE_TOURNAMENT = 3366,
             MANAGE_TOURNAMENT_PLAYERS = 3377;
-    LocationClient mLocationClient;
+//    LocationClient mLocationClient;
     Location mCurrentLocation;
     double latitude, longitude;
     public static final int ADD_NEW = 0, NEW_TOURNEY_REQUEST = 3543, PAYMENT_REQUEST = 3391;

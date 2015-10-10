@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +25,7 @@ import java.util.List;
  * Hosts fragment ScoringByHoleFragment
  * Created by aubreyM on 2014/04/12.
  */
-public class ScoringByHoleActivity extends FragmentActivity
+public class ScoringByHoleActivity extends AppCompatActivity
         implements ScoringByHoleFragment.ScoringByHoleListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -44,7 +44,7 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/04/19.
  */
-public class LeaderBoardPager extends FragmentActivity
+public class LeaderBoardPager extends AppCompatActivity
         implements LeaderboardFragment.LeaderboardListener {
     public void onCreate(Bundle savedInstanceState) {
         Log.d(LOG, "################ onCreate .......");

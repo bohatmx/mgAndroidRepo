@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,7 +56,7 @@ import javax.microedition.khronos.opengles.GL10;
 /**
  * Created by aubreyM on 2014/04/21.
  */
-public class BlobActivity extends Activity implements GLSurfaceView.Renderer {
+public class BlobActivity extends AppCompatActivity implements GLSurfaceView.Renderer {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ctx = getApplicationContext();

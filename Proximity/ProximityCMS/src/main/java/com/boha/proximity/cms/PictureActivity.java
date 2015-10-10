@@ -24,15 +24,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.VolleyError;
 import com.boha.proximity.data.BeaconDTO;
 import com.boha.proximity.data.PhotoUploadDTO;
 import com.boha.proximity.data.ResponseDTO;
-import com.boha.proximity.data.UploadBlobDTO;
-import com.boha.proximity.util.BlobUpload;
 import com.boha.proximity.util.ImageUpload;
 import com.boha.proximity.util.ImageUtil;
-import com.boha.proximity.volley.BaseVolley;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +47,7 @@ public class PictureActivity extends ActionBarActivity {
         beacon = (BeaconDTO) getIntent().getSerializableExtra("beacon");
         setFields();
         setTitle("Beacon Content");
-        getActionBar().setSubtitle(beacon.getBeaconName());
+        getSupportActionBar().setSubtitle(beacon.getBeaconName());
     }
 
     private void setFields() {
@@ -106,39 +102,6 @@ public class PictureActivity extends ActionBarActivity {
         uploadImage(beacon.getCompanyID(), beacon.getBranchID(), beacon.getBeaconID(), thumbUri.toString());
     }
 
-    private void sendBlobThumbnail() {
-        Log.e(LOG, "..........sendThumbnail ........: " + currentThumbFile.getAbsolutePath());
-
-        BaseVolley.getUploadUrl(ctx, new BaseVolley.BohaVolleyListener() {
-            @Override
-            public void onResponseReceived(ResponseDTO response) {
-                if (response.getStatusCode() > 0) {
-                    Toast.makeText(ctx, response.getMessage(), Toast.LENGTH_LONG).show();
-                    return;
-                }
-                String url = response.getUploadUrl().getUrl();
-                BlobUpload.upload(url, currentThumbFile, ctx, new BlobUpload.BlobUploadListener() {
-                    @Override
-                    public void onImageUploaded(UploadBlobDTO response) {
-                        Log.e(LOG, "###### Blob has been uploaded OK: servingUrl: "
-                                + response.getServingUrl() +
-                                " blobKey: " + response.getBlobKey());
-
-                    }
-
-                    @Override
-                    public void onUploadError() {
-                        Log.e(LOG, "###### Erroruploading blob");
-                    }
-                });
-            }
-
-            @Override
-            public void onVolleyError(VolleyError error) {
-
-            }
-        });
-    }
 
     Bitmap bitmapForScreen;
 
@@ -146,12 +109,19 @@ public class PictureActivity extends ActionBarActivity {
 
         @Override
         protected Integer doInBackground(Void... voids) {
-            //Log.e("pic", " file length: " + photoFile.length());
             ExifInterface exif = null;
             fileUri = Uri.fromFile(photoFile);
             if (fileUri != null) {
                 try {
                     exif = new ExifInterface(photoFile.getAbsolutePath());
+                    String lat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    String lng = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    String time = exif.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
+                    Log.w(LOG, "(((((((( from photo, " + time + "- lat:" + lat + " lng:" + lng);
+                    if (exif.hasThumbnail()) {
+                        Log.i(LOG, "photoFile has a thumbnail ...");
+
+                    }
                     String orient = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
                     Log.e("pic", "Orientation says: " + orient);
                     float rotate = 0;

@@ -2,19 +2,27 @@ package com.boha.ScraperApp.scraper;
 
 import android.content.Context;
 import android.util.Log;
+
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.util.WebCheck;
 import com.boha.malengagolf.library.util.WebCheckResult;
 import com.boha.malengagolf.library.util.bean.CommsException;
 import com.boha.malengagolf.library.util.bean.NetworkUnavailableException;
 import com.google.gson.Gson;
-import org.apache.http.util.ByteArrayBuffer;
-import java.io.*;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import khandroid.ext.apache.http.util.ByteArrayBuffer;
 
 
 public class CommsUtil {

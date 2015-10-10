@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,14 +31,14 @@ import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
-public class SignInActivity extends FragmentActivity implements
+public class SignInActivity extends AppCompatActivity implements
 
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     Context ctx;
 
@@ -343,12 +343,6 @@ public class SignInActivity extends FragmentActivity implements
 
 
     @Override
-    public void onDisconnected() {
-        Log.w(LOG, "### ---> PlayServices onDisconnected() ");
-    }
-
-
-    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e(LOG, "onConnection failed: " + connectionResult.toString());
     }
@@ -419,6 +413,11 @@ public class SignInActivity extends FragmentActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG, "### ---> PlayServices onConnected() - gotta go! >>");
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
 
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,7 +23,7 @@ import java.util.Locale;
 /**
  * Created by aubreyM on 2014/04/11.
  */
-public class TourneyActivity extends FragmentActivity
+public class TourneyActivity extends AppCompatActivity
         implements TournamentFragment.TournamentListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

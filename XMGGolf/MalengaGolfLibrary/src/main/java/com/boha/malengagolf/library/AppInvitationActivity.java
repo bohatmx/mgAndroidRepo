@@ -2,16 +2,17 @@ package com.boha.malengagolf.library;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
 import com.boha.malengagolf.library.util.ToastUtil;
 
 /**
  * Created by aubreyM on 2014/05/18.
  */
-public class AppInvitationActivity extends FragmentActivity implements AppInvitationFragment.AppInvitationListener{
+public class AppInvitationActivity extends AppCompatActivity implements AppInvitationFragment.AppInvitationListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite);

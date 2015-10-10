@@ -18,7 +18,7 @@ import com.boha.malengagolf.library.data.*;
 import com.boha.malengagolf.library.util.*;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
@@ -26,8 +26,8 @@ import static com.boha.malengagolf.library.volley.toolbox.BaseVolley.BohaVolleyL
 
 public class SignInActivity extends FragmentActivity implements
 
-        GooglePlayServicesClient.ConnectionCallbacks,
-        GooglePlayServicesClient.OnConnectionFailedListener {
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     Context ctx;
 
@@ -218,12 +218,6 @@ public class SignInActivity extends FragmentActivity implements
 
 
     @Override
-    public void onDisconnected() {
-        Log.w(LOG, "### ---> PlayServices onDisconnected() ");
-    }
-
-
-    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e(LOG, "onConnection failed: " + connectionResult.toString());
     }
@@ -295,6 +289,11 @@ public class SignInActivity extends FragmentActivity implements
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(LOG, "### ---> PlayServices onConnected() - gotta go! >>");
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
 
     }
 

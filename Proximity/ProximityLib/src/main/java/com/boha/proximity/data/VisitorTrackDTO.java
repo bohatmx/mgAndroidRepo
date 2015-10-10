@@ -1,12 +1,13 @@
 package com.boha.proximity.data;
 
 import android.os.Parcel;
-import android.os.Parcelable;
+
+import java.io.Serializable;
 
 /**
  * Created by aubreyM on 2014/09/09.
  */
-public class VisitorTrackDTO implements Parcelable{
+public class VisitorTrackDTO implements Serializable {
     private int visitorTrackID, visitorID, beaconID;
     private String beaconName;
     private long dateTracked;
@@ -76,23 +77,6 @@ public class VisitorTrackDTO implements Parcelable{
         this.email = email;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.visitorTrackID);
-        dest.writeInt(this.visitorID);
-        dest.writeInt(this.beaconID);
-        dest.writeString(this.beaconName);
-        dest.writeLong(this.dateTracked);
-        dest.writeString(this.firstName);
-        dest.writeString(this.lastName);
-        dest.writeString(this.email);
-    }
-
     public VisitorTrackDTO() {
     }
 
@@ -107,13 +91,4 @@ public class VisitorTrackDTO implements Parcelable{
         this.email = in.readString();
     }
 
-    public static final Creator<VisitorTrackDTO> CREATOR = new Creator<VisitorTrackDTO>() {
-        public VisitorTrackDTO createFromParcel(Parcel source) {
-            return new VisitorTrackDTO(source);
-        }
-
-        public VisitorTrackDTO[] newArray(int size) {
-            return new VisitorTrackDTO[size];
-        }
-    };
 }

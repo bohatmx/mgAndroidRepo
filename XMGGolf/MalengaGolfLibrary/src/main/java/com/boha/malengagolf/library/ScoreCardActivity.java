@@ -2,16 +2,17 @@ package com.boha.malengagolf.library;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.fragments.ScoreCardFragment;
 
 /**
  * Created by aubreyM on 2014/04/15.
  */
-public class ScoreCardActivity extends FragmentActivity {
+public class ScoreCardActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scorecard);

@@ -6,17 +6,14 @@
 
 package com.boha.proximity.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  *
  * @author aubreyM
  */
-public class ResponseDTO implements Parcelable {
+public class ResponseDTO implements Serializable {
     private int statusCode;
     private String message;
     
@@ -194,67 +191,4 @@ public class ResponseDTO implements Parcelable {
     }
 
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.statusCode);
-        dest.writeString(this.message);
-        dest.writeTypedList(beaconList);
-        dest.writeTypedList(branchList);
-        dest.writeParcelable(this.company, 0);
-        dest.writeParcelable(this.branch, 0);
-        dest.writeParcelable(this.beacon, 0);
-        dest.writeParcelable(this.beaconDataItem, 0);
-        dest.writeParcelable(this.uploadBlob, 0);
-        dest.writeParcelable(this.uploadUrl, 0);
-        dest.writeList(this.imageFileNames);
-        dest.writeTypedList(companyList);
-        dest.writeTypedList(errorStoreAndroidList);
-        dest.writeTypedList(errorStoreList);
-        dest.writeString(this.log);
-        dest.writeTypedList(visitorTrackListSortedByBeacon);
-        dest.writeTypedList(visitorList);
-        dest.writeTypedList(visitorTrackList);
-        dest.writeParcelable(this.visitor, 0);
-    }
-
-    public ResponseDTO() {
-    }
-
-    private ResponseDTO(Parcel in) {
-        this.statusCode = in.readInt();
-        this.message = in.readString();
-        in.readTypedList(beaconList, BeaconDTO.CREATOR);
-        in.readTypedList(branchList, BranchDTO.CREATOR);
-        this.company = in.readParcelable(CompanyDTO.class.getClassLoader());
-        this.branch = in.readParcelable(BranchDTO.class.getClassLoader());
-        this.beacon = in.readParcelable(BeaconDTO.class.getClassLoader());
-        this.beaconDataItem = in.readParcelable(BeaconDataItemDTO.class.getClassLoader());
-        this.uploadBlob = in.readParcelable(UploadBlobDTO.class.getClassLoader());
-        this.uploadUrl = in.readParcelable(UploadUrlDTO.class.getClassLoader());
-        this.imageFileNames = new ArrayList<String>();
-        in.readList(this.imageFileNames, String.class.getClassLoader());
-        in.readTypedList(companyList, CompanyDTO.CREATOR);
-        in.readTypedList(errorStoreAndroidList, ErrorStoreAndroidDTO.CREATOR);
-        in.readTypedList(errorStoreList, ErrorStoreDTO.CREATOR);
-        this.log = in.readString();
-        in.readTypedList(visitorTrackListSortedByBeacon, VisitorTrackDTO.CREATOR);
-        in.readTypedList(visitorList, VisitorDTO.CREATOR);
-        in.readTypedList(visitorTrackList, VisitorTrackDTO.CREATOR);
-        this.visitor = in.readParcelable(VisitorDTO.class.getClassLoader());
-    }
-
-    public static final Creator<ResponseDTO> CREATOR = new Creator<ResponseDTO>() {
-        public ResponseDTO createFromParcel(Parcel source) {
-            return new ResponseDTO(source);
-        }
-
-        public ResponseDTO[] newArray(int size) {
-            return new ResponseDTO[size];
-        }
-    };
 }

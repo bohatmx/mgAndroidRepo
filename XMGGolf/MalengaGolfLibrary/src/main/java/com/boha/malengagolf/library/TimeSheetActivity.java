@@ -2,10 +2,11 @@ package com.boha.malengagolf.library;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.TimeSheetFragment;
@@ -14,7 +15,7 @@ import com.boha.malengagolf.library.util.ToastUtil;
 /**
  * Created by aubreyM on 2014/04/20.
  */
-public class TimeSheetActivity extends FragmentActivity {
+public class TimeSheetActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timesheet);

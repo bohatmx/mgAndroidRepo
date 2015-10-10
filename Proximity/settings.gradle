@@ -1,1 +1,1 @@
-include ':app', ':ProximityApp', ':ProximityBackEnd', ':ProximityLib', ':ProximityCMS', ':ProximityReporter', ':slidingfragment', ':VisitorTrack'
+include ':app', ':ProximityApp', ':ProximityLib', ':ProximityCMS', ':ProximityReporter', ':slidingfragment', ':VisitorTrack'

@@ -58,7 +58,6 @@ public class BeaconRegisterFragment extends Fragment {
                 .inflate(R.layout.fragment_beacon_detail, container, false);
         setFields();
         company = SharedUtil.getCompany(ctx);
-
         setFields();
 
         return view;
@@ -104,11 +103,13 @@ public class BeaconRegisterFragment extends Fragment {
         BeaconDTO d = new BeaconDTO();
         d.setBeaconName(editName.getText().toString());
         d.setBranchID(branch.getBranchID());
+        d.setBranchName(branch.getBranchName());
         d.setMacAddress(beacon.getMacAddress());
         d.setMajor(beacon.getMajor());
         d.setMinor(beacon.getMinor());
         d.setProximityUUID(beacon.getProximityUUID());
         w.setBeacon(d);
+
         btnRegister.setEnabled(false);
         BaseVolley.getRemoteData(Statics.SERVLET_ADMIN,w,ctx,new BaseVolley.BohaVolleyListener() {
             @Override
@@ -120,6 +121,7 @@ public class BeaconRegisterFragment extends Fragment {
                 }
                 txtRegistered.setVisibility(View.VISIBLE);
                 txtNotReg.setVisibility(View.GONE);
+
                 Toast.makeText(ctx,"Beacon registered, branch has "
                                 + response.getBeaconList().size(),
                         Toast.LENGTH_LONG).show();

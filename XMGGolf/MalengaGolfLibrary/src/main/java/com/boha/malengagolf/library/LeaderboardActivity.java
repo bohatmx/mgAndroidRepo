@@ -2,27 +2,28 @@ package com.boha.malengagolf.library;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.boha.malengagolf.library.fragments.LeaderboardFragment;
-import com.boha.malengagolf.library.util.WebSocketUtil;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
+import com.boha.malengagolf.library.fragments.LeaderboardFragment;
 import com.boha.malengagolf.library.util.ErrorUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 /**
  * Hosts fragment LeaderboardFragment
  * Created by aubreyM on 2014/04/13.
  */
-public class LeaderboardActivity extends FragmentActivity
+public class LeaderboardActivity extends AppCompatActivity
         implements LeaderboardFragment.LeaderboardListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

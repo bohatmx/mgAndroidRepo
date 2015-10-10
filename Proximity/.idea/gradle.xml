@@ -9,7 +9,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/ProximityApp" />
-            <option value="$PROJECT_DIR$/ProximityBackEnd" />
             <option value="$PROJECT_DIR$/ProximityCMS" />
             <option value="$PROJECT_DIR$/ProximityLib" />
             <option value="$PROJECT_DIR$/ProximityReporter" />
@@ -20,7 +19,6 @@
         </option>
       </GradleProjectSettings>
     </option>
-    <option name="offlineWork" value="true" />
   </component>
 </project>
 

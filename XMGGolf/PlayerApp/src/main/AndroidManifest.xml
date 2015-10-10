@@ -4,10 +4,6 @@
           android:versionCode="1"
           android:versionName="1.0">
 
-    <uses-sdk
-            android:minSdkVersion="11"
-            android:maxSdkVersion="19"
-            android:targetSdkVersion="19"/>
 
     <permission
             android:name="com.boha.malengagolf.player.permission.MAPS_RECEIVE"

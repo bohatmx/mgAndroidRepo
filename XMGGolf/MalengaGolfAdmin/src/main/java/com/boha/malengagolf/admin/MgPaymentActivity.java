@@ -1,9 +1,9 @@
 package com.boha.malengagolf.admin;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/05/11.
  */
-public class MgPaymentActivity extends Activity {
+public class MgPaymentActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.payment);

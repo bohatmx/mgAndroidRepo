@@ -2,9 +2,10 @@ package com.boha.malengagolf.admin;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.ClubScorecardFragment;
 import com.boha.malengagolf.library.data.ClubCourseDTO;
 import com.boha.malengagolf.library.data.ClubDTO;
@@ -13,7 +14,7 @@ import com.boha.malengagolf.library.util.ToastUtil;
 /**
  * Created by aubreyM on 2014/05/10.
  */
-public class ClubScorecardActivity extends FragmentActivity implements ClubScorecardFragment.ClubScorecardListener{
+public class ClubScorecardActivity extends AppCompatActivity implements ClubScorecardFragment.ClubScorecardListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_club_scorecard);

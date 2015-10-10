@@ -1,19 +1,29 @@
 package com.boha.ScraperApp;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
 import com.android.volley.VolleyError;
-import com.boha.ScraperApp.scraper.*;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+import com.boha.ScraperApp.scraper.CityAdapter;
+import com.boha.ScraperApp.scraper.CountryManager;
+import com.boha.ScraperApp.scraper.ProvinceManager;
+import com.boha.ScraperApp.scraper.ScrapeForCityCoordinatesUtil;
+import com.boha.ScraperApp.scraper.ScrapeStateForCitiesUtil;
+import com.boha.ScraperApp.scraper.ScrapeStateForClubsUtil;
 import com.boha.malengagolf.library.base.CityDTO;
 import com.boha.malengagolf.library.data.CountryDTO;
 import com.boha.malengagolf.library.data.ProvinceDTO;
@@ -21,6 +31,7 @@ import com.boha.malengagolf.library.util.LoaderRequestDTO;
 import com.boha.malengagolf.library.util.LoaderResponseDTO;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -28,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class ScraperActivity extends Activity {
+public class ScraperActivity extends AppCompatActivity {
     /**
      * Called when the activity is first created.
      */

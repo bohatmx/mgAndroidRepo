@@ -9,6 +9,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,11 +18,8 @@ import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.boha.malengagolf.library.data.ClubDTO;
 import com.boha.malengagolf.library.util.*;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,10 +31,10 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/04/30.
  */
-public class GolfCourseMapActivity extends FragmentActivity
+public class GolfCourseMapActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         LocationListener,
-        GoogleApiClient.OnConnectionFailedListener, GooglePlayServicesClient.ConnectionCallbacks {
+        GoogleApiClient.OnConnectionFailedListener{
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap googleMap;
@@ -49,8 +47,8 @@ public class GolfCourseMapActivity extends FragmentActivity
         ctx = getApplicationContext();
         state = (State) getIntent().getSerializableExtra("state");
         initialize();
-        mLocationClient = new LocationClient(getApplicationContext(), this,
-                this);
+//        mLocationClient = new LocationClient(getApplicationContext(), this,
+//                this);
         android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
                 .findFragmentById(R.id.map);
@@ -171,7 +169,7 @@ public class GolfCourseMapActivity extends FragmentActivity
         super.onStart();
         if (!mResolvingError) {  // more about this later
             mGoogleApiClient.connect();
-            mLocationClient.connect();
+//            mLocationClient.connect();
         }
 
     }
@@ -179,15 +177,13 @@ public class GolfCourseMapActivity extends FragmentActivity
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
-        mLocationClient.disconnect();
+//        mLocationClient.disconnect();
         super.onStop();
     }
 
     private void initialize() {
         Log.e(LOG, "initialize GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
@@ -196,11 +192,6 @@ public class GolfCourseMapActivity extends FragmentActivity
     @Override
     public void onConnected(Bundle bundle) {
         Log.e(LOG, "onConnected");
-    }
-
-    @Override
-    public void onDisconnected() {
-
     }
 
     @Override
@@ -297,7 +288,7 @@ public class GolfCourseMapActivity extends FragmentActivity
     private static final int REQUEST_RESOLVE_ERROR = 1001;
     // Unique tag for the error dialog fragment
     private static final String DIALOG_ERROR = "dialog_error";
-    protected LocationClient mLocationClient;
+//    protected LocationClient mLocationClient;
     // Bool to track whether the app is already resolving an error
     private boolean mResolvingError = false;
     static final String LOG = "GolfCourseMapActivity";
