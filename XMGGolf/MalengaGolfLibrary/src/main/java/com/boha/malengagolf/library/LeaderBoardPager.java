@@ -77,11 +77,9 @@ public class LeaderBoardPager extends AppCompatActivity
             throw new UnsupportedOperationException("User not found for Leaderboard");
         }
         golfGroup = SharedUtil.getGolfGroup(ctx);
-        MGApp app = (MGApp) getApplication();
-        imageLoader = app.getImageLoader();
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         pagerTitleStrip = (PagerTitleStrip)findViewById(R.id.pager_title_strip);
 
     }
@@ -140,7 +138,6 @@ public class LeaderBoardPager extends AppCompatActivity
             bundle.putSerializable("tournament", tournament);
             bundle.putSerializable("carrier", carrierDTO);
             fragment.setArguments(bundle);
-            fragment.setImageLoader(imageLoader);
             leaderBoardPages.add(fragment);
 
         }

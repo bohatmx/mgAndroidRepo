@@ -88,8 +88,8 @@ public class BlobActivity extends AppCompatActivity implements GLSurfaceView.Ren
         }
 
         Log.e(LOG, "###### type: " + type);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         dispatchTakePictureIntent();
     }
 

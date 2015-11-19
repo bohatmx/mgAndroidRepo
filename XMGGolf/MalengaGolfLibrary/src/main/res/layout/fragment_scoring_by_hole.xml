@@ -13,7 +13,7 @@
         android:padding="0dp"
         android:layout_height="wrap_content">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/SBH_image"
             android:layout_width="match_parent"
             android:src="@drawable/boy"
@@ -23,7 +23,7 @@
         <TextView
             android:id="@+id/SBH_txtTotal"
             android:text="@string/zero"
-            style="@style/GreenCircleLarge"
+            style="@style/GreenCircle"
             android:layout_centerHorizontal="true"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
@@ -36,7 +36,7 @@
         android:id="@+id/SBH_topLayout"
         android:background="@color/white"
         android:layout_width="match_parent"
-        android:padding="0dp"
+        android:padding="@dimen/mon_padding"
         android:layout_below="@id/SBH_top1Layout"
         android:layout_height="wrap_content">
 
@@ -44,7 +44,6 @@
         <TextView
             android:id="@+id/SBH_txtName"
             android:text="@string/txt"
-            android:layout_below="@id/SBH_image"
             style="@style/Title3TextStyleBlack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

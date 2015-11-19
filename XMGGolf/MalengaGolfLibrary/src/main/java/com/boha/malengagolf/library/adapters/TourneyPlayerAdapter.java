@@ -9,13 +9,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.Statics;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -32,12 +32,10 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
     private int golfGroupID, rounds, par;
     boolean useAgeGroups;
     private boolean hideIcons;
-    private ImageLoader imageLoader;
     private TourneyPlayerListener listener;
 
     public TourneyPlayerAdapter(Context context, int textViewResourceId,
                                 List<LeaderBoardDTO> list,
-                                ImageLoader imageLoader,
                                 int golfGroupID, int rounds, int par, boolean useAgeGroups,
                                 boolean hideIcons,
                                 TourneyPlayerListener listener) {
@@ -51,7 +49,6 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
         this.listener = listener;
         this.useAgeGroups = useAgeGroups;
         this.rounds = rounds;
-        this.imageLoader = imageLoader;
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -64,7 +61,7 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
         TextView txtRound1p, txtRound2p, txtRound3p,
                 txtRound4p, txtRound5p, txtRound6p;
 
-        NetworkImageView image;
+        ImageView image;
         View round2, round3, round4, round5, round6, tot, icons;
         ImageView imgRemove, imgScoring;
     }
@@ -126,7 +123,7 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
             vhi.icons = convertView.findViewById(R.id.TNPL_layoutActions);
 
 
-            vhi.image = (NetworkImageView) convertView
+            vhi.image = (ImageView) convertView
                     .findViewById(R.id.TNPL_image);
             convertView.setTag(vhi);
         } else {
@@ -317,8 +314,7 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
                 .append(golfGroupID).append("/player/");
         sb.append("t");
         sb.append(p.getPlayer().getPlayerID()).append(".jpg");
-        vhi.image.setDefaultImageResId(R.drawable.boy);
-        vhi.image.setImageUrl(sb.toString(), imageLoader);
+        Picasso.with(ctx).load(sb.toString()).into(vhi.image);
 
         Statics.setRobotoFontLight(ctx,vhi.txtName);
         Statics.setRobotoFontLight(ctx,vhi.txtRound1p);
@@ -379,7 +375,7 @@ public class TourneyPlayerAdapter extends ArrayAdapter<LeaderBoardDTO> {
                 txt.setTextColor(ctx.getResources().getColor(com.boha.malengagolf.library.R.color.blue));
             }
         } else {
-            txt.setTextColor(ctx.getResources().getColor(com.boha.malengagolf.library.R.color.grey2));
+            txt.setTextColor(ctx.getResources().getColor(com.boha.malengagolf.library.R.color.grey));
         }
 
 

@@ -32,8 +32,8 @@ public class PlayerHistoryActivity extends AppCompatActivity {
                 .findFragmentById(R.id.PH_fragment);
         player = (PlayerDTO)getIntent().getSerializableExtra("player");
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
     }
     private void getPlayerHistory() {

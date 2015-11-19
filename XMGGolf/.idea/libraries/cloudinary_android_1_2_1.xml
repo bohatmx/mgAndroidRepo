@@ -1,9 +1,11 @@
 <component name="libraryTable">
   <library name="cloudinary-android-1.2.1">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/MalengaGolfLibrary/libs/cloudinary-android-1.2.1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.cloudinary/cloudinary-android/1.2.1/21b9088d026eafd6d8b859c2418d255672f714cb/cloudinary-android-1.2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.cloudinary/cloudinary-android/1.2.1/557a76d9878f4184045136892ab97515af6c5adb/cloudinary-android-1.2.1-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

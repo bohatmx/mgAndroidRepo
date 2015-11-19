@@ -28,8 +28,8 @@ public class TimeSheetActivity extends AppCompatActivity {
         round = getIntent().getIntExtra("round", 1);
         timeSheetFragment.setData(tournament, response.getLeaderBoardList(), round);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override

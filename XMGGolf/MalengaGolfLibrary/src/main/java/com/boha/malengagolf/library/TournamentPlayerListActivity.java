@@ -3,11 +3,11 @@ package com.boha.malengagolf.library;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import com.boha.malengagolf.library.R;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
@@ -20,23 +20,19 @@ import com.boha.malengagolf.library.util.ToastUtil;
 /**
  * Created by aubreyM on 2014/05/21.
  */
-public class TournamentPlayerListActivity extends FragmentActivity implements TournamentPlayerListFragment.TournamentPlayerListListener {
+public class TournamentPlayerListActivity extends AppCompatActivity implements TournamentPlayerListFragment.TournamentPlayerListListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_list);
         ctx = getApplicationContext();
         tournament = (TournamentDTO) getIntent().getSerializableExtra("tournament");
         golfGroup = SharedUtil.getGolfGroup(ctx);
-
-        MGApp app = (MGApp) getApplication();
-        imageLoader = app.getImageLoader();
         tournamentPlayerListFragment = (TournamentPlayerListFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragment);
-        tournamentPlayerListFragment.setImageLoader(imageLoader);
         tournamentPlayerListFragment.setTournament(tournament);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override
@@ -104,7 +100,6 @@ public class TournamentPlayerListActivity extends FragmentActivity implements To
     TournamentDTO tournament;
     GolfGroupDTO golfGroup;
     Context ctx;
-    ImageLoader imageLoader;
     Menu mMenu;
 
     @Override

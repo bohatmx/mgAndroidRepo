@@ -9,10 +9,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.data.AdministratorDTO;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -107,11 +108,10 @@ public class AdministratorAdapter extends ArrayAdapter<AdministratorDTO> {
         v.txtCountBlack.setVisibility(View.VISIBLE);
         v.txtCountGreen.setVisibility(View.GONE);
 
-//        Picasso.with(ctx)
-//                .load(sb.toString())
-//                .error(R.drawable.boy)
-//                .into(v.imagex);
-        ImageLoader.getInstance().displayImage(p.getImageURL(), v.imagex, options);
+        Picasso.with(ctx)
+                .load(p.getImageURL())
+                .error(R.drawable.boy)
+                .into(v.imagex);
         //
         v.imgCamera.setOnClickListener(new View.OnClickListener() {
             @Override

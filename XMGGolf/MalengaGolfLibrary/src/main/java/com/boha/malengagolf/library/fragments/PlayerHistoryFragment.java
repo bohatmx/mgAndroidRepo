@@ -6,17 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.ScoreCardActivity;
 import com.boha.malengagolf.library.adapters.PlayerHistoryAdapter;
@@ -30,6 +29,7 @@ import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +138,7 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
         listView = (ListView) view.findViewById(R.id.PH_FRAG_list);
         txtPlayerName = (TextView) view.findViewById(R.id.PH_FRAG_playerName);
         txtTourneyCount = (TextView) view.findViewById(R.id.PH_FRAG_count);
-        imageView = (NetworkImageView)view.findViewById(R.id.PH_FRAG_image);
+        imageView = (ImageView)view.findViewById(R.id.PH_FRAG_image);
         Statics.setRobotoFontLight(ctx, txtPlayerName);
     }
 
@@ -168,11 +168,8 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
                 .append("player/t")
                 .append(player.getPlayerID())
                 .append(".jpg");
-        //Picasso.with(ctx).load(sb.toString()).placeholder(ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
-        MGApp app = (MGApp)getActivity().getApplication();
-        ImageLoader loader = app.getImageLoader();
-        imageView.setDefaultImageResId(R.drawable.boy);
-        imageView.setImageUrl(sb.toString(), loader);
+        Picasso.with(ctx).load(sb.toString()).placeholder(ContextCompat.getDrawable(ctx, R.drawable.boy)).into(imageView);
+
     }
     LeaderBoardDTO leaderBoard;
     public void setLeaderBoardList(PlayerDTO player, List<LeaderBoardDTO> leaderBoardList) {
@@ -190,7 +187,7 @@ public class PlayerHistoryFragment extends Fragment implements MGPageFragment {
     static final String LOG = "PlayersHistoryFragment";
     Context ctx;
     View view;
-    NetworkImageView imageView;
+    ImageView imageView;
     PlayerDTO player;
     ResponseDTO response;
     List<LeaderBoardDTO> leaderBoardList;

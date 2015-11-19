@@ -7,7 +7,7 @@
         android:endColor="@color/green" />
 
     <size
-        android:height="60dp"
-        android:width="60dp" />
+        android:height="72dp"
+        android:width="72dp" />
 
 </shape>

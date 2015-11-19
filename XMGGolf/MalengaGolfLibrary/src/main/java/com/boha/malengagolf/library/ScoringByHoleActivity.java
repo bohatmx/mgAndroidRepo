@@ -46,8 +46,8 @@ public class ScoringByHoleActivity extends AppCompatActivity
         scoringByHoleFragment.setTournament(tournament);
         scoringByHoleFragment.setTourneyPlayerScore(leaderBoard);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override

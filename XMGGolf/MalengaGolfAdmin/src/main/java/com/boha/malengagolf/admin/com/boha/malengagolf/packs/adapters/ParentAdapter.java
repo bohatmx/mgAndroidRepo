@@ -9,8 +9,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.data.ParentDTO;
 import com.boha.malengagolf.library.util.Statics;
@@ -60,7 +60,7 @@ public class ParentAdapter extends ArrayAdapter<ParentDTO> {
                     .findViewById(R.id.PSN_txtEmail);
             viewHolderItem.txtCell = (TextView) convertView
                     .findViewById(R.id.PSN_txtCell);
-            viewHolderItem.image = (NetworkImageView) convertView
+            viewHolderItem.image = (ImageView) convertView
                     .findViewById(R.id.PSN_imagex);
             convertView.setTag(viewHolderItem);
         } else {

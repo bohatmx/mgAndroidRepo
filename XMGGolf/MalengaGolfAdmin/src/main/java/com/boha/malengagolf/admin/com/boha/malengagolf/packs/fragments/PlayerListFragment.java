@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.boha.malengagolf.admin.R;
@@ -28,6 +29,8 @@ import com.boha.malengagolf.library.util.ToastUtil;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by aubreyM on 2014/04/09.
@@ -40,6 +43,7 @@ public class PlayerListFragment extends Fragment implements PageFragment {
 
     }
     PlayerListener listener;
+    LayoutInflater inflater;
     @Override
     public void onAttach(Activity a) {
         if (a instanceof PlayerListener) {
@@ -64,7 +68,7 @@ public class PlayerListFragment extends Fragment implements PageFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
         ctx = getActivity();
-        inflater = getActivity().getLayoutInflater();
+        this.inflater = inflater;
         view = inflater
                 .inflate(R.layout.fragment_list, container, false);
         golfGroup = SharedUtil.getGolfGroup(ctx);
@@ -156,6 +160,11 @@ public class PlayerListFragment extends Fragment implements PageFragment {
                     }
                 });
         if (playerList == null) return;
+        View view = inflater.inflate(R.layout.header, null);
+        TextView txt = (TextView)view.findViewById(R.id.HEADER_text);
+        ImageView img = (ImageView)view.findViewById(R.id.HEADER_image);
+        txt.setText("Players");
+        listView.addHeaderView(view);
         listView.setAdapter(personAdapter);
         registerForContextMenu(listView);
         listView.setSelection(selectedIndex);
@@ -165,7 +174,7 @@ public class PlayerListFragment extends Fragment implements PageFragment {
     @Override
     public void showPersonDialog(int actionCode) {
 
-        PersonEditDialog personEditDialog = new PersonEditDialog();
+        final PersonEditDialog personEditDialog = new PersonEditDialog();
         personEditDialog.setCtx(ctx);
         personEditDialog.setAction(actionCode);
         personEditDialog.setPersonType(PersonEditDialog.PLAYER);
@@ -191,7 +200,20 @@ public class PlayerListFragment extends Fragment implements PageFragment {
                 Log.i(LOG, "Player deleted OK");
             }
         });
-        personEditDialog.show(fragmentManager, "playerDialog");
+
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        personEditDialog.show(getFragmentManager(), "playerDialog");
+                    }
+                });
+            }
+        }, 1000);
+
     }
 
     @Override

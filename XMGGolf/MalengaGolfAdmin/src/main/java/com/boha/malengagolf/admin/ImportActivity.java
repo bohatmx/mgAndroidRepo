@@ -3,7 +3,6 @@ package com.boha.malengagolf.admin;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,7 +21,7 @@ public class ImportActivity extends AppCompatActivity implements ImportFragment.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ctx = getApplicationContext();
         golfGroup = SharedUtil.getGolfGroup(ctx);
 
@@ -57,11 +56,7 @@ public class ImportActivity extends AppCompatActivity implements ImportFragment.
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getTitle().toString().equalsIgnoreCase(
-                ctx.getResources().getString(com.boha.malengagolf.library.R.string.back))) {
-            onBackPressed();
-            return true;
-        }
+
         if (item.getItemId() == R.id.menu_help) {
 
         }

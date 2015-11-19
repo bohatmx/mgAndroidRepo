@@ -7,13 +7,15 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.PhotoUploadDTO;
 import com.boha.malengagolf.library.util.GalleryRow;
 import com.boha.malengagolf.library.util.Statics;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class GalleryAdapter extends ArrayAdapter<GalleryRow> {
     }
 
     static class Holder {
-        NetworkImageView image;
+        ImageView image;
         TextView txtDetail;
     }
     @Override
@@ -47,7 +49,7 @@ public class GalleryAdapter extends ArrayAdapter<GalleryRow> {
         if (convertView == null) {
             convertView = mInflater.inflate(mLayoutRes, null);
             holder = new Holder();
-            holder.image = (NetworkImageView)convertView.findViewById(R.id.grid_item_image);
+            holder.image = (ImageView)convertView.findViewById(R.id.grid_item_image);
             holder.txtDetail = (TextView)convertView.findViewById(R.id.grid_item_label);
             convertView.setTag(holder);
 
@@ -65,8 +67,8 @@ public class GalleryAdapter extends ArrayAdapter<GalleryRow> {
             sb.append(PhotoUploadDTO.THUMB_PREFIX).append(galleryRow.getTournament()
                     .getTournamentID()).append("/");
             sb.append(galleryRow.getFileName());
-            holder.image.setDefaultImageResId(R.drawable.gallery_golf_1);
-            holder.image.setImageUrl(sb.toString(), imageLoader);
+            Picasso.with(ctx).load(sb.toString()).into(holder.image);
+
         } else {
 
             StringBuilder sb = new StringBuilder();
@@ -75,8 +77,7 @@ public class GalleryAdapter extends ArrayAdapter<GalleryRow> {
             sb.append(PhotoUploadDTO.THUMB_PREFIX).append(galleryRow.getGolfGroup()
                     .getGolfGroupID()).append("/");
             sb.append(galleryRow.getFileName());
-            holder.image.setDefaultImageResId(R.drawable.gallery_golf_1);
-            holder.image.setImageUrl(sb.toString(), imageLoader);
+            Picasso.with(ctx).load(sb.toString()).into(holder.image);
         }
 
         animateView(convertView);

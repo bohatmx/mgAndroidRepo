@@ -51,7 +51,6 @@ public class MainPagerActivity extends FragmentActivity implements GolfGroupTour
         ACRA.getErrorReporter().putCustomData("golfGroupName", golfGroup.getGolfGroupName());
         mPager = (ViewPager) findViewById(R.id.pager);
         MGApp app = (MGApp) getApplication();
-        imageLoader = app.getImageLoader();
         setTitle(ctx.getResources().getString(R.string.app_name));
     }
 

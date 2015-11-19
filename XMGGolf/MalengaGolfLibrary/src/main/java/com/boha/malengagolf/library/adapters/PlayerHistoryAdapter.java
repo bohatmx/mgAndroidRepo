@@ -7,8 +7,9 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
-import com.android.volley.toolbox.NetworkImageView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 
@@ -43,7 +44,7 @@ public class PlayerHistoryAdapter extends ArrayAdapter<LeaderBoardDTO> {
                 txtRound4, txtRound5, txtRound6, txtTotal, txtPar, txtTourney, txtClub;
         View v1, v2, v3, v4, v5, v6, vt, vp;
 
-        NetworkImageView image;
+        ImageView image;
     }
 
     @Override

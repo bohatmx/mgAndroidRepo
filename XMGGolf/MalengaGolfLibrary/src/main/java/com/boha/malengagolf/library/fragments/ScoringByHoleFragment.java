@@ -16,12 +16,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.AdministratorDTO;
@@ -37,6 +37,7 @@ import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -3442,20 +3443,15 @@ public class ScoringByHoleFragment extends Fragment {
             reminder.setVisibility(View.GONE);
         }
         Statics.setRobotoFontBold(ctx,txtPlayer);
-        NetworkImageView imageView = (NetworkImageView)view.findViewById(R.id.SBH_image);
+        ImageView imageView = (ImageView)view.findViewById(R.id.SBH_image);
         StringBuilder sb = new StringBuilder();
         sb.append(Statics.IMAGE_URL).append("golfgroup")
                 .append(SharedUtil.getGolfGroup(ctx).getGolfGroupID()).append("/")
                 .append("player/t")
                 .append(leaderBoard.getPlayer().getPlayerID())
                 .append(".jpg");
-        //Picasso.with(ctx).load(sb.toString()).placeholder(ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
-        MGApp app = (MGApp)getActivity().getApplication();
-        ImageLoader loader = app.getImageLoader();
-        imageView.setDefaultImageResId(R.drawable.boy);
-        imageView.setImageUrl(sb.toString(), loader);
-        //
-        //
+        Picasso.with(ctx).load(sb.toString()).placeholder(ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
+
 //        if (tournament.getHolesPerRound() == 9) {
 //            if (leaderBoard.getTourneyScoreByRoundList()
 //                    .get(currentRound - 1).getTee() == 0) {

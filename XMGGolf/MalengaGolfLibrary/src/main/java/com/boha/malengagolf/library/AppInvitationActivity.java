@@ -26,8 +26,8 @@ public class AppInvitationActivity extends AppCompatActivity implements AppInvit
                 getSupportFragmentManager().findFragmentById(R.id.INV_fragment);
         appInvitationFragment.setData(email, pin, member, type);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
     }
 

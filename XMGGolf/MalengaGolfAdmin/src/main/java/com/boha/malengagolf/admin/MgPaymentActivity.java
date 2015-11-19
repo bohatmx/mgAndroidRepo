@@ -36,7 +36,7 @@ public class MgPaymentActivity extends AppCompatActivity {
         //MpUtils.enablePaymentBroadcast(this, Manifest.permission.PAYMENT_BROADCAST_PERMISSION);
         setFields();
         startGooglePlay();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     IInAppBillingService mService;
