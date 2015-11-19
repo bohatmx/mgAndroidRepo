@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
@@ -72,7 +71,7 @@ public class TournamentAdapter extends ArrayAdapter<TournamentDTO> {
         ImageView imgScoring, imgEdit, imgLeaderBd, imgEmail,
                 imgCamera, imgGallery, imgDelete, imgTee, imgInvite;
         ImageView btnExample;
-        NetworkImageView image;
+        ImageView image;
         View vOpen, vClosed;
     }
 

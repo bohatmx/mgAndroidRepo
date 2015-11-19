@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.*;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.boha.malengagolf.admin.R;
@@ -26,6 +27,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by aubreyM on 2014/04/09.
@@ -37,6 +40,7 @@ public class AdministratorListFragment extends Fragment implements PageFragment 
 
     }
     AdministratorListener listener;
+    LayoutInflater inflater;
 
     @Override
     public void onAttach(Activity a) {
@@ -56,7 +60,7 @@ public class AdministratorListFragment extends Fragment implements PageFragment 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saved) {
         ctx = getActivity();
-        inflater = getActivity().getLayoutInflater();
+        this.inflater = inflater;
         view = inflater
                 .inflate(R.layout.fragment_list, container, false);
         golfGroup = SharedUtil.getGolfGroup(ctx);
@@ -121,6 +125,11 @@ public class AdministratorListFragment extends Fragment implements PageFragment 
                         startActivity(x);
                     }
                 });
+        View view = inflater.inflate(R.layout.header, null);
+        TextView txt = (TextView)view.findViewById(R.id.HEADER_text);
+        ImageView img = (ImageView)view.findViewById(R.id.HEADER_image);
+        txt.setText("Administrators");
+        listView.addHeaderView(view);
         listView.setAdapter(adapter);
         registerForContextMenu(listView);
         listView.setSelection(selectedIndex);
@@ -184,7 +193,7 @@ public class AdministratorListFragment extends Fragment implements PageFragment 
 
     @Override
     public void showPersonDialog(int actionCode) {
-        PersonEditDialog personEditDialog = new PersonEditDialog();
+        final PersonEditDialog personEditDialog = new PersonEditDialog();
         personEditDialog.setCtx(ctx);
         personEditDialog.setAction(actionCode);
         personEditDialog.setPersonType(PersonEditDialog.ADMIN);
@@ -203,7 +212,7 @@ public class AdministratorListFragment extends Fragment implements PageFragment 
                 if (administratorList == null) {
                     administratorList = new ArrayList<AdministratorDTO>();
                 }
-                administratorList.add(0, (AdministratorDTO)person);
+                administratorList.add(0, (AdministratorDTO) person);
                 adapter.notifyDataSetChanged();
             }
 
@@ -217,13 +226,24 @@ public class AdministratorListFragment extends Fragment implements PageFragment 
                 Log.i(LOG, "administrator deleted OK");
             }
         });
-        personEditDialog.show(fragmentManager, "adminDialog");
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        personEditDialog.show(getFragmentManager(), "adminDialog");
+                    }
+                });
+            }
+        }, 1000);
     }
     FragmentManager fragmentManager;
     ListView listView;
     TextView txtHeader, txtCount;
     GolfGroupDTO golfGroup;
-    static final String LOG = "AdministratorListFragment";
+    static final String LOG = "AdminListFragment";
     Context ctx;
     AdministratorAdapter adapter;
     List<AdministratorDTO> administratorList;

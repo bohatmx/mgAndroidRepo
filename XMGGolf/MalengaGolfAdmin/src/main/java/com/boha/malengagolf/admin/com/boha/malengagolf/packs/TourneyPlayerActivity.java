@@ -1,6 +1,5 @@
 package com.boha.malengagolf.admin.com.boha.malengagolf.packs;
 
-import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,13 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -55,7 +54,7 @@ import java.util.List;
 /**
  * Created by aubreyM on 2014/04/11.
  */
-public class TourneyPlayerActivity extends Activity {
+public class TourneyPlayerActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_tplayers);
@@ -70,7 +69,7 @@ public class TourneyPlayerActivity extends Activity {
         setPlayerStringList();
         setTitle(ctx.getResources().getString(R.string.players));
         vb = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void addPlayers() {
@@ -567,7 +566,6 @@ public class TourneyPlayerActivity extends Activity {
         adapter = new TourneyPlayerAdapter(ctx,
                 R.layout.tourn_player_item,
                 leaderBoardList,
-                mgApp.getImageLoader(),
                 golfGroup.getGolfGroupID(),
                 tournament.getGolfRounds(),
                 tournament.getPar(), useAgeGroups, false, new TourneyPlayerAdapter.TourneyPlayerListener() {

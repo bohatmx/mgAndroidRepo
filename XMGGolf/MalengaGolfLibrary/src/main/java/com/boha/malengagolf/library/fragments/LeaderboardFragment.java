@@ -24,7 +24,6 @@ import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.LeaderboardAdapter;
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.ScoreCardActivity;
@@ -141,12 +140,6 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
     }
 
     List<LeaderBoardDTO> goodList;
-    ImageLoader imageLoader;
-
-    public void setImageLoader(ImageLoader imageLoader) {
-        this.imageLoader = imageLoader;
-        Log.w(LOG, "imageLoader has been set ......");
-    }
 
     private void setLeaderBoardLive() {
 
@@ -472,14 +465,13 @@ public class LeaderboardFragment extends Fragment implements LeaderBoardPage {
             leaderboardOneRoundAdapter = new LeaderboardOneRoundAdapter(ctx,
                     R.layout.leaderboard_one_round,
                     leaderBoardList,
-                    SharedUtil.getGolfGroup(ctx).getGolfGroupID(),
-                    imageLoader, hidePics);
+                    SharedUtil.getGolfGroup(ctx).getGolfGroupID(),hidePics);
             listView.setAdapter(leaderboardOneRoundAdapter);
         } else {
             leaderboardAdapter = new LeaderboardAdapter(ctx,
                     R.layout.leaderboard_item,
                     leaderBoardList,
-                    tournament.getGolfRounds(), tournament.getPar(), imageLoader, hidePics,
+                    tournament.getGolfRounds(), tournament.getPar(), hidePics,
                     new LeaderboardAdapter.LeaderBoardListener() {
                         @Override
                         public void onScrollToItem(int index) {

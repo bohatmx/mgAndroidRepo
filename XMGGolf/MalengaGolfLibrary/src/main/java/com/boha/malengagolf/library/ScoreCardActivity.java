@@ -25,8 +25,8 @@ public class ScoreCardActivity extends AppCompatActivity {
         }
         scoreCardFragment.setLeaderBoard(leaderBoard);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

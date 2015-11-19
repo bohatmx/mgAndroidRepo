@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.ResponseDTO;
@@ -29,11 +28,9 @@ public class LeaderboardActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
         MGApp app = (MGApp)getApplication();
-        imageLoader = app.getImageLoader();
         ctx = getApplicationContext();
         leaderboardFragment = (LeaderboardFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.LB_fragment);
-        leaderboardFragment.setImageLoader(imageLoader);
 
         if (savedInstanceState != null) {
             Log.i(LOG, "refreshing from saved state.............what's in state?");
@@ -45,7 +42,6 @@ public class LeaderboardActivity extends AppCompatActivity
         tournament = (TournamentDTO)getIntent().getSerializableExtra("tournament");
 
     }
-    ImageLoader imageLoader;
     private void refreshLeaderBoard() {
 
         RequestDTO w = new RequestDTO();

@@ -1,6 +1,7 @@
 package com.boha.malengagolf.admin.com.boha.malengagolf.packs.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,7 @@ import android.widget.TextView;
 import com.boha.malengagolf.admin.R;
 import com.boha.malengagolf.library.data.PlayerDTO;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -124,16 +125,10 @@ public class PlayerAdapter extends ArrayAdapter<PlayerDTO> {
         } else {
             item.txtBirthdate.setVisibility(View.GONE);
         }
-
-//        Picasso.with(ctx)
-//                .load(p.getImageURL(ctx))
-//                .error(R.drawable.boy)
-//                .into(item.imagex);
-
- //       ImageLoader.getInstance().clearDiskCache();
- //       ImageLoader.getInstance().clearMemoryCache();
-
-        ImageLoader.getInstance().displayImage(p.getImageURL(ctx), item.imagex, options);
+        Picasso.with(ctx)
+                .load(p.getImageURL(ctx))
+                .placeholder(ContextCompat.getDrawable(ctx,R.drawable.boy))
+                .into(item.imagex);
 
         item.imgCamera.setOnClickListener(new View.OnClickListener() {
             @Override

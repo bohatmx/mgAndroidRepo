@@ -1,6 +1,7 @@
 package com.boha.malengagolf.library.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +11,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.RequestDTO;
 import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.Statics;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -28,20 +29,18 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
     private final int mLayoutRes;
     private List<LeaderBoardDTO> mList;
     private int golfGroupID;
-    private ImageLoader imageLoader;
     private Context ctx;
     private boolean hidePictures;
 
     public LeaderboardOneRoundAdapter(Context context,
                                       int textViewResourceId,
-                                      List<LeaderBoardDTO> list, int golfGroupID, ImageLoader imageLoader, boolean hidePictures) {
+                                      List<LeaderBoardDTO> list, int golfGroupID, boolean hidePictures) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
         mList = list;
         ctx = context;
         this.hidePictures = hidePictures;
         this.golfGroupID = golfGroupID;
-        this.imageLoader = imageLoader;
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -50,7 +49,7 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
     static class ViewHolderItem {
         TextView txtPlayer, txtLastHole, txtTotal, txtPar, txtPosition, txtParLabel;
-        NetworkImageView image;
+        ImageView image;
         ImageView winner;
     }
 
@@ -74,7 +73,7 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
                     .findViewById(R.id.ONE_ROUND_parLabel);
             v.txtLastHole = (TextView) convertView
                     .findViewById(R.id.ONE_ROUND_lastHole);
-            v.image = (NetworkImageView) convertView
+            v.image = (ImageView) convertView
                     .findViewById(R.id.ONE_ROUND_image);
             v.winner = (ImageView) convertView
                     .findViewById(R.id.ONE_ROUND_winnerImage);
@@ -122,7 +121,7 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
                 v.txtParLabel.setText(ctx.getResources().getString(R.string.par));
                 if (p.getParStatus() == LeaderBoardDTO.NO_PAR_STATUS) {
                     v.txtPar.setText("N/S");
-                    v.txtPar.setTextColor(ctx.getResources().getColor(R.color.grey2));
+                    v.txtPar.setTextColor(ContextCompat.getColor(ctx, R.color.grey));
 
                 } else {
                     v.txtPar.setVisibility(View.VISIBLE);
@@ -135,11 +134,11 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
                 v.txtParLabel.setText(ctx.getResources().getString(R.string.points));
                 v.txtPar.setText("" + p.getTotalPoints());
                 if (p.getTotalPoints() == 0) {
-                    v.txtPar.setTextColor(ctx.getResources().getColor(R.color.grey2));
+                    v.txtPar.setTextColor(ContextCompat.getColor(ctx, R.color.grey));
 
                 } else {
                     v.txtPar.setVisibility(View.VISIBLE);
-                    v.txtPar.setTextColor(ctx.getResources().getColor(R.color.black));
+                    v.txtPar.setTextColor(ContextCompat.getColor(ctx, R.color.black));
                 }
                 formatStablefordStrokes(v.txtTotal, p.getTotalPoints(), v.txtPosition, p);
                 break;
@@ -148,9 +147,9 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
         v.txtLastHole.setText("" + p.getLastHole());
         int x = position % 2;
         if (x > 0) {
-            convertView.setBackgroundColor(ctx.getResources().getColor(R.color.beige_pale));
+            convertView.setBackgroundColor(ContextCompat.getColor(ctx, R.color.beige_pale));
         } else {
-            convertView.setBackgroundColor(ctx.getResources().getColor(R.color.white));
+            convertView.setBackgroundColor(ContextCompat.getColor(ctx, R.color.white));
         }
         //image
         try {
@@ -159,8 +158,10 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
                     .append(golfGroupID).append("/player/");
             sb.append("t");
             sb.append(p.getPlayer().getPlayerID()).append(".jpg");
-            v.image.setDefaultImageResId(R.drawable.boy);
-            v.image.setImageUrl(sb.toString(), imageLoader);
+            Picasso.with(ctx).load(sb.toString()).into(v.image);
+//
+//            v.image.setDefaultImageResId(R.drawable.boy);
+//            v.image.setImageUrl(sb.toString(), imageLoader);
         } catch (Exception e) {
             Log.w("OneRound", "network image view problem", e);
         }
@@ -179,15 +180,15 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
     private void formatStrokes(TextView txt, int parStatus) {
         if (parStatus == 0) { //Even par
-            txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.black));
             txt.setText("E");
         }
         if (parStatus > 0) { //under par
-            txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.absa_red));
             txt.setText("-" + parStatus);
         }
         if (parStatus < 0) { //over par
-            txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.blue));
             txt.setText("+" + (parStatus * -1));
         }
 
@@ -196,19 +197,19 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
     private void formatStrokes(TextView txt, int parStatus, int score, TextView txtPos) {
         if (parStatus == 0) { //Even par
-            txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.black));
             if (txtPos != null) {
                 txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval));
             }
         }
         if (parStatus > 0) { //under par
-            txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.absa_red));
             if (txtPos != null) {
                 txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
             }
         }
         if (parStatus < 0) { //over par
-            txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.blue));
             if (txtPos != null) {
                 txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval));
             }
@@ -247,19 +248,19 @@ public class LeaderboardOneRoundAdapter extends ArrayAdapter<LeaderBoardDTO> {
 
 
         if (points == (holeCount * 2)) { //Even par
-            txt.setTextColor(ctx.getResources().getColor(R.color.black));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.black));
             if (txtPos != null) {
                 txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblack_oval));
             }
         }
         if (points > (holeCount * 2)) { //under par
-            txt.setTextColor(ctx.getResources().getColor(R.color.absa_red));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.absa_red));
             if (txtPos != null) {
                 txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xred_oval));
             }
         }
         if (points < (holeCount * 2)) { //over par
-            txt.setTextColor(ctx.getResources().getColor(R.color.blue));
+            txt.setTextColor(ContextCompat.getColor(ctx, R.color.blue));
             if (txtPos != null) {
                 txtPos.setBackground(ctx.getResources().getDrawable(R.drawable.xblue_oval));
             }

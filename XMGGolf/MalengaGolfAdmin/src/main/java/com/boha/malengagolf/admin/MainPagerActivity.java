@@ -5,35 +5,59 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.boha.malengagolf.admin.com.boha.malengagolf.packs.TourneyPlayerActivity;
-import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.*;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.AdministratorListFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.ClubListFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.PageFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.ParentListFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.PlayerListFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.ScorerListFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.SplashFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.TournamentFragment;
+import com.boha.malengagolf.admin.com.boha.malengagolf.packs.fragments.TournamentListFragment;
 import com.boha.malengagolf.admin.com.boha.malengagolf.packs.listeners.BusyListener;
 import com.boha.malengagolf.admin.com.boha.malengagolf.packs.util.PersonEditDialog;
 import com.boha.malengagolf.library.AppInvitationActivity;
 import com.boha.malengagolf.library.GolfCourseMapActivity;
 import com.boha.malengagolf.library.MGApp;
 import com.boha.malengagolf.library.PictureActivity;
-import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-import com.boha.malengagolf.library.data.*;
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.ClubDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.ParentDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
+import com.boha.malengagolf.library.data.RequestDTO;
+import com.boha.malengagolf.library.data.ResponseDTO;
+import com.boha.malengagolf.library.data.ScorerDTO;
+import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.fragments.AppInvitationFragment;
-import com.boha.malengagolf.library.util.*;
+import com.boha.malengagolf.library.util.CacheUtil;
+import com.boha.malengagolf.library.util.ErrorUtil;
+import com.boha.malengagolf.library.util.SharedUtil;
+import com.boha.malengagolf.library.util.Statics;
+import com.boha.malengagolf.library.util.ToastUtil;
+import com.boha.malengagolf.library.util.WebSocketUtil;
+import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
-
-import org.acra.ACRA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +80,12 @@ public class MainPagerActivity extends AppCompatActivity
     GolfGroupDTO golfGroup;
     ImageLoader imageLoader;
     LocationRequest mLocationRequest;
+    private DrawerLayout mDrawerLayout;
+    ImageView navImage;
+    TextView navText;
+    Location location;
+    NavigationView navigationView;
+    ActionBar actionBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,38 +94,88 @@ public class MainPagerActivity extends AppCompatActivity
         setContentView(R.layout.main_pager);
         ctx = getApplicationContext();
         golfGroup = SharedUtil.getGolfGroup(ctx);
-        ACRA.getErrorReporter().putCustomData("golfGroupID", "" + golfGroup.getGolfGroupID());
-        ACRA.getErrorReporter().putCustomData("golfGroupName", golfGroup.getGolfGroupName());
+//        ACRA.getErrorReporter().putCustomData("golfGroupID", "" + golfGroup.getGolfGroupID());
+//        ACRA.getErrorReporter().putCustomData("golfGroupName", golfGroup.getGolfGroupName());
         mPager = (ViewPager) findViewById(R.id.pager);
         MGApp app = (MGApp) getApplication();
-        imageLoader = app.getImageLoader();
         setTitle("mgGolf");
         setSplashFrament();
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setFastestInterval(1000);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navImage = (ImageView) findViewById(R.id.NAVHEADER_image);
+        navText = (TextView) findViewById(R.id.NAVHEADER_text);
+        navText.setText(SharedUtil.getAdministrator(ctx).getFullName());
 
-//        mLocationClient = new LocationClient(getApplicationContext(), this,
-//                this);
         setTitle(golfGroup.getGolfGroupName());
         AdministratorDTO a = SharedUtil.getAdministrator(ctx);
-        getActionBar().setSubtitle(a.getFullName());
+        getSupportActionBar().setSubtitle(a.getFullName());
+        actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setLogo(R.drawable.ic_action_event);
+
+        setMenuDestinations();
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    private void setMenuDestinations() {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                mDrawerLayout.closeDrawers();
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_import_players:
+                        Intent dd = new Intent(ctx, ImportActivity.class);
+                        startActivityForResult(dd, REQUEST_IMPORT_PLAYERS);
+                        return true;
+                    case R.id.nav_find_courses:
+                        Intent z1 = new Intent(ctx, GolfCourseMapActivity.class);
+                        z1.putExtra("requestOrigin", GolfCourseMapActivity.ORIGIN_SEARCH);
+                        startActivity(z1);
+                        return true;
+
+                    case R.id.nav_invite:
+                        Intent x = new Intent(ctx, AppInvitationActivity.class);
+                        x.putExtra("type", AppInvitationFragment.APP_USER);
+                        startActivity(x);
+                        return true;
+                    case R.id.nav_add_tournament:
+                        Intent intent = new Intent(ctx, TourneyActivity.class);
+                        intent.putExtra("action", TournamentFragment.ADD_NEW);
+                        ResponseDTO r = new ResponseDTO();
+                        r.setClubs(response.getClubs());
+                        intent.putExtra("clubs", r);
+                        startActivityForResult(intent, NEW_TOURNEY_REQUEST);
+                        return true;
+                    case R.id.nav_add_admin:
+                        mPager.setCurrentItem(ADMINS,true);
+                        administratorListFragment.showPersonDialog(PersonEditDialog.ACTION_ADD);
+                        return true;
+                    case R.id.nav_add_player:
+                        mPager.setCurrentItem(PLAYERS,true);
+                        playerListFragment.showPersonDialog(PersonEditDialog.ACTION_ADD);
+                        return true;
+                    case R.id.nav_add_scorer:
+                        mPager.setCurrentItem(SCORERS,true);
+                        scorerListFragment.showPersonDialog(PersonEditDialog.ACTION_ADD);
+                        return true;
+
+                    case R.id.nav_refresh:
+                        getGolfGroupData();
+                        return true;
+
+
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-//        if (mLocationClient != null) {
-//            mLocationClient.connect();
-//            Log.i(LOG,
-//                    "#################### onStart - locationClient connecting ... ");
-//        }
 
-    }
-
-    private void stopPeriodicUpdates() {
-//        mLocationClient.removeLocationUpdates(this);
     }
 
     @Override
@@ -480,6 +560,14 @@ public class MainPagerActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawers();
+                } else {
+                    mDrawerLayout.openDrawer(GravityCompat.START);
+                }
+                return true;
+
             case R.id.menu_import:
                 Intent dd = new Intent(ctx, ImportActivity.class);
                 startActivityForResult(dd, REQUEST_IMPORT_PLAYERS);
@@ -510,12 +598,15 @@ public class MainPagerActivity extends AppCompatActivity
                         startActivityForResult(intent, NEW_TOURNEY_REQUEST);
                         break;
                     case PLAYERS:
+                        mPager.setCurrentItem(1,true);
                         playerListFragment.showPersonDialog(PersonEditDialog.ACTION_ADD);
                         break;
                     case SCORERS:
+                        mPager.setCurrentItem(3,true);
                         scorerListFragment.showPersonDialog(PersonEditDialog.ACTION_ADD);
                         break;
                     case ADMINS:
+                        mPager.setCurrentItem(2,true);
                         administratorListFragment.showPersonDialog(PersonEditDialog.ACTION_ADD);
                         break;
 
@@ -622,14 +713,6 @@ public class MainPagerActivity extends AppCompatActivity
         data3.putSerializable("response", r3);
         scorerListFragment.setArguments(data3);
 
-//        parentListFragment = new ParentListFragment();
-//        Bundle data4 = new Bundle();
-//        ResponseDTO r4 = new ResponseDTO();
-//        r4.setParents(response.getParents());
-//        data4.putSerializable("response", r4);
-//        parentListFragment.setArguments(data4);
-//        parentListFragment.setImageLoader(imageLoader);
-
         administratorListFragment = new AdministratorListFragment();
         Bundle data5 = new Bundle();
         ResponseDTO r5 = new ResponseDTO();
@@ -641,8 +724,6 @@ public class MainPagerActivity extends AppCompatActivity
         pageFragmentList.add(playerListFragment);
         pageFragmentList.add(administratorListFragment);
         pageFragmentList.add(scorerListFragment);
-        //pageFragmentList.add(parentListFragment);
-
 
         initializeAdapter();
         mPager.setCurrentItem(1, true);
@@ -796,27 +877,17 @@ public class MainPagerActivity extends AppCompatActivity
                     title = golfGroup.getGolfGroupName();
                     break;
                 case TOURNAMENT:
-                    title = ctx.getResources().getString(R.string.tournaments)
-                    ;
+                    title = ctx.getResources().getString(R.string.tournaments);
                     break;
                 case PLAYERS:
-                    title = ctx.getResources().getString(R.string.players)
-                    ;
+                    title = ctx.getResources().getString(R.string.players);
                     break;
                 case SCORERS:
-                    title = ctx.getResources().getString(R.string.scorers)
-                    ;
+                    title = ctx.getResources().getString(R.string.scorers);
                     break;
-//                case PARENTS:
-//                    title = ctx.getResources().getString(R.string.parents)
-//                            + " (" + response.getParents().size() + ")";
-//                    break;
                 case ADMINS:
-                    title = ctx.getResources().getString(R.string.admins)
-                            ;
+                    title = ctx.getResources().getString(R.string.admins);
                     break;
-
-
                 default:
                     break;
             }
@@ -825,8 +896,13 @@ public class MainPagerActivity extends AppCompatActivity
     }
 
     private int selectedIndex;
-    public static final int SPLASH = 0, TOURNAMENT = 1, PLAYERS = 2, SCORERS = 4,
-            PARENTS = 5, ADMINS = 3,
+    public static final int
+            SPLASH = 0,
+            TOURNAMENT = 1,
+            PLAYERS = 2,
+            ADMINS = 3,
+            SCORERS = 4,
+            PARENTS = 5,
             SCORER_PICTURE_REQUESTED = 903, ADMIN_PICTURE_REQUESTED = 904, PLAYER_PICTURE_REQUESTED = 905, PARENT_PICTURE_REQUESTED = 906;
 
     @Override

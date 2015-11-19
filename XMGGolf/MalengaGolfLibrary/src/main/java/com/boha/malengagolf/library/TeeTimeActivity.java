@@ -46,8 +46,8 @@ public class TeeTimeActivity extends AppCompatActivity
         teeTimeRequestFragment.setLeaderBoardFromScoringFragment(leaderBoard);
         setTitle(tournament.getTourneyName());
 
-        getActionBar().setHomeButtonEnabled(true);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
     private int currentRound;

@@ -27,7 +27,7 @@
                 android:layout_alignLeft="@id/PSC_playerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
                 android:id="@+id/PSC_image"
                 android:layout_marginTop="5dp"
                 android:layout_below="@id/PSC_tourneyName"

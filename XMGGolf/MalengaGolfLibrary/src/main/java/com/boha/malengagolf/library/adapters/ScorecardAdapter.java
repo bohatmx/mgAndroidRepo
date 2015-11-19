@@ -346,7 +346,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
         if (r.getScore18() == 0) cnt++;
         else parStatus += cc.getParHole18() - r.getScore18();
         if (cnt < 18) {
-            txtTotal.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            txtTotal.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else {
             txtTotal.setTextColor(ctx.getResources().getColor(R.color.green));
         }
@@ -406,7 +406,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
     private void styleColors(TourneyScoreByRoundDTO p, ViewHolderItem vh, ClubCourseDTO cc) {
 
         if (p.getScore1() == 0) {
-            vh.txtHole1.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole1.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole1() == p.getScore1()) {
             vh.txtHole1.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -418,7 +418,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
         }
         //
         if (p.getScore2() == 0) {
-            vh.txtHole2.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole2.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole2() == p.getScore2()) {
             vh.txtHole2.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -429,7 +429,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore3() == 0) {
-            vh.txtHole3.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole3.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole3() == p.getScore3()) {
             vh.txtHole3.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -440,7 +440,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore4() == 0) {
-            vh.txtHole4.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole4.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole4() == p.getScore4()) {
             vh.txtHole4.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -451,7 +451,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore5() == 0) {
-            vh.txtHole5.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole5.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole5() == p.getScore5()) {
             vh.txtHole5.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -462,7 +462,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore6() == 0) {
-            vh.txtHole6.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole6.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole6() == p.getScore6()) {
             vh.txtHole6.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -473,7 +473,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore7() == 0) {
-            vh.txtHole7.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole7.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole7() == p.getScore7()) {
             vh.txtHole7.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -484,7 +484,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore8() == 0) {
-            vh.txtHole8.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole8.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole8() == p.getScore8()) {
             vh.txtHole8.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -495,7 +495,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore9() == 0) {
-            vh.txtHole9.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole9.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole9() == p.getScore9()) {
             vh.txtHole9.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -507,7 +507,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
         }
         //Log.w("adap", "Processinhg hole 10, p.getScore10: " + p.getScore10() + " cc parHole10: " + cc.getParHole10() + " " + cc.getClubName() + " - " + cc.getCourseName());
         if (p.getScore10() == 0) {
-            vh.txtHole10.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole10.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole10() == p.getScore10()) {
             vh.txtHole1.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -518,7 +518,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore11() == 0) {
-            vh.txtHole11.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole11.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole11() == p.getScore11()) {
             vh.txtHole11.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -529,7 +529,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore12() == 0) {
-            vh.txtHole12.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole12.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole12() == p.getScore12()) {
             vh.txtHole12.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -540,7 +540,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore13() == 0) {
-            vh.txtHole13.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole13.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole13() == p.getScore13()) {
             vh.txtHole13.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -551,7 +551,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore14() == 0) {
-            vh.txtHole14.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole14.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole14() == p.getScore14()) {
             vh.txtHole14.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -562,7 +562,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore15() == 0) {
-            vh.txtHole15.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole15.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole15() == p.getScore15()) {
             vh.txtHole15.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -573,7 +573,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore16() == 0) {
-            vh.txtHole16.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole16.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole16() == p.getScore16()) {
             vh.txtHole16.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -584,7 +584,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore17() == 0) {
-            vh.txtHole17.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole17.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole17() == p.getScore17()) {
             vh.txtHole17.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {
@@ -595,7 +595,7 @@ public class ScorecardAdapter extends ArrayAdapter<TourneyScoreByRoundDTO> {
             }
         }
         if (p.getScore18() == 0) {
-            vh.txtHole18.setTextColor(ctx.getResources().getColor(R.color.grey2));
+            vh.txtHole18.setTextColor(ctx.getResources().getColor(R.color.grey));
         } else if (cc.getParHole18() == p.getScore18()) {
             vh.txtHole18.setTextColor(ctx.getResources().getColor(R.color.black));
         } else {

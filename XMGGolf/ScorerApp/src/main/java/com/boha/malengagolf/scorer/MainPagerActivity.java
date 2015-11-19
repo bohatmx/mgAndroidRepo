@@ -56,7 +56,7 @@ public class MainPagerActivity extends AppCompatActivity implements GolfGroupTou
         //
         setTitle(golfGroup.getGolfGroupName());
         ScorerDTO s = SharedUtil.getScorer(ctx);
-        getActionBar().setSubtitle(s.getFullName());
+        getSupportActionBar().setSubtitle(s.getFullName());
 
     }
 

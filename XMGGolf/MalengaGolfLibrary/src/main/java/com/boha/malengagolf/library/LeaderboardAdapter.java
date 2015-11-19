@@ -10,14 +10,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
+
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
 import com.boha.malengagolf.library.data.TournamentDTO;
 import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -34,14 +34,13 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
     private int rounds, par;
     private Context ctx;
     private GolfGroupDTO golfGroup;
-    private ImageLoader imageLoader;
     private boolean hidePictures;
 
     private LeaderBoardListener listener;
     public LeaderboardAdapter(Context context,
                               int textViewResourceId,
                               List<LeaderBoardDTO> list, int rounds,
-                              int par, ImageLoader imageLoader, boolean hidePictures,
+                              int par,  boolean hidePictures,
                               LeaderBoardListener listener) {
         super(context, textViewResourceId, list);
         this.mLayoutRes = textViewResourceId;
@@ -54,8 +53,6 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         this.mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         golfGroup = SharedUtil.getGolfGroup(ctx);
-        this.imageLoader = imageLoader;
-        golfGroup = SharedUtil.getGolfGroup(ctx);
     }
 
     View view;
@@ -65,7 +62,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
         TextView txtPlayer, txtRound1, txtRound2, txtRound3, txtPosition, txtStatus,
                 txtRound4, txtRound5, txtRound6, txtTotal, txtPar, txtLastHole;
         View v1, v2, v3, v4, v5, v6, vt, vp, vlh, vPoints, pp1, pp2, pp3, pp4, pp5, pp6;
-        NetworkImageView image;
+        ImageView image;
         ImageView winner;
         TextView txtPointsRound1, txtPointsRound2, txtPointsRound3,
                 txtPointsRound4, txtPointsRound5, txtPointsRound6, txtPointsTotal;
@@ -95,7 +92,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
                     .findViewById(R.id.LS_round6);
             v.txtTotal = (TextView) convertView
                     .findViewById(R.id.LS_total);
-            v.image = (NetworkImageView) convertView
+            v.image = (ImageView) convertView
                     .findViewById(R.id.LBITEM_image);
 
             v.txtPar = (TextView) convertView
@@ -303,10 +300,12 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
                     .append(golfGroup.getGolfGroupID()).append("/player/");
             sb.append("t");
             sb.append(p.getPlayer().getPlayerID()).append(".jpg");
-            v.image.setDefaultImageResId(R.drawable.boy);
-            v.image.setImageUrl(sb.toString(), imageLoader);
+            Picasso.with(ctx).load(sb.toString()).into(v.image);
+//
+//            v.image.setDefaultImageResId(R.drawable.boy);
+//            v.image.setImageUrl(sb.toString(), imageLoader);
         } catch (Exception e) {
-            Log.w("LeaderBoardAdapter", "volley network image view problem", e);
+            Log.w("LeaderBoardAdapter", "network image view problem", e);
         }
         Statics.setRobotoFontLight(ctx, v.txtPlayer);
         animateView(convertView);
@@ -347,7 +346,7 @@ public class LeaderboardAdapter extends ArrayAdapter<LeaderBoardDTO> {
                 txt.setTextColor(ctx.getResources().getColor(com.boha.malengagolf.library.R.color.blue));
             }
         } else {
-            txt.setTextColor(ctx.getResources().getColor(com.boha.malengagolf.library.R.color.grey2));
+            txt.setTextColor(ctx.getResources().getColor(com.boha.malengagolf.library.R.color.grey));
         }
         txt.setText("" + tsbr.getTotalScore());
 

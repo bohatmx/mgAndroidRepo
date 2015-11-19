@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.adapters.TourneyPlayerAdapter;
 import com.boha.malengagolf.library.data.GolfGroupDTO;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
@@ -33,7 +32,7 @@ import com.boha.malengagolf.library.util.Statics;
 import com.boha.malengagolf.library.util.ToastUtil;
 import com.boha.malengagolf.library.util.WebSocketUtil;
 import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
-
+import com.boha.malengagolf.library.R;
 import java.util.List;
 
 /**
@@ -195,7 +194,6 @@ public class TournamentPlayerListFragment extends Fragment {
         adapter = new TourneyPlayerAdapter(ctx,
                 R.layout.tourn_player_item,
                 leaderBoardList,
-                imageLoader,
                 golfGroup.getGolfGroupID(),
                 tournament.getGolfRounds(),
                 tournament.getPar(), useAgeGroups, true, new TourneyPlayerAdapter.TourneyPlayerListener() {
@@ -389,10 +387,6 @@ public class TournamentPlayerListFragment extends Fragment {
         });
     }
 
-    public void setImageLoader(ImageLoader imageLoader) {
-        this.imageLoader = imageLoader;
-    }
-
     public void setTournament(TournamentDTO tournament) {
         this.tournament = tournament;
         txtTitle.setText(tournament.getTourneyName());
@@ -425,6 +419,5 @@ public class TournamentPlayerListFragment extends Fragment {
     List<LeaderBoardDTO> leaderBoardList;
     LeaderBoardDTO leaderBoard;
     TourneyPlayerAdapter adapter;
-    ImageLoader imageLoader;
 
 }

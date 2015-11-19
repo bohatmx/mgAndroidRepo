@@ -1,21 +1,26 @@
 package com.boha.malengagolf.library;
 
-import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDexApplication;
+import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.boha.malengagolf.library.data.AdministratorDTO;
+import com.boha.malengagolf.library.data.GolfGroupDTO;
+import com.boha.malengagolf.library.data.PlayerDTO;
+import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
-import com.boha.malengagolf.library.volley.toolbox.BitmapLruCache;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.boha.malengagolf.library.volley.toolbox.OkHttpStack;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import org.acra.ACRA;
 import org.acra.ReportField;
 import org.acra.annotation.ReportsCrashes;
+
+import java.io.File;
 
 /**
  * Created by aubreyM on 2014/05/17.
@@ -35,15 +40,50 @@ import org.acra.annotation.ReportsCrashes;
                 ReportField.LOGCAT},
         socketTimeout = 3000
 )
-public class MGApp extends MultiDexApplication {
+public class MGApp extends Application {
 
+    public static Picasso picasso;
+    static final long MAX_CACHE_SIZE = 1024 * 1024 * 1024;
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(LOG, "############################ onCreate MalengaGolf has started ---------------->");
 
-        ACRA.init(this);
-        Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
+        boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
+        if (!isDebuggable) {
+            ACRA.init(this);
+            GolfGroupDTO golfGroup = SharedUtil.getGolfGroup(getApplicationContext());
+            AdministratorDTO mon = SharedUtil.getAdministrator(getApplicationContext());
+            PlayerDTO player = SharedUtil.getPlayer(getApplicationContext());
+            if (golfGroup != null) {
+                ACRA.getErrorReporter().putCustomData("groupID", "" + golfGroup.getGolfGroupID());
+            }
+            if (mon != null) {
+                ACRA.getErrorReporter().putCustomData("administrator", "" + mon.getAdministratorID());
+            }
+            Log.e(LOG, "###### ACRA Crash Reporting has been initiated");
+        }
+        // create Picasso.Builder object
+        File picassoCacheDir = getCacheDir();
+
+        Picasso.Builder picassoBuilder = new Picasso.Builder(getApplicationContext());
+        picassoBuilder.downloader(new OkHttpDownloader(picassoCacheDir, MAX_CACHE_SIZE));
+        picasso = picassoBuilder.build();
+        try {
+            Picasso.setSingletonInstance(picasso);
+        } catch (IllegalStateException ignored) {
+            // Picasso instance was already set
+        }
+
+        if (isDebuggable) {
+            Picasso.with(getApplicationContext())
+                    .setIndicatorsEnabled(true);
+            Picasso.with(getApplicationContext())
+                    .setLoggingEnabled(true);
+        }
+
+        Log.w(LOG, "####### images in picasso cache: " + picassoCacheDir.listFiles().length);
+
         initializeVolley(getApplicationContext());
 
 
@@ -55,44 +95,17 @@ public class MGApp extends MultiDexApplication {
      * @param context
      */
     public void initializeVolley(Context context) {
-        Log.e(LOG, "initializing Volley Networking ...");
-        requestQueue = Volley.newRequestQueue(context);
-        int memClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE))
-                .getMemoryClass();
+        requestQueue = Volley.newRequestQueue(context, new OkHttpStack());
 
-        // Use 1/8th of the available memory for this memory cache.
-        int cacheSize = 1024 * 1024 * memClass / 8;
-        bitmapLruCache = new BitmapLruCache(cacheSize);
-        imageLoader = new ImageLoader(requestQueue, bitmapLruCache);
-        Log.i(LOG, "********** Yebo! Volley Networking has been initialized, cache size: " + (cacheSize / 1024) + " KB");
+        Log.i(LOG, "********** Yebo! Volley Networking has been initialized");
 
-        // Create global configuration and initialize ImageLoader with this configuration
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-                .defaultDisplayImageOptions(defaultOptions)
-                .build();
-
-        com.nostra13.universalimageloader.core.ImageLoader.getInstance().init(config);
-    }
-
-    public ImageLoader getImageLoader() {
-        return imageLoader;
     }
 
     public RequestQueue getRequestQueue() {
         return requestQueue;
     }
 
-    public BitmapLruCache getBitmapLruCache() {
-        return bitmapLruCache;
-    }
-
-    ImageLoader imageLoader;
     RequestQueue requestQueue;
-    BitmapLruCache bitmapLruCache;
     static final String LOG = "MGApplication";
 }
 

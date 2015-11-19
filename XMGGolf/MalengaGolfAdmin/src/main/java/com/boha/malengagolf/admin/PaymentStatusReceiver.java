@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import mp.MpUtils;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -43,14 +42,14 @@ public class PaymentStatusReceiver extends BroadcastReceiver {
         Log.d(TAG, "- currency:         " + extras.getString("currency"));
         Log.d(TAG, "- price:         " + extras.getString("price"));
 
-        int billingStatus = extras.getInt("billing_status");
-        if(billingStatus == MpUtils.MESSAGE_STATUS_BILLED) {
-            int coins = Integer.parseInt(intent.getStringExtra("credit_amount"));
-            //Wallet.addCoins(context, coins);
-            Log.e(TAG, "This transaction has been billed OK");
-        } else {
-            Log.e(TAG, "This transaction has NOT billed, tell user...");
-        }
+//        int billingStatus = extras.getInt("billing_status");
+//        if(billingStatus == MpUtils.MESSAGE_STATUS_BILLED) {
+//            int coins = Integer.parseInt(intent.getStringExtra("credit_amount"));
+//            //Wallet.addCoins(context, coins);
+//            Log.e(TAG, "This transaction has been billed OK");
+//        } else {
+//            Log.e(TAG, "This transaction has NOT billed, tell user...");
+//        }
     }
 
     static final String TAG = "PaymentStatusReceiver";

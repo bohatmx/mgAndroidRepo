@@ -87,8 +87,8 @@ public class PictureActivity extends AppCompatActivity implements GLSurfaceView.
         }
 
         Log.e(LOG, "###### type: " + type);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         dispatchTakePictureIntent();
     }
 

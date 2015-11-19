@@ -60,8 +60,6 @@ public class MGGalleryActivity extends AppCompatActivity implements StaggeredLis
         golfGroup = SharedUtil.getGolfGroup(ctx);
 
         mPager = (ViewPager) findViewById(R.id.pager);
-        MGApp app = (MGApp) getApplication();
-        imageLoader = app.getImageLoader();
         setTitle(tournament.getTourneyName());
         //setTimer();
 

@@ -8,11 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.boha.malengagolf.library.MGApp;
+
 import com.boha.malengagolf.library.R;
 import com.boha.malengagolf.library.adapters.ScorecardAdapter;
 import com.boha.malengagolf.library.data.LeaderBoardDTO;
@@ -21,6 +20,7 @@ import com.boha.malengagolf.library.data.TourneyScoreByRoundDTO;
 import com.boha.malengagolf.library.util.CompleteRounds;
 import com.boha.malengagolf.library.util.SharedUtil;
 import com.boha.malengagolf.library.util.Statics;
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class ScoreCardFragment extends Fragment  {
         txtPlayerName = (TextView) view.findViewById(R.id.PSC_playerName);
         txtRounds = (TextView) view.findViewById(R.id.PSC_count);
         txtAverage = (TextView) view.findViewById(R.id.PSC_averageStrokes);
-        imageView = (NetworkImageView)view.findViewById(R.id.PSC_image);
+        imageView = (ImageView)view.findViewById(R.id.PSC_image);
         Statics.setRobotoFontLight(ctx, txtPlayerName);
     }
 
@@ -84,7 +84,7 @@ public class ScoreCardFragment extends Fragment  {
     ScorecardAdapter adapter;
     List<TourneyScoreByRoundDTO> tourneyScoreByRoundDTOList;
     PlayerDTO player;
-    NetworkImageView imageView;
+    ImageView imageView;
     int par;
     LeaderBoardDTO leaderBoard;
     List<CompleteRounds> completeRoundsList;
@@ -117,11 +117,9 @@ public class ScoreCardFragment extends Fragment  {
           .append("player/t")
           .append(leaderBoard.getPlayer().getPlayerID())
           .append(".jpg");
-        //Picasso.with(ctx).load(sb.toString()).placeholder(ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
-        MGApp app = (MGApp)getActivity().getApplication();
-        ImageLoader loader = app.getImageLoader();
-        imageView.setDefaultImageResId(R.drawable.boy);
-        imageView.setImageUrl(sb.toString(), loader);
+        Picasso.with(ctx).load(sb.toString()).placeholder(
+                ctx.getResources().getDrawable(R.drawable.boy)).into(imageView);
+
         setList();
     }
     static final DecimalFormat df = new DecimalFormat("###,###.00");

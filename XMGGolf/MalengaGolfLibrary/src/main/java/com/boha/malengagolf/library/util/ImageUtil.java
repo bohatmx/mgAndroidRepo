@@ -13,9 +13,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import com.android.volley.toolbox.NetworkImageView;
+import android.widget.ImageView;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class ImageUtil {
 
@@ -201,7 +205,7 @@ public class ImageUtil {
         return memoryClass;
     }
 
-    public static File getFileFromDrawable(Context ctx, NetworkImageView a,
+    public static File getFileFromDrawable(Context ctx, ImageView a,
                                            String fileName) throws Exception {
         Bitmap bm = ((BitmapDrawable) a.getDrawable()).getBitmap();
         File f = getFileFromBitmap(bm, fileName);

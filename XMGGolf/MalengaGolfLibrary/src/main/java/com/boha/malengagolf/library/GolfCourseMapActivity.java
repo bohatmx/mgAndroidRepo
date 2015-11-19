@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -49,19 +49,22 @@ import com.boha.malengagolf.library.volley.toolbox.BaseVolley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -70,12 +73,12 @@ import java.util.List;
 public class GolfCourseMapActivity extends AppCompatActivity
         implements GoogleApiClient.ConnectionCallbacks,
         LocationListener,
-        GoogleApiClient.OnConnectionFailedListener
-         {
+        GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleMap googleMap;
     private FragmentActivity fragmentActivity;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,13 @@ public class GolfCourseMapActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
                 .findFragmentById(R.id.map);
 
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startLocationUpdates();
+            }
+        });
         googleMap = mapFragment.getMap();
         if (googleMap == null) {
             ToastUtil.toast(ctx, "Map not available. Please try again!");
@@ -128,7 +138,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
                                 .draggable(true)
                                 .snippet(province.getProvinceName())
                                 .position(pnt));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 12.0f));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pnt, 16.0f));
                         //googleMap.animateCamera(CameraUpdateFactory.zoomTo(14.0f));
                         googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
                             @Override
@@ -173,6 +183,21 @@ public class GolfCourseMapActivity extends AppCompatActivity
             }
         });
 
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                //ensure that all markers in bounds
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markers) {
+                    builder.include(marker.getPosition());
+                }
+
+                LatLngBounds bounds = builder.build();
+                int padding = 100; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                googleMap.animateCamera(cu);
+            }
+        });
         googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -195,7 +220,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
             public void onMapLongClick(LatLng latLng) {
                 latitude = latLng.latitude;
                 longitude = latLng.longitude;
-                //getNearbyClubs();
+                startLocationUpdates();
             }
         });
     }
@@ -215,7 +240,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
             return;
         }
         setRefreshActionButtonState(true);
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO response) {
                 runOnUiThread(new Runnable() {
@@ -351,16 +376,18 @@ public class GolfCourseMapActivity extends AppCompatActivity
             index++;
         }
 
-        //TODO - calculate the center of the clubs retrieved - centre map.
-        if (clubList.isEmpty()) return;
-        int indxe = 0;
-        if (clubList.size() > 3) {
-            indxe = clubList.size() / 2;
+
+        //ensure that all markers in bounds
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
         }
-        ClubDTO c = clubList.get(indxe);
-        LatLng ltlng = new LatLng(c.getLatitude(), c.getLongitude());
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ltlng, 1.0f));
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(9.0f));
+
+        LatLngBounds bounds = builder.build();
+        int padding = 60; // offset from edges of the map in pixels
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+        googleMap.animateCamera(cu);
     }
 
     @Override
@@ -389,30 +416,48 @@ public class GolfCourseMapActivity extends AppCompatActivity
         // reduce the need to do it on my own server ...THINK!!
         Log.e(LOG, "############ initialize GoogleApiClient... do not need it at this point");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
     }
 
-    LocationRequest locationRequest;
+    LocationRequest mLocationRequest;
+    Location location;
+    static final float ACCURACY_THRESHOLD = 100;
     static final long ONE_MINUTE = 1000 * 60;
     static final long FIVE_MINUTES = 1000 * 60 * 5;
+    boolean mRequestingLocationUpdates;
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.e(LOG, "########### onConnected .... what is in the bundle...?");
-
-//        if (loc != null) {
-//            latitude = loc.getLatitude();
-//            longitude = loc.getLongitude();
-//            Log.d(LOG, "----------------> Last location, lat: " + latitude + " lng: " + longitude);
-//        }
-
-        locationRequest = new LocationRequest();
-        locationRequest.setFastestInterval(FIVE_MINUTES);
-        locationRequest.setInterval(ONE_MINUTE);
-
+        location = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        Log.w(LOG, "## requesting location updates ....");
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(3000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setFastestInterval(1000);
+        startLocationUpdates();
     }
+
+    protected void startLocationUpdates() {
+        if (mGoogleApiClient.isConnected()) {
+            mRequestingLocationUpdates = true;
+            LocationServices.FusedLocationApi.requestLocationUpdates(
+                    mGoogleApiClient, mLocationRequest, this);
+            setRefreshActionButtonState(true);
+        }
+    }
+
+    protected void stopLocationUpdates() {
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+        }
+    }
+
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -439,8 +484,6 @@ public class GolfCourseMapActivity extends AppCompatActivity
         }
     }
 
-    // The rest of this code is all about building the error dialog
-
     /* Creates a dialog for an error message */
     private void showErrorDialog(int errorCode) {
         // Create a fragment for the error dialog
@@ -459,42 +502,19 @@ public class GolfCourseMapActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        mLatitude = latitude;
-        mLongitude = longitude;
-        Log.e(LOG, "----------------> Location changed, lat: " + latitude + " lng: " + longitude
-                + " at: " + sdf.format(new Date()));
+
+        Log.d(LOG, "## onLocationChanged accuracy = " + location.getAccuracy());
+        if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
+            this.location = location;
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            mLatitude = latitude;
+            mLongitude = longitude;
+            stopLocationUpdates();
+            getNearbyClubs();
+        }
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    /**
-     * Called when the provider is enabled by the user.
-     *
-     * @param provider the name of the location provider associated with this
-     *                 update.
-     */
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    /**
-     * Called when the provider is disabled by the user. If requestLocationUpdates
-     * is called on an already disabled provider, this method is called
-     * immediately.
-     *
-     * @param provider the name of the location provider associated with this
-     *                 update.
-     */
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 
     static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
@@ -729,7 +749,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
                         getProvinceClubs();
                         break;
                     case FROM_NEARBY:
-                        getNearbyClubs();
+                        startLocationUpdates();
                         break;
                 }
             }
@@ -744,7 +764,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
                         getProvinceClubs();
                         break;
                     case FROM_NEARBY:
-                        getNearbyClubs();
+                        startLocationUpdates();
                         break;
                 }
             }
@@ -776,7 +796,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (seekBar.getProgress() > 0) {
-                    getNearbyClubs();
+                    startLocationUpdates();
                 }
             }
         });
@@ -784,7 +804,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (seekBar.getProgress() > 0) {
-                    getNearbyClubs();
+                    startLocationUpdates();
                 }
             }
         });
@@ -804,7 +824,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
         List<String> list = new ArrayList<String>();
         list.add(ctx.getResources().getString(R.string.select_province));
         if (provinceList == null) {
-            Log.e(LOG,"###### error, provinceList is NULL ------->");
+            Log.e(LOG, "###### error, provinceList is NULL ------->");
             provinceSpinner.setVisibility(View.GONE);
             return;
         }
@@ -864,7 +884,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
         if (provinceList == null || provinceList.isEmpty()) {
             setRefreshActionButtonState(true);
         }
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
@@ -965,7 +985,6 @@ public class GolfCourseMapActivity extends AppCompatActivity
                         putClubMarkersOnMap();
                     setList();
                 }
-                getNearbyClubs();
             }
 
             @Override
@@ -984,7 +1003,6 @@ public class GolfCourseMapActivity extends AppCompatActivity
         }
 
 
-        double[] loc = SharedUtil.getLastLocation(getApplicationContext());
         RequestDTO w = new RequestDTO();
         w.setRequestType(RequestDTO.GET_CLUBS_NEARBY);
         w.setLatitude(latitude);
@@ -1003,7 +1021,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
         }
         txtResults.setText("");
         setRefreshActionButtonState(true);
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
@@ -1139,7 +1157,7 @@ public class GolfCourseMapActivity extends AppCompatActivity
         }
         txtResults.setText("");
         setRefreshActionButtonState(true);
-        WebSocketUtil.sendRequest(ctx,Statics.ADMIN_ENDPOINT,w,new WebSocketUtil.WebSocketListener() {
+        WebSocketUtil.sendRequest(ctx, Statics.ADMIN_ENDPOINT, w, new WebSocketUtil.WebSocketListener() {
             @Override
             public void onMessage(final ResponseDTO r) {
                 runOnUiThread(new Runnable() {
