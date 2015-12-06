@@ -59,10 +59,10 @@ public class AppInvitationActivity extends AppCompatActivity implements AppInvit
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.back))) {
-            finish();
-            return true;
-        }
+//        if (item.getTitle().toString().equalsIgnoreCase(ctx.getResources().getString(R.string.back))) {
+//            finish();
+//            return true;
+//        }
         if (item.getItemId() == R.id.menu_help) {
             ToastUtil.toast(ctx, "Under Construction");
             return true;

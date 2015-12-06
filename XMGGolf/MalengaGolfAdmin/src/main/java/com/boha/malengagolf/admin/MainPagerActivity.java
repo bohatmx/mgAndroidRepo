@@ -466,7 +466,7 @@ public class MainPagerActivity extends AppCompatActivity
         }
     }
 
-    boolean isUsingCachedData, useWebSocket = true;
+    boolean isUsingCachedData, useWebSocket = false;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
