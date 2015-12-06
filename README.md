@@ -11,7 +11,7 @@ mgGolf | mgGolf
 
 mgGolf | mgGolf
 ------------ | -------------
-![Alt text](/XMGGolf/MalengaGolfAdmin/screenshots/d6.png?raw=true "mgGolf App") | ![Alt text](/XMGGolf/MalengaGolfAdmin/screenshots/d7.png?raw=true "mgGolf App")
+![Alt text](/XMGGolf/MalengaGolfAdmin/screenshots/d6.png?raw=true "mgGolf App") | ![Alt text](/XMGGolf/MalengaGolfAdmin/screenshots/d5.png?raw=true "mgGolf App")
 
 mgGolf | mgGolf
 ------------ | -------------
