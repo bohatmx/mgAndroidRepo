@@ -2,3 +2,10 @@
 ## Run your golf tournaments on a suite of Android apps
 
 mgGolf is a subscription based platform that allows any group of golfers to organize and run tournaments
+
+
+#### Random screenshots
+mgGolf | mgGolf
+------------ | -------------
+![Alt text](/XMGGolf/MalengaGolfAdmin/screenshots/d1.png?raw=true "mgGolf App") | ![Alt text](/XMGGolf/MalengaGolfAdmin/screenshots/d2.png?raw=true "mgGolf App")
+
